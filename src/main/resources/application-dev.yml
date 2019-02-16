@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+# 固定上传文件的大小
+spring:
+  servlet:
+    multipart:
+      maxFileSize: 30MB
+      maxRequestSize: 30MB
+
+  resources:
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /**
+    static-locations: classpath:/files/
+
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://127.0.0.1:3306/core_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    initialSize: 1
+    minIdle: 3
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 30000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall,slf4j
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    useGlobalDataSourceStat:true
+
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: ac.cn.saya.laboratory.entity

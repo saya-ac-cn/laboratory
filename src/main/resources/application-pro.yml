@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+# 固定上传文件的大小
+spring:
+  servlet:
+    multipart:
+      maxFileSize: 30MB
+      maxRequestSize: 30MB
+
+  resources:
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /**
+    static-locations: classpath:/files/

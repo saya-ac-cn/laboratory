@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--全局配置-->
+    <settings>
+        <!--使用jdbc的getGeneratedKeys获取数据库自增主键值-->
+        <!-- 打印查询语句 -->
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+        <setting name="useGeneratedKeys" value="true"/>
+    </settings>
+    <typeAliases>
+        <typeAlias alias="user" type="ac.cn.saya.laboratory.entity.UserEntity" />
+        <typeAlias alias="log" type="ac.cn.saya.laboratory.entity.LogEntity" />
+        <typeAlias alias="logType" type="ac.cn.saya.laboratory.entity.LogTypeEntity" />
+        <typeAlias alias="plan" type="ac.cn.saya.laboratory.entity.PlanEntity" />
+    </typeAliases>
+</configuration>

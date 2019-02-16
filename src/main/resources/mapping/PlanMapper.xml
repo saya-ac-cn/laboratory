@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.cn.saya.laboratory.dao.PlanDAO">
+
+    <!--添加计划-->
+    <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->
+    <insert id="insertPlan" useGeneratedKeys="true" keyProperty="id" parameterType="plan" >
+        INSERT INTO `plan` (
+            `source`,
+            `describe`,
+            `plandate`,
+            `createtime`
+        )
+        VALUES
+            (
+                #{source},
+                #{describe},
+                #{plandate},
+                NOW()
+            );
+    </insert>
+
+    <!--修改计划-->
+    <update id="updatePlan" parameterType="plan">
+        UPDATE `plan`
+        <set>
+            <if test="describe != null and describe != ''">
+                `describe` = #{describe},
+            </if>
+            <if test="plandate != null and plandate != ''">
+                `plandate` = #{plandate},
+            </if>
+            updatetime = now()
+        </set>
+        where `id` = #{id} and `source` = #{source}
+    </update>
+
+    <!--删除计划-->
+    <delete id="deletePlan" parameterType="plan">
+        delete from plan where `id` = #{id} and `source` = #{source}
+    </delete>
+
+    <!-- 查询一条计划-->
+    <select id="getOnePlan" parameterType="plan" resultType="plan">
+        select
+        a.`id`,a.`source`,a.`describe`,a.`plandate`,a.`createtime`,a.`updatetime`
+        from
+          plan a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test = "plandate != null and plandate != ''">
+                and date_format(a.plandate,'%Y-%m-%d') = date_format(#{plandate},'%Y-%m-%d')
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.plandate,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 获取计划集-->
+    <select id="getPlanList" parameterType="plan" resultType="plan">
+        select
+        a.`id`,a.`source`,a.`describe`,a.`plandate`,a.`createtime`,a.`updatetime`, dayofmonth(a.`plandate`) as number
+        from
+          plan a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test = "plandate != null and plandate != ''">
+                and date_format(a.plandate,'%Y-%m-%d') = date_format(#{plandate},'%Y-%m-%d')
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.plandate,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by number asc
+    </select>
+
+</mapper>
+
+
+
+
+
+

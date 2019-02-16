@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">    
+    
+<mapper namespace="ac.cn.saya.laboratory.dao.LogDAO">
+
+    <!--添加一条日志-->
+    <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="log" >
+        insert into log(user,type,ip,city,date) values(#{user},#{type},#{ip},#{city},#{date})
+    </insert>
+
+    <!--获取所有的日志类别   -->
+    <select id="selectType" resultType="logType">
+        select * from logtype;
+    </select>
+
+    <resultMap id="logList" type="log">
+        <id column="id" property="id"/>
+        <result column="user" property="user"/>
+        <result column="ip" property="ip"/>
+        <result column="city" property="city"/>
+        <result column="date" property="date"/>
+        <association property="logType" javaType="LogType">
+            <id column="type" property="type"/>
+            <result column="describe" property="describe"/>
+        </association>
+    </resultMap>
+
+    <!-- 查询日志 分页-->
+    <select id="selectPage" parameterType="log" resultMap="logList">
+        select
+            a.user,
+            a.type,
+            b.describe,
+            a.ip,
+            a.city,
+            a.date
+        from
+            log a
+            left join logtype b on a.type = b.type
+        <where>
+            <if test = "user != null and user != ''">
+                and a.user  = #{user}
+            </if>
+            <if test="type != null and type != ''">
+                and a.type = #{type}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.date,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.id desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!-- 查询日志 计数-->
+    <select id="selectCount" parameterType="log" resultType="java.lang.Long">
+        select
+          count(*) as total
+        from
+        log a
+        left join logtype b on a.type = b.type
+        <where>
+            <if test = "user != null and user != ''">
+                and a.user  = #{user}
+            </if>
+            <if test="type != null and type != ''">
+                and a.type = #{type}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.date,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+
+
+</mapper> 
