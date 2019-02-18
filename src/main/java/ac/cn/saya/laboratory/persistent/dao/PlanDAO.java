@@ -1,4 +1,4 @@
-package ac.cn.saya.laboratory.dao;
+package ac.cn.saya.laboratory.persistent.dao;
 
 
 import ac.cn.saya.laboratory.entity.PlanEntity;

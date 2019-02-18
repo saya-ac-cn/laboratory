@@ -1,10 +1,10 @@
 package ac.cn.saya.laboratory.controller;
 
-import ac.cn.saya.datacenter.entity.LogEntity;
-import ac.cn.saya.datacenter.entity.PlanEntity;
-import ac.cn.saya.datacenter.entity.UserEntity;
-import ac.cn.saya.datacenter.tools.Result;
-import ac.cn.saya.datacenter.www.service.impl.CoreServiceImpl;
+import ac.cn.saya.laboratory.entity.LogEntity;
+import ac.cn.saya.laboratory.entity.PlanEntity;
+import ac.cn.saya.laboratory.entity.UserEntity;
+import ac.cn.saya.laboratory.service.ICoreService;
+import ac.cn.saya.laboratory.tools.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +27,7 @@ public class SetController {
 
     @Autowired()
     @Qualifier("coreServiceImpl")
-    private CoreServiceImpl coreServiceImpl;
+    private ICoreService coreServiceImpl;
 
     /**
      * 获取用户的个人信息
@@ -49,7 +49,7 @@ public class SetController {
      * @throws Exception
      */
     @PutMapping(value = "update")
-    public Result<Object> setInfo(@RequestBody UserEntity entity,HttpServletRequest httpServletRequest) throws Exception
+    public Result<Object> setInfo(@RequestBody UserEntity entity, HttpServletRequest httpServletRequest) throws Exception
     {
         return coreServiceImpl.setUserInfo(entity,httpServletRequest);
     }

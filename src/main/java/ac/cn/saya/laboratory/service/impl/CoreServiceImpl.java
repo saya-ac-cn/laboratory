@@ -1,17 +1,19 @@
 package ac.cn.saya.laboratory.service.impl;
 
-import ac.cn.saya.laboratory.dao.UserDAO;
+import ac.cn.saya.laboratory.entity.LogEntity;
+import ac.cn.saya.laboratory.entity.LogTypeEntity;
+import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
 import ac.cn.saya.laboratory.exception.MyException;
+import ac.cn.saya.laboratory.handle.RepeatLogin;
+import ac.cn.saya.laboratory.persistent.service.LogService;
+import ac.cn.saya.laboratory.persistent.service.PlanService;
+import ac.cn.saya.laboratory.persistent.service.UserService;
 import ac.cn.saya.laboratory.service.ICoreService;
-import ac.cn.saya.laboratory.tools.Result;
-import ac.cn.saya.laboratory.tools.ResultEnum;
-import ac.cn.saya.laboratory.tools.ResultUtil;
-import ac.cn.saya.laboratory.tools.UploadUtils;
+import ac.cn.saya.laboratory.tools.*;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -25,9 +27,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Title: CoreServiceImpl
@@ -44,18 +44,17 @@ public class CoreServiceImpl implements ICoreService {
 
     private static Logger logger = LoggerFactory.getLogger(CoreServiceImpl.class);
 
-    @Reference(version = "${dubbo.consumer.version}")
-    private IUserService IUserService;
-
-    @Reference(version = "${dubbo.consumer.version}")
-    private ILogService ILogService;
-
-    @Reference(version = "${dubbo.consumer.version}")
-    private IPlanService iPlanService;
+    @Resource
+    @Qualifier("userService")
+    private UserService userService;
 
     @Resource
-    @Qualifier("userDAO")
-    private UserDAO userDAO;
+    @Qualifier("logService")
+    private LogService logService;
+
+    @Resource
+    @Qualifier("planService")
+    private PlanService planService;
 
     @Resource
     @Qualifier("recordService")//日志助手表
@@ -78,7 +77,7 @@ public class CoreServiceImpl implements ICoreService {
         HttpSession session = request.getSession();
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         String userSession = (String) session.getAttribute("user");
-        UserEntity entity = userDAO.queryUser(user.getUser());
+        UserEntity entity = userService.getUser(user.getUser());
         if (entity == null) {
             // 没有该用户的信息 直接中断返回
             //未找到该用户
@@ -95,7 +94,8 @@ public class CoreServiceImpl implements ICoreService {
             // 在系统中查询该用户是否存在
             // 在服务器全局中检查
             // 由于登录时 可以用用户名 和 邮箱登录 所以 这里用用户查找
-            if(redisUtils.hmExists("DataCenter:SessionMap",entity.getUser())) {
+            ///if(redisUtils.hmExists("DataCenter:SessionMap",entity.getUser())) {
+            if(RepeatLogin.sessionMap.get(user.getUser()) != null){
                 /**
                  * 已经登录
                  * 将已经登陆的信息拿掉,踢下线
@@ -110,7 +110,8 @@ public class CoreServiceImpl implements ICoreService {
                 //为之注入用户名
                 session.setAttribute("user", entity.getUser());
                 //放入用户的session 到数据库中
-                redisUtils.hmSet("DataCenter:SessionMap",user.getUser(),session.getId());
+                ///redisUtils.hmSet("DataCenter:SessionMap",user.getUser(),session.getId());
+                RepeatLogin.sessionMap.put(user.getUser(),session);
                 // 登录
                 recordService.record("OX001",request);
                 // 对密码脱敏处理
@@ -159,7 +160,7 @@ public class CoreServiceImpl implements ICoreService {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         String userSession = (String) request.getSession().getAttribute("user");
         // 在系统中查询该用户是否存在
-        UserEntity entity = IUserService.getUser(userSession);
+        UserEntity entity = userService.getUser(userSession);
         if (entity == null)
         {
             // 没有该用户的信息 直接中断返回
@@ -189,7 +190,7 @@ public class CoreServiceImpl implements ICoreService {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         String userSession = (String) request.getSession().getAttribute("user");
         user.setUser(userSession);
-        if(IUserService.setUser(user) > 0 ) {
+        if(userService.setUser(user) > 0 ) {
             /**
              * 记录日志
              */
@@ -220,7 +221,7 @@ public class CoreServiceImpl implements ICoreService {
         user.setUser(userSession);
         //加密后用户的密码
         user.setPassword(DesUtil.encrypt(user.getPassword()));
-        if(IUserService.setUser(user) > 0 )
+        if(userService.setUser(user) > 0 )
         {
             /**
              * 记录日志
@@ -240,7 +241,7 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> getLogType()  throws Exception{
-        List<LogTypeEntity> list = ILogService.selectLogType();
+        List<LogTypeEntity> list = logService.selectLogType();
         if (list.size() < 0) {
             // 没有该用户的信息 直接中断返回
             //未找到登录类别
@@ -258,7 +259,7 @@ public class CoreServiceImpl implements ICoreService {
      * @return
      */
     @Override
-    public Result<Object> getLog(LogEntity entity,HttpServletRequest request)  throws Exception{
+    public Result<Object> getLog(LogEntity entity, HttpServletRequest request)  throws Exception{
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         String userSession = (String) request.getSession().getAttribute("user");
         entity.setUser(userSession);
@@ -272,7 +273,7 @@ public class CoreServiceImpl implements ICoreService {
         //每页显示记录的数量
         paging.setPageSize(entity.getPageSize());
         //获取满足条件的总记录（不分页）
-        Long pageSize = ILogService.selectCount(entity);
+        Long pageSize = logService.selectCount(entity);
         if(pageSize > 0) {
             //总记录数
             paging.setDateSum(pageSize);
@@ -283,7 +284,7 @@ public class CoreServiceImpl implements ICoreService {
             //设置行索引
             entity.setPage((paging.getPageNow()-1)*paging.getPageSize(),paging.getPageSize());
             //获取满足条件的记录集合
-            List<LogEntity> list = ILogService.selectPage(entity);
+            List<LogEntity> list = logService.selectPage(entity);
             paging.setGrid(list);
             return ResultUtil.success(paging);
         } else {
@@ -310,7 +311,7 @@ public class CoreServiceImpl implements ICoreService {
         String userSession = (String) request.getSession().getAttribute("user");
         try{
             //获取满足条件的总记录（不分页）
-            Long pageSize = ILogService.selectCount(entity);
+            Long pageSize = logService.selectCount(entity);
             if(pageSize <= 0) {
                 return ResultUtil.error(-1,"没有可导出的数据");
             }
@@ -318,7 +319,7 @@ public class CoreServiceImpl implements ICoreService {
             entity.setPage(0,pageSize.intValue());
             entity.setUser(userSession);
             //获取满足条件的记录集合
-            List<LogEntity> entityList = ILogService.selectPage(entity);
+            List<LogEntity> entityList = logService.selectPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
             for (LogEntity item : entityList) {
                 JSONObject json = new JSONObject();
@@ -364,7 +365,7 @@ public class CoreServiceImpl implements ICoreService {
             UserEntity user = new UserEntity();
             user.setUser(userSession);
             user.setLogo(successUrl);
-            if(IUserService.setUser(user) > 0 ) {
+            if(userService.setUser(user) > 0 ) {
                 /**
                  * 记录日志
                  * 上传头像
@@ -464,7 +465,7 @@ public class CoreServiceImpl implements ICoreService {
         // 查询该月的计划
         query.setBeginTime(firstDay);
         query.setEndTime(lastDay);
-        List<PlanEntity> plan = iPlanService.getPlanList(query);
+        List<PlanEntity> plan = planService.getPlanList(query);
         if(firstDayWeek < 1 || firstDayWeek > 7){
             // 获取的该月第一天是否正常
             throw new MyException(ResultEnum.ERROP);
@@ -529,7 +530,7 @@ public class CoreServiceImpl implements ICoreService {
             // 缺少参数
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
-        PlanEntity result = iPlanService.getOnePlan(entity);
+        PlanEntity result = planService.getOnePlan(entity);
         if(result == null){
             //未找到有效记录
             throw new MyException(ResultEnum.NOT_EXIST);
@@ -557,7 +558,7 @@ public class CoreServiceImpl implements ICoreService {
         }
         String userSession = (String) request.getSession().getAttribute("user");
         entity.setSource(userSession);
-        Integer flog = iPlanService.insertPlan(entity);
+        Integer flog = planService.insertPlan(entity);
         if(flog > 0){
             /**
              * 记录日志
@@ -595,7 +596,7 @@ public class CoreServiceImpl implements ICoreService {
         // 日期准备
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         entity.setPlandate(format.format(format.parse(entity.getPlandate())));
-        Integer flog = iPlanService.editPlan(entity);
+        Integer flog = planService.editPlan(entity);
         if(flog > 0){
             /**
              * 记录日志
@@ -630,7 +631,7 @@ public class CoreServiceImpl implements ICoreService {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         String userSession = (String) request.getSession().getAttribute("user");
         entity.setSource(userSession);
-        if(iPlanService.deletePlan(entity) > 0){
+        if(planService.deletePlan(entity) > 0){
             /**
              * 记录日志
              */

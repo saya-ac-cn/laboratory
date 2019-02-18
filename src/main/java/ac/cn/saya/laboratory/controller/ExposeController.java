@@ -1,7 +1,11 @@
 package ac.cn.saya.laboratory.controller;
 
+import ac.cn.saya.laboratory.entity.UserEntity;
+import ac.cn.saya.laboratory.service.ICoreService;
 import ac.cn.saya.laboratory.tools.Result;
 import ac.cn.saya.laboratory.tools.ResultUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,24 +25,20 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 public class ExposeController {
 
-//    @Autowired()
-//    @Qualifier("coreServiceImpl")
-//    private CoreServiceImpl coreServiceImpl;
+    @Autowired()
+    @Qualifier("coreServiceImpl")
+    private ICoreService coreServiceImpl;
 
-    @GetMapping("/backend/login")
-    public Result<Object> login(HttpServletRequest request) throws Exception{
-        return ResultUtil.success("pass check！");
-    }
 
     /**
      * 登录
      * @return
      */
-//    @PostMapping("/backend/login")
-//    public Result<Object> login(@RequestBody UserEntity user, HttpServletRequest request) throws Exception
-//    {
-//        return coreServiceImpl.login(user, request);
-//    }
+    @PostMapping("/backend/login")
+    public Result<Object> login(@RequestBody UserEntity user, HttpServletRequest request) throws Exception
+    {
+        return coreServiceImpl.login(user, request);
+    }
 
     /**
      * 下载文件
@@ -49,7 +49,7 @@ public class ExposeController {
     @GetMapping("/backend/download/channel-1")
     public void fileDownload (@RequestParam(value = "url") String url,HttpServletRequest request, HttpServletResponse response){
         System.out.println(ClassUtils.getDefaultClassLoader().getResource("").getPath());
-       // coreServiceImpl.fileDownload(url,request,response);
+        coreServiceImpl.fileDownload(url,request,response);
     }
 
     /**
@@ -58,11 +58,11 @@ public class ExposeController {
      * @return
      * @throws Exception
      */
-//    @PostMapping(value = "/backend/logout")
-//    public Result<Object> logout(HttpServletRequest httpServletRequest) throws Exception
-//    {
-//        return coreServiceImpl.logout(httpServletRequest);
-//    }
+    @PostMapping(value = "/backend/logout")
+    public Result<Object> logout(HttpServletRequest httpServletRequest) throws Exception
+    {
+        return coreServiceImpl.logout(httpServletRequest);
+    }
 
 
 }

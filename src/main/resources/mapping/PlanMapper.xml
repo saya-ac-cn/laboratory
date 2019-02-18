@@ -2,7 +2,7 @@
 <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="ac.cn.saya.laboratory.dao.PlanDAO">
+<mapper namespace="ac.cn.saya.laboratory.persistent.dao.PlanDAO">
 
     <!--添加计划-->
     <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->

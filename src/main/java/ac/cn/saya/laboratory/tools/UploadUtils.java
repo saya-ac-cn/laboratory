@@ -1,10 +1,8 @@
 package ac.cn.saya.laboratory.tools;
 
-import ac.cn.saya.datacenter.tools.Log4jUtils;
-import ac.cn.saya.datacenter.tools.RandomUtil;
-import ac.cn.saya.datacenter.tools.Result;
-import ac.cn.saya.datacenter.tools.ResultUtil;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +29,7 @@ import java.util.Random;
 
 public class UploadUtils {
 
-    private static Logger logger = Logger.getLogger(UploadUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(UploadUtils.class);
 
     /**
      * 上传logo -> class/files

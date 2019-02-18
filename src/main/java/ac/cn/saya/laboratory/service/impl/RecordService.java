@@ -1,7 +1,8 @@
 package ac.cn.saya.laboratory.service.impl;
 
-import ac.cn.saya.laboratory.dao.LogDAO;
+import ac.cn.saya.laboratory.persistent.dao.LogDAO;
 import ac.cn.saya.laboratory.entity.LogEntity;
+import ac.cn.saya.laboratory.persistent.service.LogService;
 import ac.cn.saya.laboratory.tools.City;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,8 +30,8 @@ public class RecordService {
     private static Logger logger = LoggerFactory.getLogger(RecordService.class);
 
     @Resource
-    @Qualifier("logDAO")
-    private LogDAO logDAO;
+    @Qualifier("logService")
+    private LogService logService;
 
 
     public RecordService() {
@@ -53,11 +54,7 @@ public class RecordService {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String datetime = formatter.format(currentTime);
             LogEntity entity = new LogEntity(user, type, ip, city, datetime);
-            Integer flog = logDAO.insert(entity);
-            if(flog <= 0) {
-                //插入失败
-                logger.warn("记录日志失败");
-            }
+            logService.insert(entity);
         }catch (Exception e)
         {
             e.printStackTrace();
