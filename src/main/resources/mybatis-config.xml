@@ -18,5 +18,11 @@
         <typeAlias alias="transactionType" type="ac.cn.saya.laboratory.entity.TransactionTypeEntity" />
         <typeAlias alias="transactionInfo" type="ac.cn.saya.laboratory.entity.TransactionInfoEntity" />
         <typeAlias alias="transactionList" type="ac.cn.saya.laboratory.entity.TransactionListEntity" />
+        <typeAlias alias="news" type="ac.cn.saya.laboratory.entity.NewsEntity" />
+        <typeAlias alias="guestbook" type="ac.cn.saya.laboratory.entity.GuestBookEntity" />
+        <typeAlias alias="notebook" type="ac.cn.saya.laboratory.entity.NoteBookEntity" />
+        <typeAlias alias="notes" type="ac.cn.saya.laboratory.entity.NotesEntity" />
+        <typeAlias alias="picture" type="ac.cn.saya.laboratory.entity.PictureEntity" />
+        <typeAlias alias="files" type="ac.cn.saya.laboratory.entity.FilesEntity" />
     </typeAliases>
 </configuration>

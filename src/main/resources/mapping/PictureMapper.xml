@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.cn.saya.laboratory.persistent.dao.PictureDAO">
+
+    <!--添加一条日志-->
+    <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->
+    <insert id="insertPictuBase64" useGeneratedKeys="true" keyProperty="id" parameterType="picture" >
+        insert into pictures(`type`,`filename`,`descript`,`fileurl`,`weburl`,`source`,`date`) values(#{type},#{filename},#{descript},#{fileurl},#{weburl},#{source},now())
+    </insert>
+
+    <!--删除base64类型的图片-->
+    <delete id="deletePictuBase64" parameterType="picture">
+        delete from pictures where id = #{id} and source = #{source}
+    </delete>
+
+    <!-- 查询一张图片-->
+    <select id="getOnePictuBase64" parameterType="picture" resultType="picture">
+        select
+          *
+        from
+        pictures a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="type != null and type != 0">
+                and a.type = #{type}
+            </if>
+            <if test="filename != null and filename != ''">
+                and a.filename  like concat('%',#{filename},'%')
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.date,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 查询分页后的图片-->
+    <select id="getPictuBase64Page" parameterType="picture" resultType="picture">
+        select
+            `id`,
+            `type`,
+            `filename`,
+            `descript`,
+            `weburl`,
+            `source`,
+            `date`
+        from
+          pictures a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="type != null and type != 0">
+                and a.type = #{type}
+            </if>
+            <if test="filename != null and filename != ''">
+                and a.filename  like concat('%',#{filename},'%')
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.date,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.id desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!-- 查询图片的总数-->
+    <select id="getPictuBase64Count" parameterType="picture" resultType="java.lang.Long">
+        select
+        count(*)
+        from
+        pictures a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="type != null and type != 0">
+                and a.type = #{type}
+            </if>
+            <if test="filename != null and filename != ''">
+                and a.filename  like concat('%',#{filename},'%')
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.date,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+    
+</mapper>
