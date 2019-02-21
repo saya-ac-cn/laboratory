@@ -56,5 +56,59 @@ public interface IFinancialService {
     public Result<Object> getTransactionFinal(TransactionListEntity entity, HttpServletRequest request) throws Exception;
 
 
+    /**
+     * 添加财政记录父+子
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> insertTransaction(TransactionListEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * 修改财政记录父
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> updateTransaction(TransactionListEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * 删除财政记录父+子
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> deleteTransaction(TransactionListEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * 添加财政子记录
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> insertTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * 修改财政子记录
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> updateTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * 删除财政子记录
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> deleteTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws Exception;
+
 
 }

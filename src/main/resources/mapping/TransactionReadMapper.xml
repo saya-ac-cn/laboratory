@@ -44,6 +44,9 @@
         from
             transaction_list a left join transaction_type b on a.tradeType = b.id
         <where>
+            <if test="tradeId != null and tradeId != ''">
+                and a.tradeId = #{tradeId}
+            </if>
             <if test = "source != null and source != ''">
                 and a.source  = #{source}
             </if>
@@ -65,6 +68,9 @@
         from
         transaction_list a left join transaction_type b on a.tradeType = b.id
         <where>
+            <if test="tradeId != null and tradeId != ''">
+                and a.tradeId = #{tradeId}
+            </if>
             <if test = "source != null and source != ''">
                 and a.source  = #{source}
             </if>

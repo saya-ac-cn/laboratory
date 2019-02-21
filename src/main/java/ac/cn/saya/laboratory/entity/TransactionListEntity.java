@@ -1,5 +1,7 @@
 package ac.cn.saya.laboratory.entity;
 
+import java.util.List;
+
 /**
  * @Title: TransactionListEntity
  * @ProjectName DataCenter
@@ -56,6 +58,10 @@ public class TransactionListEntity extends BaseEntity {
      * 交易类别
      */
     private TransactionTypeEntity tradeTypeEntity;
+    /**
+     * 明细表
+     */
+    private List<TransactionInfoEntity> infoList;
 
     public TransactionListEntity() {
     }
@@ -146,5 +152,13 @@ public class TransactionListEntity extends BaseEntity {
 
     public void setTradeTypeEntity(TransactionTypeEntity tradeTypeEntity) {
         this.tradeTypeEntity = tradeTypeEntity;
+    }
+
+    public List<TransactionInfoEntity> getInfoList() {
+        return infoList;
+    }
+
+    public void setInfoList(List<TransactionInfoEntity> infoList) {
+        this.infoList = infoList;
     }
 }
