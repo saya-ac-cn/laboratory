@@ -36,6 +36,10 @@ public class FinancialServiceImpl implements IFinancialService {
     private static Logger logger = LoggerFactory.getLogger(FinancialServiceImpl.class);
 
     @Resource
+    @Qualifier("recordService")//日志助手表
+    private RecordService recordService;
+
+    @Resource
     @Qualifier("transactionReadService")
     private TransactionReadService transactionReadService;
 
@@ -260,6 +264,10 @@ public class FinancialServiceImpl implements IFinancialService {
                 item.setTradeId(backfillValue);
                 transactionWriteService.insertTransactionInfo(item);
             }
+            /**
+             * 申报流水
+             */
+            recordService.record("OX025",request);
             return ResultUtil.success();
         }else{
             logger.warn("在写入到财政父表异常");
@@ -285,6 +293,10 @@ public class FinancialServiceImpl implements IFinancialService {
             String userSession = (String) request.getSession().getAttribute("user");
             entity.setSource(userSession);
             if(transactionWriteService.updateTransactionList(entity)>0){
+                /**
+                 * 修改流水
+                 */
+                recordService.record("OX026",request);
                 return ResultUtil.success();
             }else{
                 return ResultUtil.error(-1,"修改失败");
@@ -309,6 +321,10 @@ public class FinancialServiceImpl implements IFinancialService {
             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
             String userSession = (String) request.getSession().getAttribute("user");
             if(transactionWriteService.deleteTransactionList(entity.getTradeId(),userSession) > 0){
+                /**
+                 * 删除流水
+                 */
+                recordService.record("OX027",request);
                 return ResultUtil.success();
             }else{
                 return ResultUtil.error(-1,"删除失败");
@@ -376,6 +392,10 @@ public class FinancialServiceImpl implements IFinancialService {
                     writeEntity.setSource(userSession);
                     // 开始写入父表的数据
                     if(transactionWriteService.updateTransactionList(writeEntity) > 0){
+                        /**
+                         * 补充流水明细
+                         */
+                        recordService.record("OX028",request);
                         return ResultUtil.success();
                     }else
                     {
@@ -454,6 +474,10 @@ public class FinancialServiceImpl implements IFinancialService {
                     writeEntity.setSource(userSession);
                     // 开始写入父表的数据
                     if(transactionWriteService.updateTransactionList(writeEntity) > 0){
+                        /**
+                         * 修改流水明细
+                         */
+                        recordService.record("OX029",request);
                         return ResultUtil.success();
                     }else
                     {
@@ -489,16 +513,20 @@ public class FinancialServiceImpl implements IFinancialService {
         Long itemConut = transactionReadService.selectTransactionInfoCount(queryEntity);
         if(itemConut > 0){
             String userSession = (String) request.getSession().getAttribute("user");
-            if(itemConut.equals(1)){
+            if(itemConut == 1 || itemConut.equals(1)){
                 // 只有一条记录时，直接调用父表的方法级联删除即可
                 if(transactionWriteService.deleteTransactionList(entity.getTradeId(),userSession) > 0){
+                    /**
+                     * 删除流水明细
+                     */
+                    recordService.record("OX030",request);
                     return ResultUtil.success();
                 }else{
                     return ResultUtil.error(-1,"删除失败");
                 }
             }else{
                 // 先删除子表，然后修改父表的值
-                if(transactionWriteService.deleteTransactionInfo(entity.getTradeId(),userSession) > 0 ){
+                if(transactionWriteService.deleteTransactionInfo(entity.getId(),userSession) > 0 ){
                     // 查询本流水号下的所有子记录
                     // 财政子表记录总行数
                     itemConut = transactionReadService.selectTransactionInfoCount(queryEntity);
@@ -543,6 +571,10 @@ public class FinancialServiceImpl implements IFinancialService {
                             writeEntity.setSource(userSession);
                             // 开始写入父表的数据
                             if(transactionWriteService.updateTransactionList(writeEntity) > 0){
+                                /**
+                                 * 删除流水明细
+                                 */
+                                recordService.record("OX030",request);
                                 return ResultUtil.success();
                             }else
                             {

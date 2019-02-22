@@ -30,6 +30,7 @@ public class TransactionWriteService{
 
     private static Logger logger = LoggerFactory.getLogger(TransactionWriteService.class);
 
+
     @Resource
     @Qualifier("transactionWriteDAO")
     private TransactionWriteDAO transactionWriteDAO;

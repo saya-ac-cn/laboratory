@@ -6,9 +6,7 @@ import ac.cn.saya.laboratory.service.impl.FinancialServiceImpl;
 import ac.cn.saya.laboratory.tools.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -78,6 +76,78 @@ public class FinancialController {
     public Result<Object> getTransactionFinal(TransactionListEntity entity, HttpServletRequest request) throws Exception
     {
         return financialService.getTransactionFinal(entity,request);
+    }
+
+    /**
+     * 添加财政记录父+子
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @PostMapping(value = "insertTransaction")
+    public Result<Object> insertTransaction(@RequestBody TransactionListEntity entity, HttpServletRequest request) throws Exception{
+        return financialService.insertTransaction(entity,request);
+    }
+
+    /**
+     * 修改财政记录父
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @PutMapping(value = "updateTransaction")
+    public Result<Object> updateTransaction(@RequestBody TransactionListEntity entity, HttpServletRequest request) throws Exception{
+        return financialService.updateTransaction(entity,request);
+    }
+
+    /**
+     * 删除财政记录父+子
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @DeleteMapping(value = "deleteTransaction")
+    public Result<Object> deleteTransaction(TransactionListEntity entity, HttpServletRequest request) throws Exception{
+        return financialService.deleteTransaction(entity,request);
+    }
+
+    /**
+     * 添加财政子记录
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @PostMapping(value = "insertTransactioninfo")
+    public Result<Object> insertTransactioninfo(@RequestBody TransactionInfoEntity entity, HttpServletRequest request) throws Exception{
+        return financialService.insertTransactioninfo(entity,request);
+    }
+
+    /**
+     * 修改财政子记录
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @PutMapping(value = "updateTransactioninfo")
+    public Result<Object> updateTransactioninfo(@RequestBody TransactionInfoEntity entity, HttpServletRequest request) throws Exception{
+        return financialService.updateTransactioninfo(entity,request);
+    }
+
+    /**
+     * 删除财政子记录
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @DeleteMapping(value = "deleteTransactioninfo")
+    public Result<Object> deleteTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws Exception{
+        return financialService.deleteTransactioninfo(entity,request);
     }
 
 
