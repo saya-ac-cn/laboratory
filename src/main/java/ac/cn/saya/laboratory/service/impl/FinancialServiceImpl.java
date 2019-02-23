@@ -7,10 +7,8 @@ import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.service.TransactionReadService;
 import ac.cn.saya.laboratory.persistent.service.TransactionWriteService;
 import ac.cn.saya.laboratory.service.IFinancialService;
-import ac.cn.saya.laboratory.tools.Paging;
-import ac.cn.saya.laboratory.tools.Result;
-import ac.cn.saya.laboratory.tools.ResultEnum;
-import ac.cn.saya.laboratory.tools.ResultUtil;
+import ac.cn.saya.laboratory.tools.*;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,7 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -594,5 +596,122 @@ public class FinancialServiceImpl implements IFinancialService {
         }else{
             return ResultUtil.error(-1,"记录已经不存在");
         }
+    }
+
+    /**
+     * 导出流水
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result<Object> outTransactionListExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String[] keys = {"tradeId","deposited","expenditure","transactionType","currencyNumber","tradeDate","transactionAmount","createTime","updateTime"};
+        //放置到第一行的字段名
+        String[] titles = {"流水号","存入","取出","交易方式","产生总额","产生日期","摘要","创建时间","修改时间"};
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        try{
+            //获取满足条件的总记录（不分页）
+            Long pageSize = transactionReadService.selectTransactionCount(entity);
+            if(pageSize <= 0) {
+                return ResultUtil.error(-1,"没有可导出的数据");
+            }
+            //设置行索引
+            entity.setPage(0,pageSize.intValue());
+            entity.setSource(userSession);
+            //获取满足条件的记录集合
+            List<TransactionListEntity> entityList = transactionReadService.selectTransactionPage(entity);
+            List<JSONObject> jsonObjectList = new ArrayList<>();
+            for (TransactionListEntity item : entityList) {
+                JSONObject json = new JSONObject();
+                json.put("tradeId",item.getTradeId());
+                json.put("deposited",item.getDeposited());
+                json.put("expenditure",item.getExpenditure());
+                json.put("transactionType",item.getTradeTypeEntity().getTransactionType());
+                json.put("currencyNumber", item.getCurrencyNumber());
+                json.put("tradeDate",item.getTradeDate());
+                json.put("transactionAmount",item.getTransactionAmount());
+                json.put("createTime",item.getCreateTime());
+                json.put("updateTime", item.getUpdateTime());
+                jsonObjectList.add(json);
+            }
+            // 设置contentType为excel格式
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("UTF-8");
+            //设置文件头：最后一个参数是设置下载文件名
+            response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("财务流水.xlsx", "UTF-8"));
+            ServletOutputStream out=response.getOutputStream();
+            response.flushBuffer();
+            OutExcelUtils.outExcelTemplateSimple(keys,titles,jsonObjectList,out);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 导出完整流水及明细
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result<Object> outTransactionInfoExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String[] keys = {"tradeId","deposited","expenditure","transactionType","currencyNumber","tradeDate","transactionAmount","flog","itemNumber","currencyDetails","createTime","updateTime"};
+        //放置到第一行的字段名
+        String[] titles = {"流水号","存入","取出","交易方式","产生总额","产生日期","摘要","标志","金额","详情","创建时间","修改时间"};
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        try{
+            //获取满足条件的总记录（不分页）
+            Long pageSize = transactionReadService.selectTransactionFinalCount(entity);
+            if(pageSize <= 0) {
+                return ResultUtil.error(-1,"没有可导出的数据");
+            }
+            //设置行索引
+            entity.setPage(0,pageSize.intValue());
+            entity.setSource(userSession);
+            //获取满足条件的记录集合
+            List<TransactionInfoEntity> entityList = transactionReadService.selectTransactionFinalPage(entity);
+            List<JSONObject> jsonObjectList = new ArrayList<>();
+            for (TransactionInfoEntity item : entityList) {
+                JSONObject json = new JSONObject();
+                json.put("tradeId",item.getTradeId());
+                json.put("deposited",item.getTransactionListEntity().getDeposited());
+                json.put("expenditure",item.getTransactionListEntity().getExpenditure());
+                json.put("transactionType",item.getTransactionListEntity().getTradeTypeEntity().getTransactionType());
+                json.put("currencyNumber", item.getTransactionListEntity().getCurrencyNumber());
+                json.put("tradeDate",item.getTransactionListEntity().getTradeDate());
+                json.put("transactionAmount",item.getTransactionListEntity().getTransactionAmount());
+                if(item.getFlog() == 1){
+                    json.put("flog","存入");
+                }else{
+                    json.put("flog","取出");
+                }
+                json.put("itemNumber",item.getCurrencyNumber());
+                json.put("currencyDetails",item.getCurrencyDetails());
+                json.put("createTime",item.getTransactionListEntity().getCreateTime());
+                json.put("updateTime", item.getTransactionListEntity().getUpdateTime());
+                jsonObjectList.add(json);
+            }
+            // 设置contentType为excel格式
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("UTF-8");
+            //设置文件头：最后一个参数是设置下载文件名
+            response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("财务流水明细.xlsx", "UTF-8"));
+            ServletOutputStream out=response.getOutputStream();
+            response.flushBuffer();
+            OutExcelUtils.outExcelTemplateSimple(keys,titles,jsonObjectList,out);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 }

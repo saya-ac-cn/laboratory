@@ -51,7 +51,7 @@
                 and a.source  = #{source}
             </if>
             <if test="tradeType != null and tradeType != ''">
-                and a.type = #{tradeType}
+                and a.tradeType = #{tradeType}
             </if>
             <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
                 and date_format(a.createTime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
@@ -75,7 +75,7 @@
                 and a.source  = #{source}
             </if>
             <if test="tradeType != null and tradeType != ''">
-                and a.type = #{tradeType}
+                and a.tradeType = #{tradeType}
             </if>
             <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
                 and date_format(a.createTime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
@@ -178,7 +178,7 @@
                 and b.source  = #{source}
             </if>
             <if test="tradeType != null and tradeType != ''">
-                and b.type = #{tradeType}
+                and b.tradeType = #{tradeType}
             </if>
             <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
                 and date_format(b.createTime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
@@ -201,12 +201,195 @@
                 and b.source  = #{source}
             </if>
             <if test="tradeType != null and tradeType != ''">
-                and b.type = #{tradeType}
+                and b.tradeType = #{tradeType}
             </if>
             <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
                 and date_format(b.createTime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
             </if>
         </where>
+    </select>
+
+
+    <!--按天分页统计财务报表-->
+    <select id="selectTransactionForDayPage" parameterType="transactionList" resultType="transactionList">
+        SELECT
+            a.tradeDate,
+            sum(a.deposited) as deposited,
+            sum(a.expenditure) as expenditure,
+            sum(a.currencyNumber) as currencyNumber
+        FROM
+            (
+                SELECT
+                    deposited,
+                    expenditure,
+                    currencyNumber,
+                    DATE_FORMAT(tradeDate, '%Y-%m-%d') AS tradeDate
+                FROM
+                    transaction_list
+                WHERE
+                  source = #{source}
+            ) a
+        GROUP BY
+            a.tradeDate
+        ORDER BY
+            a.tradeDate desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!--按天统计财务报表流水总数-->
+    <select id="selectTransactionForDayCount" parameterType="transactionList" resultType="java.lang.Long">
+        SELECT
+            count(*)
+        FROM
+            (
+                SELECT
+                    COUNT(a.tradeDate)
+                FROM
+                    (
+                        SELECT
+                            deposited,
+                            expenditure,
+                            currencyNumber,
+                            DATE_FORMAT(tradeDate, '%Y-%m-%d') AS tradeDate
+                        FROM
+                            transaction_list
+                        WHERE
+                            source = #{source}
+                    ) a
+                GROUP BY
+                    a.tradeDate
+            ) b
+    </select>
+
+
+    <!--按月分页统计（只统计到上月的最后一天）-->
+    <select id="selectTransactionForMonthPage" parameterType="transactionList" resultType="transactionList">
+        SELECT
+            a.tradeDate,
+            sum(a.deposited) as deposited,
+            sum(a.expenditure) as expenditure,
+            sum(a.currencyNumber) as currencyNumber
+        FROM
+            (
+                SELECT
+                    deposited,
+                    expenditure,
+                    currencyNumber,
+                    DATE_FORMAT(tradeDate, '%Y-%m') AS tradeDate
+                FROM
+                    transaction_list
+                WHERE
+                    source = #{source}
+                    AND tradeDate <![CDATA[ < ]]>  date_sub(
+                        date_sub(
+                            date_format(now(), '%y-%m-%d'),
+                            INTERVAL extract(DAY FROM now()) DAY
+                        ),
+                        INTERVAL 0 MONTH
+                    )
+            ) a
+        GROUP BY
+            a.tradeDate
+        ORDER BY
+          a.tradeDate desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!--按月统计（只统计到上月的最后一天）总数-->
+    <select id="selectTransactionForMonthCount" parameterType="transactionList" resultType="java.lang.Long">
+        SELECT
+            count(*)
+        FROM
+            (
+                SELECT
+                    a.tradeDate,
+                    sum(a.deposited),
+                    sum(a.expenditure),
+                    sum(a.currencyNumber)
+                FROM
+                    (
+                        SELECT
+                            deposited,
+                            expenditure,
+                            currencyNumber,
+                            DATE_FORMAT(tradeDate, '%Y-%m') AS tradeDate
+                        FROM
+                            transaction_list
+                        WHERE
+                            source = #{source}
+                            AND tradeDate <![CDATA[ < ]]> date_sub(
+                                date_sub(
+                                    date_format(now(), '%y-%m-%d'),
+                                    INTERVAL extract(DAY FROM now()) DAY
+                                ),
+                                INTERVAL 0 MONTH
+                            )
+                    ) a
+                GROUP BY
+                    a.tradeDate
+            ) b
+    </select>
+
+
+    <!--按年分页统计（只统计到上一年的最后一天）-->
+    <select id="selectTransactionForYearPage" parameterType="transactionList" resultType="transactionList">
+        SELECT
+            a.tradeDate,
+            sum(a.deposited) as deposited,
+            sum(a.expenditure) as expenditure,
+            sum(a.currencyNumber) as currencyNumber
+        FROM
+            (
+                SELECT
+                    deposited,
+                    expenditure,
+                    currencyNumber,
+                    DATE_FORMAT(tradeDate, '%Y') AS tradeDate
+                FROM
+                    transaction_list
+                WHERE
+                    source = #{source} AND tradeDate <![CDATA[ < ]]> concat(DATE_FORMAT(date_add(now(),interval -1 year),'%Y'),'-12-31')
+            ) a
+        GROUP BY
+            a.tradeDate
+        ORDER BY
+            a.tradeDate desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!--按年统计（只统计到上一年的最后一天）总数-->
+    <select id="selectTransactionForYearCount" parameterType="transactionList" resultType="java.lang.Long">
+        SELECT
+            count(*)
+        FROM
+            (
+                SELECT
+                    a.tradeDate,
+                    sum(a.deposited),
+                    sum(a.expenditure),
+                    sum(a.currencyNumber)
+                FROM
+                    (
+                        SELECT
+                            deposited,
+                            expenditure,
+                            currencyNumber,
+                            DATE_FORMAT(tradeDate, '%Y') AS tradeDate
+                        FROM
+                            transaction_list
+                        WHERE
+                            source = #{source}
+                            AND tradeDate <![CDATA[ < ]]> concat(
+                                DATE_FORMAT(
+                                    date_add(now(), INTERVAL - 1 YEAR),
+                                    '%Y'
+                                ),
+                                '-12-31'
+                            )
+                    ) a
+                GROUP BY
+                    a.tradeDate
+            ) b
     </select>
 
 </mapper> 

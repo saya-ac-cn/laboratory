@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @Title: FinancialController
@@ -150,6 +151,32 @@ public class FinancialController {
         return financialService.deleteTransactioninfo(entity,request);
     }
 
+    /**
+     * 导出流水
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "outTransactionListExcel")
+    public Result<Object> outTransactionListExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        return financialService.outTransactionListExcel(entity, request, response);
+    }
+
+
+    /**
+     * 导出完整流水及明细
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "outTransactionInfoExcel")
+    public Result<Object> outTransactionInfoExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        return financialService.outTransactionInfoExcel(entity, request, response);
+    }
 
 
 }

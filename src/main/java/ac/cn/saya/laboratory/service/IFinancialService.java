@@ -5,6 +5,7 @@ import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.tools.Result;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @Title: IFinancialService
@@ -110,5 +111,25 @@ public interface IFinancialService {
      */
     public Result<Object> deleteTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws Exception;
 
+    /**
+     * 导出流水
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> outTransactionListExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+
+    /**
+     * 导出完整流水及明细
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> outTransactionInfoExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 }
