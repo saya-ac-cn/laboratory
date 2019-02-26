@@ -522,7 +522,8 @@ public class FinancialServiceImpl implements IFinancialService {
                      * 删除流水明细
                      */
                     recordService.record("OX030",request);
-                    return ResultUtil.success();
+                    // 此时父表及子表已经级联删除，返回End，通知前端关闭弹框页
+                    return ResultUtil.success("End");
                 }else{
                     return ResultUtil.error(-1,"删除失败");
                 }
@@ -577,7 +578,8 @@ public class FinancialServiceImpl implements IFinancialService {
                                  * 删除流水明细
                                  */
                                 recordService.record("OX030",request);
-                                return ResultUtil.success();
+                                // 删除后父表及子表还有相关数据，返回前端Exist，不关闭弹框
+                                return ResultUtil.success("Exist");
                             }else
                             {
                                 throw new MyException(ResultEnum.RollBACK);
@@ -706,6 +708,300 @@ public class FinancialServiceImpl implements IFinancialService {
             response.setCharacterEncoding("UTF-8");
             //设置文件头：最后一个参数是设置下载文件名
             response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("财务流水明细.xlsx", "UTF-8"));
+            ServletOutputStream out=response.getOutputStream();
+            response.flushBuffer();
+            OutExcelUtils.outExcelTemplateSimple(keys,titles,jsonObjectList,out);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 按天统计流水
+     *
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result<Object> totalTransactionForDay(TransactionListEntity entity, HttpServletRequest request) throws Exception {
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        Paging paging =new Paging();
+        if(entity.getNowPage() == null)
+        {
+            entity.setNowPage(1);
+        }
+        if(entity.getPageSize() == null)
+        {
+            entity.setPageSize(20);
+        }
+        entity.setSource(userSession);
+        //每页显示记录的数量
+        paging.setPageSize(entity.getPageSize());
+        //获取满足条件的总记录（不分页）
+        Long pageSize = transactionReadService.selectTransactionForDayCount(entity);
+        if(pageSize > 0)
+        {
+            //总记录数
+            paging.setDateSum(pageSize);
+            //计算总页数
+            paging.setTotalPage();
+            //设置当前的页码-并校验是否超出页码范围
+            paging.setPageNow(entity.getNowPage());
+            //设置行索引
+            entity.setPage((paging.getPageNow()-1)*paging.getPageSize(),paging.getPageSize());
+            //获取满足条件的记录集合
+            List<TransactionListEntity> list = transactionReadService.selectTransactionForDayPage(entity);
+            paging.setGrid(list);
+            return ResultUtil.success(paging);
+        }
+        else
+        {
+            //未找到有效记录
+            throw new MyException(ResultEnum.NOT_EXIST);
+        }
+    }
+
+    /**
+     * 按月统计流水
+     *
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result<Object> totalTransactionForMonth(TransactionListEntity entity, HttpServletRequest request) throws Exception {
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        Paging paging =new Paging();
+        if(entity.getNowPage() == null)
+        {
+            entity.setNowPage(1);
+        }
+        if(entity.getPageSize() == null)
+        {
+            entity.setPageSize(20);
+        }
+        entity.setSource(userSession);
+        //每页显示记录的数量
+        paging.setPageSize(entity.getPageSize());
+        //获取满足条件的总记录（不分页）
+        Long pageSize = transactionReadService.selectTransactionForMonthCount(entity);
+        if(pageSize > 0)
+        {
+            //总记录数
+            paging.setDateSum(pageSize);
+            //计算总页数
+            paging.setTotalPage();
+            //设置当前的页码-并校验是否超出页码范围
+            paging.setPageNow(entity.getNowPage());
+            //设置行索引
+            entity.setPage((paging.getPageNow()-1)*paging.getPageSize(),paging.getPageSize());
+            //获取满足条件的记录集合
+            List<TransactionListEntity> list = transactionReadService.selectTransactionForMonthPage(entity);
+            paging.setGrid(list);
+            return ResultUtil.success(paging);
+        }
+        else
+        {
+            //未找到有效记录
+            throw new MyException(ResultEnum.NOT_EXIST);
+        }
+    }
+
+    /**
+     * 按年统计流水
+     *
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result<Object> totalTransactionForYear(TransactionListEntity entity, HttpServletRequest request) throws Exception {
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        Paging paging =new Paging();
+        if(entity.getNowPage() == null)
+        {
+            entity.setNowPage(1);
+        }
+        if(entity.getPageSize() == null)
+        {
+            entity.setPageSize(20);
+        }
+        entity.setSource(userSession);
+        //每页显示记录的数量
+        paging.setPageSize(entity.getPageSize());
+        //获取满足条件的总记录（不分页）
+        Long pageSize = transactionReadService.selectTransactionForYearCount(entity);
+        if(pageSize > 0)
+        {
+            //总记录数
+            paging.setDateSum(pageSize);
+            //计算总页数
+            paging.setTotalPage();
+            //设置当前的页码-并校验是否超出页码范围
+            paging.setPageNow(entity.getNowPage());
+            //设置行索引
+            entity.setPage((paging.getPageNow()-1)*paging.getPageSize(),paging.getPageSize());
+            //获取满足条件的记录集合
+            List<TransactionListEntity> list = transactionReadService.selectTransactionForYearPage(entity);
+            paging.setGrid(list);
+            return ResultUtil.success(paging);
+        }
+        else
+        {
+            //未找到有效记录
+            throw new MyException(ResultEnum.NOT_EXIST);
+        }
+    }
+
+    /**
+     * 按天导出流水统计报表
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result<Object> outTransactionForDayExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String[] keys = {"tradeDate","deposited","expenditure","currencyNumber"};
+        //放置到第一行的字段名
+        String[] titles = {"产生日期","流入","流出","产生总额"};
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        try{
+            //获取满足条件的总记录（不分页）
+            Long pageSize = transactionReadService.selectTransactionForDayCount(entity);
+            if(pageSize <= 0) {
+                return ResultUtil.error(-1,"没有可导出的数据");
+            }
+            //设置行索引
+            entity.setPage(0,pageSize.intValue());
+            entity.setSource(userSession);
+            //获取满足条件的记录集合
+            List<TransactionListEntity> entityList = transactionReadService.selectTransactionForDayPage(entity);
+            List<JSONObject> jsonObjectList = new ArrayList<>();
+            for (TransactionListEntity item : entityList) {
+                JSONObject json = new JSONObject();
+                json.put("tradeDate",item.getTradeId());
+                json.put("deposited",item.getDeposited());
+                json.put("expenditure",item.getExpenditure());
+                json.put("currencyNumber",item.getCurrencyNumber());
+                jsonObjectList.add(json);
+            }
+            // 设置contentType为excel格式
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("UTF-8");
+            //设置文件头：最后一个参数是设置下载文件名
+            response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("日度财务明细.xlsx", "UTF-8"));
+            ServletOutputStream out=response.getOutputStream();
+            response.flushBuffer();
+            OutExcelUtils.outExcelTemplateSimple(keys,titles,jsonObjectList,out);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 按月导出流水统计报表
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result<Object> outTransactionForMonthExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String[] keys = {"tradeDate","deposited","expenditure","currencyNumber"};
+        //放置到第一行的字段名
+        String[] titles = {"产生日期","流入","流出","产生总额"};
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        try{
+            //获取满足条件的总记录（不分页）
+            Long pageSize = transactionReadService.selectTransactionForMonthCount(entity);
+            if(pageSize <= 0) {
+                return ResultUtil.error(-1,"没有可导出的数据");
+            }
+            //设置行索引
+            entity.setPage(0,pageSize.intValue());
+            entity.setSource(userSession);
+            //获取满足条件的记录集合
+            List<TransactionListEntity> entityList = transactionReadService.selectTransactionForMonthPage(entity);
+            List<JSONObject> jsonObjectList = new ArrayList<>();
+            for (TransactionListEntity item : entityList) {
+                JSONObject json = new JSONObject();
+                json.put("tradeDate",item.getTradeId());
+                json.put("deposited",item.getDeposited());
+                json.put("expenditure",item.getExpenditure());
+                json.put("currencyNumber",item.getCurrencyNumber());
+                jsonObjectList.add(json);
+            }
+            // 设置contentType为excel格式
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("UTF-8");
+            //设置文件头：最后一个参数是设置下载文件名
+            response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("月度财务明细.xlsx", "UTF-8"));
+            ServletOutputStream out=response.getOutputStream();
+            response.flushBuffer();
+            OutExcelUtils.outExcelTemplateSimple(keys,titles,jsonObjectList,out);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 按年导出流水统计报表
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result<Object> outTransactionForYearExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String[] keys = {"tradeDate","deposited","expenditure","currencyNumber"};
+        //放置到第一行的字段名
+        String[] titles = {"产生日期","流入","流出","产生总额"};
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        try{
+            //获取满足条件的总记录（不分页）
+            Long pageSize = transactionReadService.selectTransactionForYearCount(entity);
+            if(pageSize <= 0) {
+                return ResultUtil.error(-1,"没有可导出的数据");
+            }
+            //设置行索引
+            entity.setPage(0,pageSize.intValue());
+            entity.setSource(userSession);
+            //获取满足条件的记录集合
+            List<TransactionListEntity> entityList = transactionReadService.selectTransactionForYearPage(entity);
+            List<JSONObject> jsonObjectList = new ArrayList<>();
+            for (TransactionListEntity item : entityList) {
+                JSONObject json = new JSONObject();
+                json.put("tradeDate",item.getTradeId());
+                json.put("deposited",item.getDeposited());
+                json.put("expenditure",item.getExpenditure());
+                json.put("currencyNumber",item.getCurrencyNumber());
+                jsonObjectList.add(json);
+            }
+            // 设置contentType为excel格式
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("UTF-8");
+            //设置文件头：最后一个参数是设置下载文件名
+            response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("年度财务明细.xlsx", "UTF-8"));
             ServletOutputStream out=response.getOutputStream();
             response.flushBuffer();
             OutExcelUtils.outExcelTemplateSimple(keys,titles,jsonObjectList,out);

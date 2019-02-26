@@ -132,4 +132,62 @@ public interface IFinancialService {
      */
     public Result<Object> outTransactionInfoExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
+    /**
+     * 按天统计流水
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> totalTransactionForDay(TransactionListEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * 按月统计流水
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> totalTransactionForMonth(TransactionListEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * 按年统计流水
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> totalTransactionForYear(TransactionListEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * 按天导出流水统计报表
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> outTransactionForDayExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+    /**
+     * 按月导出流水统计报表
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> outTransactionForMonthExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+    /**
+     * 按年导出流水统计报表
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> outTransactionForYearExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+
 }

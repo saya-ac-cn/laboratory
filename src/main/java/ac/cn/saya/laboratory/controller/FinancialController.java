@@ -7,7 +7,6 @@ import ac.cn.saya.laboratory.tools.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -177,6 +176,82 @@ public class FinancialController {
     public Result<Object> outTransactionInfoExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception{
         return financialService.outTransactionInfoExcel(entity, request, response);
     }
+
+    /**
+     * 按天统计流水
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "totalTransactionForDay")
+    public Result<Object> totalTransactionForDay(TransactionListEntity entity, HttpServletRequest request) throws Exception{
+        return financialService.totalTransactionForDay(entity, request);
+    }
+
+    /**
+     * 按月统计流水
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "totalTransactionForMonth")
+    public Result<Object> totalTransactionForMonth(TransactionListEntity entity, HttpServletRequest request) throws Exception{
+        return financialService.totalTransactionForMonth(entity, request);
+    }
+
+    /**
+     * 按年统计流水
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "totalTransactionForYear")
+    public Result<Object> totalTransactionForYear(TransactionListEntity entity, HttpServletRequest request) throws Exception{
+        return financialService.totalTransactionForYear(entity, request);
+    }
+
+    /**
+     * 按天导出流水统计报表
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "outTransactionForDayExcel")
+    public Result<Object> outTransactionForDayExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        return financialService.outTransactionForDayExcel(entity, request, response);
+    }
+
+    /**
+     * 按月导出流水统计报表
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "outTransactionForMonthExcel")
+    public Result<Object> outTransactionForMonthExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        return financialService.outTransactionForMonthExcel(entity, request, response);
+    }
+
+    /**
+     * 按年导出流水统计报表
+     * @param entity
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "outTransactionForYearExcel")
+    public Result<Object> outTransactionForYearExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        return financialService.outTransactionForYearExcel(entity, request, response);
+    }
+
 
 
 }

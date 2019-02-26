@@ -17,7 +17,8 @@ public class ResultUtil {
         Result result = new Result();
         result.setCode(0);
         result.setMsg("成功");
-        result.setData(object);//返回执行成功后的模型
+        //返回执行成功后的模型
+        result.setData(object);
         return result;
     }
 
@@ -44,7 +45,8 @@ public class ResultUtil {
         Result result = new Result();
         result.setCode(code);
         result.setMsg(msg);
-        result.setData(object);//返回执行成功后的模型
+        //返回执行成功后的模型
+        result.setData(object);
         return result;
     }
 

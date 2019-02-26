@@ -228,6 +228,9 @@
                     transaction_list
                 WHERE
                   source = #{source}
+                  <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                    and date_format(createTime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+                  </if>
             ) a
         GROUP BY
             a.tradeDate
@@ -255,6 +258,9 @@
                             transaction_list
                         WHERE
                             source = #{source}
+                            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                                and date_format(createTime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+                            </if>
                     ) a
                 GROUP BY
                     a.tradeDate
