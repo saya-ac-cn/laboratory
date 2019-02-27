@@ -11,7 +11,7 @@
     <Properties>
         <!-- 配置日志文件输出目录,此处为项目根目录下的logs文件夹 -->
         <Property name="LOG_HOME">${sys:user.dir}/logs</Property>
-        <property name="FILE_NAME">provider</property>
+        <property name="FILE_NAME">laboratory</property>
     </Properties>
 
     <Appenders>

@@ -877,6 +877,7 @@ public class FinancialServiceImpl implements IFinancialService {
         String[] titles = {"产生日期","流入","流出","产生总额"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         String userSession = (String) request.getSession().getAttribute("user");
+        entity.setSource(userSession);
         try{
             //获取满足条件的总记录（不分页）
             Long pageSize = transactionReadService.selectTransactionForDayCount(entity);
@@ -885,13 +886,12 @@ public class FinancialServiceImpl implements IFinancialService {
             }
             //设置行索引
             entity.setPage(0,pageSize.intValue());
-            entity.setSource(userSession);
             //获取满足条件的记录集合
             List<TransactionListEntity> entityList = transactionReadService.selectTransactionForDayPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
             for (TransactionListEntity item : entityList) {
                 JSONObject json = new JSONObject();
-                json.put("tradeDate",item.getTradeId());
+                json.put("tradeDate",item.getTradeDate());
                 json.put("deposited",item.getDeposited());
                 json.put("expenditure",item.getExpenditure());
                 json.put("currencyNumber",item.getCurrencyNumber());
@@ -927,6 +927,7 @@ public class FinancialServiceImpl implements IFinancialService {
         String[] titles = {"产生日期","流入","流出","产生总额"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         String userSession = (String) request.getSession().getAttribute("user");
+        entity.setSource(userSession);
         try{
             //获取满足条件的总记录（不分页）
             Long pageSize = transactionReadService.selectTransactionForMonthCount(entity);
@@ -935,13 +936,12 @@ public class FinancialServiceImpl implements IFinancialService {
             }
             //设置行索引
             entity.setPage(0,pageSize.intValue());
-            entity.setSource(userSession);
             //获取满足条件的记录集合
             List<TransactionListEntity> entityList = transactionReadService.selectTransactionForMonthPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
             for (TransactionListEntity item : entityList) {
                 JSONObject json = new JSONObject();
-                json.put("tradeDate",item.getTradeId());
+                json.put("tradeDate",item.getTradeDate());
                 json.put("deposited",item.getDeposited());
                 json.put("expenditure",item.getExpenditure());
                 json.put("currencyNumber",item.getCurrencyNumber());
@@ -977,6 +977,7 @@ public class FinancialServiceImpl implements IFinancialService {
         String[] titles = {"产生日期","流入","流出","产生总额"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         String userSession = (String) request.getSession().getAttribute("user");
+        entity.setSource(userSession);
         try{
             //获取满足条件的总记录（不分页）
             Long pageSize = transactionReadService.selectTransactionForYearCount(entity);
@@ -985,13 +986,12 @@ public class FinancialServiceImpl implements IFinancialService {
             }
             //设置行索引
             entity.setPage(0,pageSize.intValue());
-            entity.setSource(userSession);
             //获取满足条件的记录集合
             List<TransactionListEntity> entityList = transactionReadService.selectTransactionForYearPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
             for (TransactionListEntity item : entityList) {
                 JSONObject json = new JSONObject();
-                json.put("tradeDate",item.getTradeId());
+                json.put("tradeDate",item.getTradeDate());
                 json.put("deposited",item.getDeposited());
                 json.put("expenditure",item.getExpenditure());
                 json.put("currencyNumber",item.getCurrencyNumber());
