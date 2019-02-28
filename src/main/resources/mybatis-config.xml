@@ -24,5 +24,7 @@
         <typeAlias alias="notes" type="ac.cn.saya.laboratory.entity.NotesEntity" />
         <typeAlias alias="picture" type="ac.cn.saya.laboratory.entity.PictureEntity" />
         <typeAlias alias="files" type="ac.cn.saya.laboratory.entity.FilesEntity" />
+        <typeAlias alias="api" type="ac.cn.saya.laboratory.entity.ApiEntity"/>
+        <typeAlias alias="backup" type="ac.cn.saya.laboratory.entity.BackupLogEntity"/>
     </typeAliases>
 </configuration>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.cn.saya.laboratory.persistent.dao.BackupLogDAO">
+
+    <!--记录备份日志-->
+    <insert id="insertBackup" parameterType="backup" >
+        INSERT INTO `backuplog` (
+            `url`,
+            `archiveDate`,
+            `createtime`
+        )
+        VALUES
+            (
+                #{url},
+                #{archiveDate},
+                NOW()
+            );
+    </insert>
+
+    <!--删除备份日志-->
+    <delete id="deleteBackup" parameterType="backup">
+        delete from backuplog where `archiveDate` = #{archiveDate}
+    </delete>
+
+    <!-- 查询一条备份详情-->
+    <select id="getBackupOne" parameterType="backup" resultType="backup">
+        select
+        a.`url`,a.`archiveDate`,a.`createtime`
+        from
+          backuplog a
+        where
+           a.`archiveDate` = #{archiveDate}
+    </select>
+
+
+    <!-- 分页查看备份记录-->
+    <select id="getBackupPagin" parameterType="backup" resultType="backup">
+        select
+          a.`url`,a.`archiveDate`,a.`createtime`
+        from
+          backuplog a
+        <where>
+            <if test = "archiveDate != null and archiveDate != ''">
+                and a.`archiveDate`  = #{archiveDate}
+            </if>
+        </where>
+        limit #{startLine},#{endLine}
+        order by archiveDate desc
+    </select>
+
+    <!-- 查看备份记录总数-->
+    <select id="getBackupCount" parameterType="backup" resultType="java.lang.Long">
+        select
+          count(*)
+        from
+          backuplog a
+        <where>
+            <if test = "archiveDate != null and archiveDate != ''">
+                and a.`archiveDate`  = #{archiveDate}
+            </if>
+        </where>
+    </select>
+
+</mapper>
+
+
+
+
+
+

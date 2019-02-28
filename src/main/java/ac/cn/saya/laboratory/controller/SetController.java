@@ -1,5 +1,6 @@
 package ac.cn.saya.laboratory.controller;
 
+import ac.cn.saya.laboratory.entity.ApiEntity;
 import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
@@ -185,6 +186,57 @@ public class SetController {
     @GetMapping(value = "plan/show")
     public Result<Object> getOneNotes(PlanEntity entity,HttpServletRequest request) throws Exception{
         return coreServiceImpl.getPlanDetail(entity,request);
+    }
+
+    /**
+     * 分页查看接口列表
+     * @param entity
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "api/list")
+    public Result<Object> getApi(ApiEntity entity, HttpServletRequest request) throws Exception{
+        return coreServiceImpl.getApi(entity,request);
+    }
+
+    /**
+     * @描述 创建接口
+     * @参数  [entity, request]
+     * @返回值  ac.cn.saya.datacenter.tools.Result<java.lang.Object>
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    @PostMapping(value = "api/create")
+    public Result<Object> createApi(@RequestBody ApiEntity entity, HttpServletRequest request) throws Exception{
+        return coreServiceImpl.createApi(entity,request);
+    }
+
+    /**
+     * @描述 编辑接口
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    @PutMapping(value = "api/edit")
+    public Result<Object> editApi(@RequestBody ApiEntity entity, HttpServletRequest request) throws Exception{
+        return coreServiceImpl.editApi(entity,request);
+    }
+
+    /**
+     * @描述
+     * @参数  删除接口
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    @DeleteMapping(value = "api/delete")
+    public Result<Object> deleteApi(ApiEntity entity, HttpServletRequest request) throws Exception{
+        return coreServiceImpl.deleteApi(entity,request);
     }
 
 

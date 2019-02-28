@@ -25,7 +25,7 @@ public class BackupLogEntity extends BaseEntity{
     /**
      * 备份执行时间
      */
-    private String createTime;
+    private String createtime;
 
 
     public BackupLogEntity() {
@@ -47,11 +47,11 @@ public class BackupLogEntity extends BaseEntity{
         this.archiveDate = archiveDate;
     }
 
-    public String getCreateTime() {
-        return createTime;
+    public String getCreatetime() {
+        return createtime;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
+    public void setCreatetime(String createtime) {
+        this.createtime = createtime;
     }
 }

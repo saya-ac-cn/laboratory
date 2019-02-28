@@ -1,11 +1,9 @@
 package ac.cn.saya.laboratory.service.impl;
 
-import ac.cn.saya.laboratory.entity.LogEntity;
-import ac.cn.saya.laboratory.entity.LogTypeEntity;
-import ac.cn.saya.laboratory.entity.PlanEntity;
-import ac.cn.saya.laboratory.entity.UserEntity;
+import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.handle.RepeatLogin;
+import ac.cn.saya.laboratory.persistent.service.ApiService;
 import ac.cn.saya.laboratory.persistent.service.LogService;
 import ac.cn.saya.laboratory.persistent.service.PlanService;
 import ac.cn.saya.laboratory.persistent.service.UserService;
@@ -55,6 +53,10 @@ public class CoreServiceImpl implements ICoreService {
     @Resource
     @Qualifier("planService")
     private PlanService planService;
+
+    @Resource
+    @Qualifier("apiService")
+    private ApiService apiService;
 
     @Resource
     @Qualifier("recordService")//日志助手表
@@ -636,6 +638,132 @@ public class CoreServiceImpl implements ICoreService {
              * 记录日志
              */
             recordService.record("OX024",request);
+            return ResultUtil.success();
+        } else {
+            throw new MyException(ResultEnum.ERROP);
+        }
+    }
+
+    /**
+     * @param entity
+     * @param request
+     * @描述
+     * @参数 [entity, request]
+     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/24
+     * @修改人和其它信息 查询接口列表
+     */
+    @Override
+    public Result<Object> getApi(ApiEntity entity, HttpServletRequest request) throws Exception {
+        Paging paging =new Paging();
+        if(entity.getNowPage() == null) {
+            entity.setNowPage(1);
+        }
+        if(entity.getPageSize() == null) {
+            entity.setPageSize(20);
+        }
+        //每页显示记录的数量
+        paging.setPageSize(entity.getPageSize());
+        //获取满足条件的总记录（不分页）
+        Long pageSize = apiService.getApiCount(entity);
+        if(pageSize > 0) {
+            //总记录数
+            paging.setDateSum(pageSize);
+            //计算总页数
+            paging.setTotalPage();
+            //设置当前的页码-并校验是否超出页码范围
+            paging.setPageNow(entity.getNowPage());
+            //设置行索引
+            entity.setPage((paging.getPageNow()-1)*paging.getPageSize(),paging.getPageSize());
+            //获取满足条件的记录集合
+            List<ApiEntity> list = apiService.getApiPage(entity);
+            paging.setGrid(list);
+            return ResultUtil.success(paging);
+        } else {
+            //未找到有效记录
+            throw new MyException(ResultEnum.NOT_EXIST);
+        }
+    }
+
+    /**
+     * @param entity
+     * @param request
+     * @描述
+     * @参数 [entity, request]
+     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/24
+     * @修改人和其它信息 创建接口
+     */
+    @Override
+    public Result<Object> createApi(ApiEntity entity, HttpServletRequest request) throws Exception {
+        // 校验用户输入的参数
+        if(entity == null ){
+            // 缺少参数
+            throw new MyException(ResultEnum.NOT_PARAMETER);
+        }
+        if(apiService.insertApi(entity) > 0){
+            /**
+             * 记录日志
+             */
+            recordService.record("OX031",request);
+            return ResultUtil.success();
+        } else {
+            throw new MyException(ResultEnum.ERROP);
+        }
+    }
+
+    /**
+     * @param entity
+     * @param request
+     * @描述
+     * @参数 [entity, request]
+     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/24
+     * @修改人和其它信息 修改接口
+     */
+    @Override
+    public Result<Object> editApi(ApiEntity entity, HttpServletRequest request) throws Exception {
+        // 校验用户输入的参数
+        if(entity == null ){
+            // 缺少参数
+            throw new MyException(ResultEnum.NOT_PARAMETER);
+        }
+        if(apiService.editApi(entity) > 0){
+            /**
+             * 记录日志
+             */
+            recordService.record("OX032",request);
+            return ResultUtil.success();
+        } else {
+            throw new MyException(ResultEnum.ERROP);
+        }
+    }
+
+    /**
+     * @param entity
+     * @param request
+     * @描述
+     * @参数 [entity, request]
+     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/24
+     * @修改人和其它信息 删除接口
+     */
+    @Override
+    public Result<Object> deleteApi(ApiEntity entity, HttpServletRequest request) throws Exception {
+        // 校验用户输入的参数
+        if(entity == null ){
+            // 缺少参数
+            throw new MyException(ResultEnum.NOT_PARAMETER);
+        }
+        if(apiService.deleteApi(entity) > 0){
+            /**
+             * 记录日志
+             */
+            recordService.record("OX033",request);
             return ResultUtil.success();
         } else {
             throw new MyException(ResultEnum.ERROP);

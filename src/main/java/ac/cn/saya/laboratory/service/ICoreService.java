@@ -1,6 +1,7 @@
 package ac.cn.saya.laboratory.service;
 
 
+import ac.cn.saya.laboratory.entity.ApiEntity;
 import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
@@ -163,5 +164,50 @@ public interface ICoreService {
      * 删除计划
      */
     public Result<Object> deletePlan(PlanEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * @描述
+     * @参数  [entity, request]
+     * @返回值  ac.cn.saya.datacenter.tools.Result<java.lang.Object>
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/24
+     * @修改人和其它信息
+     * 查询接口列表
+     */
+    public Result<Object> getApi(ApiEntity entity, HttpServletRequest request) throws Exception;
+
+
+    /**
+     * @描述
+     * @参数  [entity, request]
+     * @返回值  ac.cn.saya.datacenter.tools.Result<java.lang.Object>
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/24
+     * @修改人和其它信息
+     * 创建接口
+     */
+    public Result<Object> createApi(ApiEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * @描述
+     * @参数  [entity, request]
+     * @返回值  ac.cn.saya.datacenter.tools.Result<java.lang.Object>
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/24
+     * @修改人和其它信息
+     * 修改接口
+     */
+    public Result<Object> editApi(ApiEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * @描述
+     * @参数  [entity, request]
+     * @返回值  ac.cn.saya.datacenter.tools.Result<java.lang.Object>
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/24
+     * @修改人和其它信息
+     * 删除接口
+     */
+    public Result<Object> deleteApi(ApiEntity entity, HttpServletRequest request) throws Exception;
 
 }
