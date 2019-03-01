@@ -110,6 +110,7 @@ public class ApiService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public ApiEntity getOneApi(ApiEntity entity) {
         ApiEntity result = null;
         try
@@ -132,6 +133,7 @@ public class ApiService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<ApiEntity> getApiPage(ApiEntity entity) {
         List<ApiEntity> list = new ArrayList<>();
         try
@@ -157,6 +159,7 @@ public class ApiService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Long getApiCount(ApiEntity entity) {
         Long total = null;
         try

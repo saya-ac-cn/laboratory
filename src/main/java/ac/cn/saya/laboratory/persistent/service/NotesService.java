@@ -110,6 +110,7 @@ public class NotesService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public NotesEntity getOneNotes(NotesEntity entity) {
         NotesEntity result = null;
         try
@@ -132,6 +133,7 @@ public class NotesService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<NotesEntity> getNotesPage(NotesEntity entity) {
         List<NotesEntity> list = new ArrayList<>();
         try
@@ -157,6 +159,7 @@ public class NotesService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Long getNotesCount(NotesEntity entity) {
         Long total = null;
         try

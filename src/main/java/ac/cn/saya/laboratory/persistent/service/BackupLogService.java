@@ -38,7 +38,7 @@ public class BackupLogService {
     private BackupLogDAO backupLogDAO;
 
     /**
-     * @param entity
+     * @param backupUrl
      * @描述 新增备份记录
      * @参数
      * @返回值
@@ -46,11 +46,11 @@ public class BackupLogService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
-    public Integer insertBackup(BackupLogEntity entity) {
+    public Integer insertBackup(String backupUrl) {
         Integer flog = null;
         try
         {
-            flog = backupLogDAO.insertBackup(entity);
+            flog = backupLogDAO.insertBackup(backupUrl);
         }catch (Exception e) {
             flog = ResultEnum.UNKONW_ERROR.getCode();
             logger.error("新增备份记录异常："+ Log4jUtils.getTrace(e));
@@ -91,6 +91,7 @@ public class BackupLogService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public BackupLogEntity getOneBackup(BackupLogEntity entity) {
         BackupLogEntity result = null;
         try
@@ -113,6 +114,7 @@ public class BackupLogService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<BackupLogEntity> getBackupPagin(BackupLogEntity entity) {
         List<BackupLogEntity> list = new ArrayList<>();
         try
@@ -138,6 +140,7 @@ public class BackupLogService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Long getBackupCount(BackupLogEntity entity) {
         Long total = null;
         try

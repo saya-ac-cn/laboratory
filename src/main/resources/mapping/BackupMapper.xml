@@ -13,8 +13,8 @@
         )
         VALUES
             (
-                #{url},
-                #{archiveDate},
+                #{backupUrl},
+                date_format(now(),'%Y-%m-%d'),
                 NOW()
             );
     </insert>

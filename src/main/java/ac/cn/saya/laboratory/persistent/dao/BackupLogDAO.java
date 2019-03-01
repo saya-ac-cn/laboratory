@@ -2,6 +2,7 @@ package ac.cn.saya.laboratory.persistent.dao;
 
 import ac.cn.saya.laboratory.entity.BackupLogEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public interface BackupLogDAO {
      * @创建时间  2019/1/11
      * @修改人和其它信息
      */
-    public Integer insertBackup(BackupLogEntity entity);
+    public Integer insertBackup(@Param("backupUrl") String backupUrl);
 
     /**
      * @描述 删除备份数据

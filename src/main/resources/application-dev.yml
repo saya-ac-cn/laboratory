@@ -1,3 +1,9 @@
+backup:
+  dburl: 120.132.116.155
+  dbname: laboratory
+  mysqlbin: /usr/local/mysql/bin/
+  mail: saya@saya.ac.cn
+
 server:
   port: 8080
 #  servlet:
@@ -9,6 +15,11 @@ spring:
     multipart:
       maxFileSize: 30MB
       maxRequestSize: 30MB
+
+  thymeleaf:
+    mode: HTML5
+    encoding: UTF-8
+    cache: false
 
   resources:
     chain:
@@ -40,6 +51,19 @@ spring:
     filters: stat,wall,slf4j
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
     useGlobalDataSourceStat: true
+
+  mail:
+    host: smtp.qq.com
+    port: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+    username: 504804540@qq.com
+    password: abfekqvcpsbrbhie
+    default-encoding: UTF-8
 
 mybatis:
   config-location: classpath:mybatis-config.xml
