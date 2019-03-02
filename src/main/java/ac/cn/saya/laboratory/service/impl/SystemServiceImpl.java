@@ -1,10 +1,12 @@
 package ac.cn.saya.laboratory.service.impl;
 
+import ac.cn.saya.laboratory.entity.BackupLogEntity;
 import ac.cn.saya.laboratory.persistent.service.BackupLogService;
 import ac.cn.saya.laboratory.service.SystemService;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.RandomUtil;
+import ac.cn.saya.laboratory.tools.UploadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.List;
+
 /**
  * @Title: SystemServiceImpl
  * @ProjectName laboratory
@@ -51,6 +55,9 @@ public class SystemServiceImpl implements SystemService {
 
     @Value("${backup.mail}")
     private String mail;
+
+    @Value("${backup.savemonth}")
+    private Integer savemonth;
 
     @Value("${spring.datasource.username}")
     private String username;
@@ -78,9 +85,9 @@ public class SystemServiceImpl implements SystemService {
      */
     @Override
     // 每天3点执行
-    //@Scheduled(cron = "0 0 3 * * ?")
+    @Scheduled(cron = "0 0 3 * * ?")
     // 每隔5分钟执行一次
-    @Scheduled(cron = "0 0/1 * * * ?")
+    //@Scheduled(cron = "0 0/1 * * * ?")
     public Boolean backupDatabase() {
         try {
             Date currentTime = new Date();
@@ -105,6 +112,42 @@ public class SystemServiceImpl implements SystemService {
             }
         } catch (InterruptedException e) {
             logger.error("备份数据库计划异常："+ Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return false;
+    }
+
+    /**
+     * @描述 删除数据库备份 每月1日凌晨1点执行
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-02
+     * @修改人和其它信息
+     */
+    @Override
+    @Scheduled(cron = "0 0 1 1 * ?")
+    public Boolean deleteBackup(){
+        //查询一个月以前的数据库备份总数
+        try{
+            BackupLogEntity queryEntity = new BackupLogEntity();
+            queryEntity.setSaveMonth(savemonth);
+            Long count = backupLogService.getBackupCount(queryEntity);
+            if(count > 0){
+                // 执行删除计划
+                queryEntity.setStartLine(0);
+                queryEntity.setEndLine(count.intValue());
+                // 读取备份记录
+                List<BackupLogEntity> list = backupLogService.getBackupPagin(queryEntity);
+                // 删除磁盘文件
+                for(BackupLogEntity item : list){
+                    UploadUtils.deleteFile(item.getUrl());
+                }
+                // 删除数据库激励
+                backupLogService.deleteBackup(queryEntity);
+            }
+        } catch (Exception e){
+            logger.error("清理备份数据库计划异常："+ Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
         }
         return false;

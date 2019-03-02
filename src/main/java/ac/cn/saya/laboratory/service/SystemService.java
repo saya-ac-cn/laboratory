@@ -25,4 +25,14 @@ public interface SystemService {
      */
     public Boolean backupDatabase();
 
+    /**
+     * @描述 删除数据库备份
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-02
+     * @修改人和其它信息
+     */
+    public Boolean deleteBackup();
+
 }

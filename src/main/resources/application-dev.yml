@@ -3,6 +3,7 @@ backup:
   dbname: laboratory
   mysqlbin: /usr/local/mysql/bin/
   mail: saya@saya.ac.cn
+  savemonth: 1
 
 server:
   port: 8080

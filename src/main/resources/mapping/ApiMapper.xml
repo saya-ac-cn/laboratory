@@ -15,9 +15,9 @@
         )
         VALUES
             (
-                #{source},
-                #{describe},
-                #{plandate},
+                #{name},
+                #{status},
+                #{descript},
                 NOW()
             );
     </insert>
@@ -77,8 +77,8 @@
                 and a.`name`  like concat('%',#{name},'%')
             </if>
         </where>
-        limit #{startLine},#{endLine}
         order by id desc
+        limit #{startLine},#{endLine}
     </select>
 
     <!-- 获取指定条件接口总数-->

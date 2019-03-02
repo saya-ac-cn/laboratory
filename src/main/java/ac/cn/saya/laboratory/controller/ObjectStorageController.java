@@ -1,5 +1,6 @@
 package ac.cn.saya.laboratory.controller;
 
+import ac.cn.saya.laboratory.entity.BackupLogEntity;
 import ac.cn.saya.laboratory.entity.FilesEntity;
 import ac.cn.saya.laboratory.entity.PictureEntity;
 import ac.cn.saya.laboratory.tools.Result;
@@ -147,9 +148,43 @@ public class ObjectStorageController {
         return objectStorageServiceImpl.deleteFile(entity, request);
     }
 
+    /**
+     * @描述 下载普通文件
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-02
+     * @修改人和其它信息
+     */
     @GetMapping(value = "files/download/{id}")
     public Result<Object> downloadFileForAdmin(@PathVariable("id") int id, HttpServletRequest request, HttpServletResponse response) throws Exception{
         return  objectStorageServiceImpl.downloadFileForAdmin(id,request,response);
+    }
+
+    /**
+     * @描述 下载数据库备份文件
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-02
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "db/download/")
+    public Result<Object> downloadBackUpDB(@RequestParam("archiveDate") String archiveDate, HttpServletResponse response) throws Exception{
+        return  objectStorageServiceImpl.downloadBackUpDB(archiveDate,response);
+    }
+
+    /**
+     * @描述 获取数据库备份日志列表
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-02
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "db")
+    public Result<Object> getBackUpDBList(BackupLogEntity entity) throws Exception{
+        return  objectStorageServiceImpl.getBackUpDBList(entity);
     }
 
 }

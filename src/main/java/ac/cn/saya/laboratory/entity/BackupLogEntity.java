@@ -27,6 +27,11 @@ public class BackupLogEntity extends BaseEntity{
      */
     private String createtime;
 
+    /**
+     * 保留备份多少月
+     */
+    private Integer saveMonth;
+
 
     public BackupLogEntity() {
     }
@@ -53,5 +58,13 @@ public class BackupLogEntity extends BaseEntity{
 
     public void setCreatetime(String createtime) {
         this.createtime = createtime;
+    }
+
+    public Integer getSaveMonth() {
+        return saveMonth;
+    }
+
+    public void setSaveMonth(Integer saveMonth) {
+        this.saveMonth = saveMonth;
     }
 }

@@ -1,5 +1,6 @@
 package ac.cn.saya.laboratory.service;
 
+import ac.cn.saya.laboratory.entity.BackupLogEntity;
 import ac.cn.saya.laboratory.entity.FilesEntity;
 import ac.cn.saya.laboratory.entity.PictureEntity;
 import ac.cn.saya.laboratory.tools.Result;
@@ -119,5 +120,26 @@ public interface IObjectStorageService {
      * @修改人和其它信息
      */
     public Result<Object> downloadFileForAdmin(Integer id, HttpServletRequest request, HttpServletResponse response) throws  Exception;
+
+
+    /**
+     * @描述 下载备份文件
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-02
+     * @修改人和其它信息
+     */
+    public Result<Object> downloadBackUpDB(String archiveDate, HttpServletResponse response) throws  Exception;
+
+    /**
+     * @描述 获取分页的备份数据库列表
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-02
+     * @修改人和其它信息
+     */
+    public Result<Object> getBackUpDBList(BackupLogEntity entity) throws  Exception;
 
 }

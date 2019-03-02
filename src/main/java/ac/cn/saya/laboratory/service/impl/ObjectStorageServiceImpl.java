@@ -1,8 +1,10 @@
 package ac.cn.saya.laboratory.service.impl;
 
+import ac.cn.saya.laboratory.entity.BackupLogEntity;
 import ac.cn.saya.laboratory.entity.FilesEntity;
 import ac.cn.saya.laboratory.entity.PictureEntity;
 import ac.cn.saya.laboratory.exception.MyException;
+import ac.cn.saya.laboratory.persistent.service.BackupLogService;
 import ac.cn.saya.laboratory.persistent.service.FilesService;
 import ac.cn.saya.laboratory.persistent.service.PictureStorageService;
 import ac.cn.saya.laboratory.tools.Paging;
@@ -52,6 +54,10 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     @Resource
     @Qualifier("filesService")
     private FilesService filesService;
+
+    @Resource
+    @Qualifier("backupLogService")
+    private BackupLogService backupLogService;
 
     /**
      * 上传动态、笔记（插图）图片服务
@@ -456,6 +462,97 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             bis.close();
             fis.close();
             return ResultUtil.success();
+        }
+    }
+
+    /**
+     * @param archiveDate
+     * @param response
+     * @描述 下载备份文件
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019-03-02
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> downloadBackUpDB(String archiveDate, HttpServletResponse response) throws Exception {
+        if(StringUtils.isEmpty(archiveDate)){
+            // 缺少参数
+            throw new MyException(ResultEnum.NOT_PARAMETER);
+        }
+        BackupLogEntity queryEntity = new BackupLogEntity();
+        queryEntity.setArchiveDate(archiveDate);
+        BackupLogEntity resultEntity = backupLogService.getOneBackup(queryEntity);
+        if(resultEntity == null || StringUtils.isEmpty(resultEntity.getUrl())){
+            throw new MyException(ResultEnum.NOT_EXIST);
+        }else{
+            File thisFile = UploadUtils.getFilePath(resultEntity.getUrl());
+            if(thisFile == null){
+                // 文件不存在
+                throw new MyException(ResultEnum.NOT_EXIST);
+            }
+            FileInputStream fis = null;
+            BufferedInputStream bis = null;
+            OutputStream os = null;
+            //且仅当此对象抽象路径名表示的文件或目录存在时，返回true
+            response.setContentType("application/x-download");
+            //控制下载文件的名字
+            response.addHeader("Content-Disposition", "attachment;filename=" + archiveDate + ".sql");
+            byte buf[] = new byte[1024];
+            fis = new FileInputStream(thisFile);
+            bis = new BufferedInputStream(fis);
+            os = response.getOutputStream();
+            int i = bis.read(buf);
+            while(i!=-1){
+                os.write(buf,0,i);
+                i = bis.read(buf);
+            }
+            os.close();
+            bis.close();
+            fis.close();
+            return ResultUtil.success();
+        }
+    }
+
+    /**
+     * @param entity
+     * @描述 获取分页的备份数据库列表
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019-03-02
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> getBackUpDBList(BackupLogEntity entity) throws Exception {
+        Paging paging =new Paging();
+        if(entity.getNowPage() == null){
+            entity.setNowPage(1);
+        }
+        if(entity.getPageSize() == null){
+            entity.setPageSize(20);
+        }
+        //每页显示记录的数量
+        paging.setPageSize(entity.getPageSize());
+        //获取满足条件的总记录（不分页）
+        Long pageSize = backupLogService.getBackupCount(entity);
+        if(pageSize > 0) {
+            //总记录数
+            paging.setDateSum(pageSize);
+            //计算总页数
+            paging.setTotalPage();
+            //设置当前的页码-并校验是否超出页码范围
+            paging.setPageNow(entity.getNowPage());
+            //设置行索引
+            entity.setPage((paging.getPageNow()-1)*paging.getPageSize(),paging.getPageSize());
+            //获取满足条件的记录集合
+            List<BackupLogEntity> list = backupLogService.getBackupPagin(entity);
+            paging.setGrid(list);
+            return ResultUtil.success(paging);
+        }else{
+            //未找到有效记录
+            throw new MyException(ResultEnum.NOT_EXIST);
         }
     }
 }
