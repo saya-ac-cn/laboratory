@@ -3,10 +3,7 @@ package ac.cn.saya.laboratory.service.impl;
 import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.handle.RepeatLogin;
-import ac.cn.saya.laboratory.persistent.service.ApiService;
-import ac.cn.saya.laboratory.persistent.service.LogService;
-import ac.cn.saya.laboratory.persistent.service.PlanService;
-import ac.cn.saya.laboratory.persistent.service.UserService;
+import ac.cn.saya.laboratory.persistent.service.*;
 import ac.cn.saya.laboratory.service.ICoreService;
 import ac.cn.saya.laboratory.tools.*;
 import com.alibaba.fastjson.JSONObject;
@@ -25,7 +22,9 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Title: CoreServiceImpl
@@ -57,6 +56,30 @@ public class CoreServiceImpl implements ICoreService {
     @Resource
     @Qualifier("apiService")
     private ApiService apiService;
+
+    @Resource
+    @Qualifier("pictureStorageService")
+    private PictureStorageService pictureStorageService;
+
+    @Resource
+    @Qualifier("filesService")
+    private FilesService filesService;
+
+    @Resource
+    @Qualifier("newsService")
+    private NewsService newsService;
+
+    @Resource
+    @Qualifier("guestBookService")
+    private GuestBookService guestBookService;
+
+    @Resource
+    @Qualifier("noteBookService")
+    private NoteBookService noteBookService;
+
+    @Resource
+    @Qualifier("notesService")
+    private NotesService notesService;
 
     @Resource
     @Qualifier("recordService")//日志助手表
@@ -768,5 +791,71 @@ public class CoreServiceImpl implements ICoreService {
         } else {
             throw new MyException(ResultEnum.ERROP);
         }
+    }
+
+    /**
+     * @param request
+     * @描述 获取统计报表数据
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019-03-03
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> dashBoard(HttpServletRequest request) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        String userSession = (String) request.getSession().getAttribute("user");
+        // 统计图片总数
+        PictureEntity pictureEntity = new PictureEntity();
+        pictureEntity.setSource(userSession);
+        Long pictureCount = pictureStorageService.getPictuBase64Count(pictureEntity);
+        result.put("pictureCount",pictureCount);
+        // 统计文件总数
+        FilesEntity filesEntity = new FilesEntity();
+        filesEntity.setSource(userSession);
+        Long fileCount = filesService.getFileCount(filesEntity);
+        result.put("fileCount",fileCount);
+        // 统计笔记簿总数
+        NoteBookEntity bookEntity = new NoteBookEntity();
+        bookEntity.setSource(userSession);
+        Long bookCount = noteBookService.getNoteBookCount(bookEntity);
+        result.put("bookCount",bookCount);
+        // 统计笔记总数
+        NotesEntity notesEntity = new NotesEntity();
+        notesEntity.setNotebook(bookEntity);
+        Long notesCount = notesService.getNotesCount(notesEntity);
+        result.put("notesCount",notesCount);
+        // 统计计划总数
+        PlanEntity planEntity = new PlanEntity();
+        planEntity.setSource(userSession);
+        Long planCount = planService.getPlanCount(planEntity);
+        result.put("planCount",planCount);
+        // 统计公告总数
+        NewsEntity newsEntity = new NewsEntity();
+        newsEntity.setSource(userSession);
+        Long newsCount = newsService.getNewsCount(newsEntity);
+        result.put("newsCount",newsCount);
+        // 统计留言总数
+        GuestBookEntity guestBookEntity = new GuestBookEntity();
+        Long guestCount = guestBookService.getGuestBookCount(guestBookEntity);
+        result.put("guestCount",guestCount);
+        // 统计登录总数
+        LogEntity logEntity = new LogEntity();
+        logEntity.setUser(userSession);
+        logEntity.setType("OX001");
+        Long logCount = logService.selectCount(logEntity);
+        result.put("logCount",logCount);
+        // 统计笔记簿
+        bookEntity.setStartLine(0);
+        bookEntity.setEndLine(bookCount.intValue());
+        List<NoteBookEntity> bookList = noteBookService.getNoteBook(bookEntity);
+        result.put("bookList",bookList);
+        result.put("news6",userService.countPre6MonthNews(userSession));
+        result.put("log6",userService.countPre6Logs(userSession));
+        result.put("files6",userService.countPre6Files(userSession));
+        result.put("board",userService.countPre6Board());
+        result.put("financial6",userService.countPre6Financial(userSession));
+        return ResultUtil.success(result);
     }
 }

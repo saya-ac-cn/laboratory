@@ -210,4 +210,15 @@ public interface ICoreService {
      */
     public Result<Object> deleteApi(ApiEntity entity, HttpServletRequest request) throws Exception;
 
+    /**
+     * @描述 获取统计报表数据
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-03
+     * @修改人和其它信息
+     */
+    public Result<Object> dashBoard(HttpServletRequest request) throws Exception;
+
+
 }

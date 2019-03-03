@@ -71,5 +71,15 @@ public interface PlanDAO {
      */
     public List<PlanEntity> getPlanList(PlanEntity entity);
 
+    /**
+     * @描述 统计计划总数
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-03
+     * @修改人和其它信息
+     */
+    public Long getPlanCount(PlanEntity entity);
+
 
 }

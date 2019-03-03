@@ -181,4 +181,27 @@ public class PlanService {
         }
         return list;
     }
+
+    /**
+     * @描述 统计计划总数
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-03
+     * @修改人和其它信息
+     */
+    @Transactional(readOnly = true)
+    public Long getPlanCount(PlanEntity entity){
+        Long total = null;
+        try
+        {
+            total = planDAO.getPlanCount(entity);
+        }catch (Exception e) {
+            total = Long.valueOf(ResultEnum.ERROP.getCode());
+            logger.error("统计计划总数时发生异常："+Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return total;
+    }
+
 }

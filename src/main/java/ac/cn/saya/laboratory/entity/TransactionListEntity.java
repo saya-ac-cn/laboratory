@@ -66,6 +66,13 @@ public class TransactionListEntity extends BaseEntity {
     public TransactionListEntity() {
     }
 
+    public TransactionListEntity(String tradeDate, Double deposited, Double expenditure, Double currencyNumber) {
+        this.tradeDate = tradeDate;
+        this.deposited = deposited;
+        this.expenditure = expenditure;
+        this.currencyNumber = currencyNumber;
+    }
+
     public Integer getTradeId() {
         return tradeId;
     }

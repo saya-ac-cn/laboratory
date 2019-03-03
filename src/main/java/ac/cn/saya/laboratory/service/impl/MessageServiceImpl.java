@@ -677,7 +677,7 @@ public class MessageServiceImpl implements IMessageService {
             bookEntity = new NoteBookEntity();
         }
         bookEntity.setSource(userSession);
-        entity.setNotebook( bookEntity);
+        entity.setNotebook(bookEntity);
         Long pageSize = notesService.getNotesCount(entity);
         if(pageSize > 0){
             //总记录数

@@ -1,6 +1,8 @@
 package ac.cn.saya.laboratory.persistent.service;
 
+import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
+import ac.cn.saya.laboratory.persistent.dao.BatchDAO;
 import ac.cn.saya.laboratory.persistent.dao.UserDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
@@ -15,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @描述 用户业务层实现类
@@ -38,6 +42,10 @@ public class UserService{
     @Resource
     @Qualifier("userDAO")
     private UserDAO userDAO;
+
+    @Resource
+    @Qualifier("batchDAO")
+    private BatchDAO batchDAO;
 
     /**
      * @描述 获取用户的信息
@@ -83,6 +91,101 @@ public class UserService{
         }catch (Exception e){
             result = 0;
             logger.error("修改用户信息失败"+Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return result;
+    }
+
+    /**
+     * @描述 查询近半年的动态发布情况
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-03
+     * @修改人和其它信息
+     */
+    public Map<String,Object> countPre6MonthNews(String user){
+        Map<String,Object> result = null;
+        try {
+            result = batchDAO.countPre6MonthNews(user);
+        }catch (Exception e) {
+            logger.error("查询近半年的动态发布情况失败"+ Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return result;
+    }
+
+    /**
+     * @描述 查询近半年活跃情况
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-03
+     * @修改人和其它信息
+     */
+    public Map<String,Object> countPre6Logs(String user){
+        Map<String,Object> result = null;
+        try {
+            result = batchDAO.countPre6Logs(user);
+        }catch (Exception e) {
+            logger.error("查询近半年活跃情况失败"+ Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return result;
+    }
+
+    /**
+     * @描述 查询近半年文件上传情况
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-03
+     * @修改人和其它信息
+     */
+    public Map<String,Object> countPre6Files(String user){
+        Map<String,Object> result = null;
+        try {
+            result = batchDAO.countPre6Files(user);
+        }catch (Exception e) {
+            logger.error("查询近半年文件上传情况失败"+ Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return result;
+    }
+
+    /**
+     * @描述 查询近半年留言情况
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-03
+     * @修改人和其它信息
+     */
+    public Map<String,Object> countPre6Board(){
+        Map<String,Object> result = null;
+        try {
+            result = batchDAO.countPre6Board();
+        }catch (Exception e) {
+            logger.error("查询近半年留言情况失败"+ Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return result;
+    }
+
+    /**
+     * @描述 查询近半年财政收支情况
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-03
+     * @修改人和其它信息
+     */
+    public List<TransactionListEntity> countPre6Financial(String user){
+        List<TransactionListEntity> result = null;
+        try {
+            result = batchDAO.countPre6Financial(user);
+        }catch (Exception e) {
+            logger.error("查询近半年财政收支情况失败"+ Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
         }
         return result;

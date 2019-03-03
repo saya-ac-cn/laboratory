@@ -88,6 +88,28 @@
         order by number asc
     </select>
 
+    <!-- 获取计划总数-->
+    <select id="getPlanCount" parameterType="plan" resultType="java.lang.Long">
+        select
+         count(*)
+        from
+          plan a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test = "plandate != null and plandate != ''">
+                and date_format(a.plandate,'%Y-%m-%d') = date_format(#{plandate},'%Y-%m-%d')
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.plandate,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
 </mapper>
 
 
