@@ -47,7 +47,7 @@ public class RecordService {
         try{
             //在session中取出管理员的名字
             String user = (String) httpRequest.getSession().getAttribute("user");
-            String ip = httpRequest.getRemoteAddr();
+            String ip = this.getIpAddr(httpRequest);
             City cityUtil =new City();
             String city = cityUtil.getCity(ip, "utf-8");
             Date currentTime = new Date();
@@ -60,6 +60,25 @@ public class RecordService {
             e.printStackTrace();
             logger.warn("记录日志异常"+ Log4jUtils.getTrace(e));
         }
+    }
+
+    /**
+     * 获取用户真实的IP地址，主要是经过代理后，获取的ip地址有误。
+     * @param request
+     * @return
+     */
+    public String getIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 
 }
