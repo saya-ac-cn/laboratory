@@ -265,7 +265,7 @@ public class City {
  public static void main(String[] args) {
   City addressUtils = new City();
   // 测试ip 119.29.153.69 中国=华南=广东省=广州市=越秀区=电信
-  String ip = "119.29.153.69";
+  String ip = "117.139.255.111";
   String address = "";
   try {
    ///address = addressUtils.getAddresses(ip, "utf-8");

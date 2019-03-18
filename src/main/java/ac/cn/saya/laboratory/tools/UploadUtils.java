@@ -175,7 +175,7 @@ public class UploadUtils {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
                     String datetime = formatter.format(currentTime);
                     //url路径 files/picture/document/用户名/yyyyMMdd
-                    String urlPath =  File.separator + "files"+ File.separator + "document"+ File.separator + "wallpaper" +File.separator+String.valueOf(request.getSession().getAttribute("user"))+File.separator+datetime;
+                    String urlPath =  File.separator + "files"+ File.separator + "document"+ File.separator + "file" +File.separator+String.valueOf(request.getSession().getAttribute("user"))+File.separator+datetime;
                     //上传文件路径-/picture/目录下该用户当天的文件夹
                     String path = ClassUtils.getDefaultClassLoader().getResource("").getPath() + urlPath;
                     File filepath = new File(path);

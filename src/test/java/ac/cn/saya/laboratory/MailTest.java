@@ -40,7 +40,7 @@ public class MailTest {
         context.setVariable("saveUrl", "/324/35/346/");
         context.setVariable("sendTime", "2019-03-01 22:36:41");
         String emailContent = templateEngine.process("mail/backUpDB", context);
-        mailService.sendHtmlMail("pandoras@189.cn","数据库备份结果报告",emailContent);
+        //mailService.sendHtmlMail("pandoras@189.cn","数据库备份结果报告",emailContent);
     }
 
 

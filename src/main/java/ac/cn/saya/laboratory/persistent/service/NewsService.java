@@ -2,6 +2,7 @@ package ac.cn.saya.laboratory.persistent.service;
 
 
 import ac.cn.saya.laboratory.entity.NewsEntity;
+import ac.cn.saya.laboratory.persistent.dao.BatchDAO;
 import ac.cn.saya.laboratory.persistent.dao.NewsDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Title: NewsService
@@ -36,6 +38,10 @@ public class NewsService {
     @Resource
     @Qualifier("newsDAO")
     private NewsDAO newsDAO;
+
+    @Resource
+    @Qualifier("batchDAO")
+    private BatchDAO batchDAO;
 
     /**
      * @param entity
@@ -172,6 +178,27 @@ public class NewsService {
             logger.error(CurrentLineInfo.printCurrentLineInfo());
         }
         return total;
+    }
+
+    /**
+     * @描述 获取上一条和下一条动态
+     * @参数  [newsId]
+     * @返回值  java.util.Map<java.lang.String,java.lang.String>
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-18
+     * @修改人和其它信息
+     */
+    @Transactional(readOnly = true)
+    public Map<String,String> getNewsPreAndNext(Integer newsId){
+        Map<String,String> result = null;
+        try
+        {
+            result = batchDAO.getNewsPreAndNext(newsId);
+        }catch (Exception e) {
+            logger.error("获取动态总数时发生异常："+Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return result;
     }
 
 }

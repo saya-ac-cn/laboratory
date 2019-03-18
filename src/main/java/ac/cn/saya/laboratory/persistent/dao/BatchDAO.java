@@ -249,4 +249,51 @@ public class BatchDAO extends JDBCBaseConnection {
         }
     }
 
+    /**
+     * @描述 获取上一条动态和下一条动态的id
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-03
+     * @修改人和其它信息
+     */
+    public Map<String,String> getNewsPreAndNext(Integer newsId){
+        Map<String,String> result = null;
+        SqlSession sqlSession = null;
+        //连接对象
+        Connection sqlCon = null;
+        String flog = "";
+        try
+        {
+            //获取sqlSession
+            sqlSession = getSqlSession();
+            //建立jdbc连接
+            sqlCon =  sqlSession.getConfiguration().getEnvironment().getDataSource().getConnection();
+            CallableStatement cs = sqlCon .prepareCall("{Call newsPreAndNext(?)}");
+            //设置参数
+            cs.setInt(1, newsId);
+            //执行
+            cs.executeQuery();
+            ResultSet rs = cs.getResultSet();
+            result = new LinkedHashMap();
+            while(rs.next()){
+                String[] data = (rs.getString("id")).split(":");
+                result.put(data[1],data[0]);
+            }
+            cs.close();
+            sqlCon.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }finally {
+            //及时关闭资源
+            if(sqlSession != null)
+            {
+                sqlSession.close();
+            }
+            return result;
+        }
+    }
+
 }
