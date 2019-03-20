@@ -1,9 +1,11 @@
 package ac.cn.saya.laboratory.service;
 
+import ac.cn.saya.laboratory.entity.FilesEntity;
 import ac.cn.saya.laboratory.entity.NewsEntity;
 import ac.cn.saya.laboratory.tools.Result;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @Title: IFrontendService
@@ -37,5 +39,25 @@ public interface IFrontendService {
      * @修改人和其它信息
      */
     public Result<Object> getNewsList(NewsEntity entity) throws Exception;
+
+    /**
+     * @描述 获取分页文件列表
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-20
+     * @修改人和其它信息
+     */
+    public Result<Object> getFileList(FilesEntity entity) throws Exception;
+
+    /**
+     * @描述 下载文件
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-20
+     * @修改人和其它信息
+     */
+    public Result<Object> downloadFile(String user, Integer id, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 }

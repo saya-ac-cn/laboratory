@@ -1,7 +1,10 @@
 package ac.cn.saya.laboratory.controller;
 
+import ac.cn.saya.laboratory.entity.FilesEntity;
+import ac.cn.saya.laboratory.entity.NewsEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
 import ac.cn.saya.laboratory.service.ICoreService;
+import ac.cn.saya.laboratory.service.IFrontendService;
 import ac.cn.saya.laboratory.tools.Result;
 import ac.cn.saya.laboratory.tools.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,11 @@ public class ExposeController {
     private ICoreService coreServiceImpl;
 
 
+    @Autowired()
+    @Qualifier("frontendServiceImpl")
+    private IFrontendService frontendServiceImpl;
+
+
     /**
      * 登录
      * @return
@@ -41,7 +49,7 @@ public class ExposeController {
     }
 
     /**
-     * 下载文件
+     * 下载文件（通过路由）
      * @param url
      * @param request
      * @param response
@@ -64,5 +72,59 @@ public class ExposeController {
         return coreServiceImpl.logout(httpServletRequest);
     }
 
+    /**
+     * @描述 查询动态列表
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-20
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "/frontend/{user}/news")
+    public Result<Object> getNewsList(@PathVariable("user") String user, NewsEntity entity) throws Exception{
+        entity.setSource(user);
+        return frontendServiceImpl.getNewsList(entity);
+    }
+
+    /**
+     * @描述 查询单条动态详情
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-20
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "/frontend/{user}/news/info")
+    public Result<Object> getNewsInfo(@PathVariable("user") String user, NewsEntity entity) throws Exception{
+        entity.setSource(user);
+        return frontendServiceImpl.getOneNews(entity);
+    }
+
+    /**
+     * @描述 下载文件
+     * @参数  [user, id, request, response]
+     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-20
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "/frontend/{user}/files/download/{id}")
+    public Result<Object> downloadFile(@PathVariable("user") String user,@PathVariable("id") int id, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        return  frontendServiceImpl.downloadFile(user,id,request,response);
+    }
+
+    /**
+     * @描述 获取文件列表
+     * @参数  [user, entity]
+     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-20
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "/frontend/{user}/file")
+    public Result<Object> getFileList(@PathVariable("user") String user, FilesEntity entity) throws Exception{
+        entity.setSource(user);
+        return frontendServiceImpl.getFileList(entity);
+    }
 
 }

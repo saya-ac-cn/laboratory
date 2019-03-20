@@ -31,12 +31,12 @@ public class SystemInterceptor implements HandlerInterceptor {
         //在session中取出管理员的信息
         String sessionUdmin= (String) request.getSession().getAttribute("user");
         if (sessionUdmin!= null) {
-            logger.warn("you can go to controller");
+            ///logger.warn("you can go to controller");
             return true;
         }
         else
         {
-            logger.warn("controller tell you Please login");
+            //logger.warn("controller tell you Please login");
             ///request.getRequestDispatcher("/login.html").forward(request, response);
             // 设置将字符以"UTF-8"编码输出到客户端浏览器
             response.setCharacterEncoding("UTF-8");
