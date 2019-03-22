@@ -1,6 +1,7 @@
 package ac.cn.saya.laboratory.service;
 
 import ac.cn.saya.laboratory.entity.FilesEntity;
+import ac.cn.saya.laboratory.entity.GuestBookEntity;
 import ac.cn.saya.laboratory.entity.NewsEntity;
 import ac.cn.saya.laboratory.tools.Result;
 
@@ -59,5 +60,28 @@ public interface IFrontendService {
      * @修改人和其它信息
      */
     public Result<Object> downloadFile(String user, Integer id, HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+    /**
+     * @描述 留言
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    public Result<Object> insertGuestBook(GuestBookEntity entity) throws Exception;
+
+    /**
+     * 查看行程安排
+     * @param data
+     * @param user
+     * @描述
+     * @参数 [data, request]
+     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/24
+     * @修改人和其它信息 查询该月的计划
+     */
+    public Result<Object> getPlan(String data, String user) throws Exception;
 
 }

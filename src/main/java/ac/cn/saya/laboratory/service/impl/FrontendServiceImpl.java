@@ -1,12 +1,17 @@
 package ac.cn.saya.laboratory.service.impl;
 
 import ac.cn.saya.laboratory.entity.FilesEntity;
+import ac.cn.saya.laboratory.entity.GuestBookEntity;
 import ac.cn.saya.laboratory.entity.NewsEntity;
+import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.service.FilesService;
+import ac.cn.saya.laboratory.persistent.service.GuestBookService;
 import ac.cn.saya.laboratory.persistent.service.NewsService;
+import ac.cn.saya.laboratory.persistent.service.PlanService;
 import ac.cn.saya.laboratory.service.IFrontendService;
 import ac.cn.saya.laboratory.tools.*;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,6 +25,8 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +51,14 @@ public class FrontendServiceImpl implements IFrontendService {
     @Resource
     @Qualifier("filesService")
     private FilesService filesService;
+
+    @Resource
+    @Qualifier("guestBookService")
+    private GuestBookService guestBookService;
+
+    @Resource
+    @Qualifier("planService")
+    private PlanService planService;
 
     /**
      * @param entity
@@ -216,4 +231,104 @@ public class FrontendServiceImpl implements IFrontendService {
             return ResultUtil.success();
         }
     }
+
+    /**
+     * @param entity
+     * @描述 留言
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/11
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> insertGuestBook(GuestBookEntity entity) throws Exception {
+        // 校验用户输入的参数
+        if(entity == null ){
+            // 缺少参数
+            throw new MyException(ResultEnum.NOT_PARAMETER);
+        }
+        if(guestBookService.insertGuestBook(entity) > 0){
+            return ResultUtil.success();
+        } else {
+            throw new MyException(ResultEnum.ERROP);
+        }
+    }
+
+    /**
+     * 查看行程安排
+     * @param data
+     * @param user
+     * @描述
+     * @参数 [data, request]
+     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/24
+     * @修改人和其它信息 查询该月的计划
+     */
+    @Override
+    public Result<Object> getPlan(String data, String user) throws Exception {
+        // 日期准备
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        // 第一天
+        String firstDay = DateUtil.getFirstDay(format.parse(data));
+        // 最后一天
+        String lastDay = DateUtil.getLastDay(format.parse(data));
+        // 获取该月的总天数
+        Integer monthCount = DateUtil.getDaysOfMonth(format.parse(data));
+        // 获取该月第一天是星期几--星期日i==1，星期六i==7
+        Integer firstDayWeek = DateUtil.getFirstDayWeek(format.parse(firstDay));
+        PlanEntity query = new PlanEntity();
+        // 查询该用户的计划
+        query.setSource(user);
+        // 查询该月的计划
+        query.setBeginTime(firstDay);
+        query.setEndTime(lastDay);
+        List<PlanEntity> plan = planService.getPlanList(query);
+        if(firstDayWeek < 1 || firstDayWeek > 7){
+            // 获取的该月第一天是否正常
+            throw new MyException(ResultEnum.ERROP);
+        }else{
+            // 表格中单元格个数（1号前的空单元格加上日历的单元格）
+            Integer gridCount = monthCount + (firstDayWeek - 1);
+            // 总行数
+            Integer tableLine = 5;
+            if (gridCount % 7 == 0) {
+                tableLine = gridCount / 7;
+            }else {
+                tableLine = gridCount / 7 + 1;
+            }
+            // 统计有效的单元格（加上月尾的空白单元格）
+            gridCount = tableLine * 7;
+            List<JSONObject> jsonObjectList = new ArrayList<>();
+            for(int i = 1; i <= gridCount; i++){
+                JSONObject json = new JSONObject();
+                if(i >= firstDayWeek && i <= (monthCount + (firstDayWeek - 1))){
+                    json.put("flog", 1);
+                    json.put("number", i - (firstDayWeek - 1));
+                    json.put("value", 0);
+                    json.put("id", -1);
+                    // 输出日历
+                    if(plan != null){
+                        for(PlanEntity item:plan){
+                            if(item.getNumber() == (i - (firstDayWeek - 1))){
+                                // 该天有内容
+                                json.put("value", item.getDescribe());
+                                json.put("id", item.getId());
+                                break;
+                            }
+                        }
+                    }
+                }else{
+                    // 输出空白
+                    json.put("flog", 0);
+                    json.put("number", 0);
+                    json.put("value", 0);
+                }
+                jsonObjectList.add(json);
+            }
+            return ResultUtil.success(jsonObjectList);
+        }
+    }
+
 }

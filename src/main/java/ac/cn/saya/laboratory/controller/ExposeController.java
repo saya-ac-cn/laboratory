@@ -1,6 +1,7 @@
 package ac.cn.saya.laboratory.controller;
 
 import ac.cn.saya.laboratory.entity.FilesEntity;
+import ac.cn.saya.laboratory.entity.GuestBookEntity;
 import ac.cn.saya.laboratory.entity.NewsEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
 import ac.cn.saya.laboratory.service.ICoreService;
@@ -125,6 +126,32 @@ public class ExposeController {
     public Result<Object> getFileList(@PathVariable("user") String user, FilesEntity entity) throws Exception{
         entity.setSource(user);
         return frontendServiceImpl.getFileList(entity);
+    }
+
+    /**
+     * @描述 留言
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-22
+     * @修改人和其它信息
+     */
+    @PostMapping("/frontend/write/board")
+    public Result<Object> insertGuestBook(@RequestBody GuestBookEntity message) throws Exception{
+        return frontendServiceImpl.insertGuestBook(message);
+    }
+
+    /**
+     * @描述 查看计划安排
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-03-22
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "/frontend/{user}/plan")
+    public Result<Object> getPlan(@PathVariable("user") String user,@RequestParam(value = "date") String date) throws Exception{
+        return  frontendServiceImpl.getPlan(date,user);
     }
 
 }

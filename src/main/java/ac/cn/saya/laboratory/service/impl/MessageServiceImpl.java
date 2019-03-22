@@ -223,29 +223,6 @@ public class MessageServiceImpl implements IMessageService {
 
     /**
      * @param entity
-     * @描述 留言
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/11
-     * @修改人和其它信息
-     */
-    @Override
-    public Result<Object> insertGuestBook(GuestBookEntity entity) throws Exception {
-        // 校验用户输入的参数
-        if(entity == null ){
-            // 缺少参数
-            throw new MyException(ResultEnum.NOT_PARAMETER);
-        }
-        if(guestBookService.insertGuestBook(entity) > 0){
-            return ResultUtil.success();
-        } else {
-            throw new MyException(ResultEnum.ERROP);
-        }
-    }
-
-    /**
-     * @param entity
      * @param request
      * @描述 审核修改
      * @参数
