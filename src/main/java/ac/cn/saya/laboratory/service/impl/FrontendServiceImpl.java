@@ -248,6 +248,8 @@ public class FrontendServiceImpl implements IFrontendService {
             // 缺少参数
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
+        // 设置为待审核
+        entity.setStatus(2);
         if(guestBookService.insertGuestBook(entity) > 0){
             return ResultUtil.success();
         } else {

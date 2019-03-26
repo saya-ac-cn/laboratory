@@ -1,5 +1,14 @@
+backup:
+  dburl: 120.132.116.155
+  dbname: laboratory
+  mysqlbin: /usr/local/mysql/bin/
+  mail: saya@saya.ac.cn
+  savemonth: 1
+
 server:
   port: 8080
+  servlet:
+    context-path: /laboratory
 
 # 固定上传文件的大小
 spring:
@@ -8,6 +17,11 @@ spring:
       maxFileSize: 30MB
       maxRequestSize: 30MB
 
+  thymeleaf:
+    mode: HTML5
+    encoding: UTF-8
+    cache: false
+
   resources:
     chain:
       strategy:
@@ -15,3 +29,44 @@ spring:
           enabled: true
           paths: /**
     static-locations: classpath:/files/
+
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://120.132.116.155/laboratory?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    username: saya
+    password: Saya.ac.cn.666
+    driver-class-name: com.mysql.jdbc.Driver
+    initialSize: 1
+    minIdle: 3
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 30000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall,slf4j
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    useGlobalDataSourceStat: true
+
+  mail:
+    host: smtp.qq.com
+    port: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+    username: 504804540@qq.com
+    password: abfekqvcpsbrbhie
+    default-encoding: UTF-8
+
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: ac.cn.saya.laboratory.entity

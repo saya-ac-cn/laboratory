@@ -48,7 +48,7 @@ public class GuestBookEntity extends BaseEntity{
     private String reply;
 
     /**
-     * 留言状态
+     * 状态，用户提交后的状态2，已回复状态1，已屏蔽4
      */
     private Integer status;
 

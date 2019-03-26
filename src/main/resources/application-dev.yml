@@ -7,8 +7,8 @@ backup:
 
 server:
   port: 8080
-#  servlet:
-#    context-path: /laboratory
+  servlet:
+    context-path: /laboratory
 
 # 固定上传文件的大小
 spring:

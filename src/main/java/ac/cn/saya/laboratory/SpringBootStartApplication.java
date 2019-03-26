@@ -10,9 +10,11 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * @Author liunengkai
  * @Date: 2019-02-12 22:34
  * @Description:
+ * tomcat 启动
+ * extends SpringBootServletInitializer
  */
 
-public class SpringBootStartApplication extends SpringBootServletInitializer {
+public class SpringBootStartApplication {
 
     /**
      * Configure the application. Normally all you would need to do is to add sources
@@ -24,7 +26,7 @@ public class SpringBootStartApplication extends SpringBootServletInitializer {
      * @return the application builder
      * @see SpringApplicationBuilder
      */
-    @Override
+    //@Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
         return builder.sources(LaboratoryApplication.class);
     }
