@@ -187,7 +187,7 @@ public class MessageController {
     }
 
     /**
-     * @描述 获取笔记簿(分页)
+     * @描述 获取笔记簿
      * @参数
      * @返回值
      * @创建人  saya.ac.cn-刘能凯

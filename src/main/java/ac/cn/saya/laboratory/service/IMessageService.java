@@ -151,7 +151,7 @@ public interface IMessageService {
     public Result<Object> getNoteBookList(NoteBookEntity entity, HttpServletRequest request) throws Exception;
 
     /**
-     * @描述 获取笔记簿（分页）
+     * @描述 获取笔记簿
      * @参数
      * @返回值
      * @创建人  saya.ac.cn-刘能凯

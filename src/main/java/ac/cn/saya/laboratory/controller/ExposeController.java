@@ -1,9 +1,6 @@
 package ac.cn.saya.laboratory.controller;
 
-import ac.cn.saya.laboratory.entity.FilesEntity;
-import ac.cn.saya.laboratory.entity.GuestBookEntity;
-import ac.cn.saya.laboratory.entity.NewsEntity;
-import ac.cn.saya.laboratory.entity.UserEntity;
+import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.service.ICoreService;
 import ac.cn.saya.laboratory.service.IFrontendService;
 import ac.cn.saya.laboratory.tools.Result;
@@ -152,6 +149,39 @@ public class ExposeController {
     @GetMapping(value = "/frontend/{user}/plan")
     public Result<Object> getPlan(@PathVariable("user") String user,@RequestParam(value = "date") String date) throws Exception{
         return  frontendServiceImpl.getPlan(date,user);
+    }
+
+    /**
+     * @描述 获取笔记簿
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/12
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "/frontend/{user}/notebook")
+    public Result<Object> getNoteBook(@PathVariable("user") String user,NoteBookEntity entity) throws Exception{
+        entity.setSource(user);
+        return  frontendServiceImpl.getNoteBook(entity);
+    }
+
+    /**
+     * @描述 获取分页的笔记
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/12
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "/frontend/{user}/notes")
+    public Result<Object> getNotesList(@PathVariable("user") String user,NotesEntity entity) throws Exception{
+        NoteBookEntity bookEntity = entity.getNotebook();
+        if(bookEntity == null){
+            bookEntity = new NoteBookEntity();
+        }
+        bookEntity.setSource(user);
+        entity.setNotebook(bookEntity);
+        return  frontendServiceImpl.getNotesList(entity);
     }
 
 }

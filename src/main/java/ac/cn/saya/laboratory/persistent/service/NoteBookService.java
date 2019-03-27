@@ -175,7 +175,7 @@ public class NoteBookService {
 
     /**
      * @param entity
-     * @描述 获取笔记簿（分页）
+     * @描述 获取笔记簿
      * @参数
      * @返回值
      * @创建人 saya.ac.cn-刘能凯
@@ -192,7 +192,7 @@ public class NoteBookService {
             }
         }catch (Exception e) {
             list = null;
-            logger.error("获取笔记簿（分页）发生异常："+ Log4jUtils.getTrace(e));
+            logger.error("获取笔记簿发生异常："+ Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
         }
         return list;

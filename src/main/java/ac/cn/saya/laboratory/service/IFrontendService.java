@@ -1,8 +1,6 @@
 package ac.cn.saya.laboratory.service;
 
-import ac.cn.saya.laboratory.entity.FilesEntity;
-import ac.cn.saya.laboratory.entity.GuestBookEntity;
-import ac.cn.saya.laboratory.entity.NewsEntity;
+import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.tools.Result;
 
 import javax.servlet.http.HttpServletRequest;
@@ -83,5 +81,25 @@ public interface IFrontendService {
      * @修改人和其它信息 查询该月的计划
      */
     public Result<Object> getPlan(String data, String user) throws Exception;
+
+    /**
+     * @描述 获取笔记簿
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    public Result<Object> getNoteBook(NoteBookEntity entity) throws Exception;
+
+    /**
+     * @描述 获取分页的笔记
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    public Result<Object> getNotesList(NotesEntity entity) throws Exception;
 
 }

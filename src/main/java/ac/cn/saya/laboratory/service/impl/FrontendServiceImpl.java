@@ -1,14 +1,8 @@
 package ac.cn.saya.laboratory.service.impl;
 
-import ac.cn.saya.laboratory.entity.FilesEntity;
-import ac.cn.saya.laboratory.entity.GuestBookEntity;
-import ac.cn.saya.laboratory.entity.NewsEntity;
-import ac.cn.saya.laboratory.entity.PlanEntity;
+import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.service.FilesService;
-import ac.cn.saya.laboratory.persistent.service.GuestBookService;
-import ac.cn.saya.laboratory.persistent.service.NewsService;
-import ac.cn.saya.laboratory.persistent.service.PlanService;
+import ac.cn.saya.laboratory.persistent.service.*;
 import ac.cn.saya.laboratory.service.IFrontendService;
 import ac.cn.saya.laboratory.tools.*;
 import com.alibaba.fastjson.JSONObject;
@@ -59,6 +53,14 @@ public class FrontendServiceImpl implements IFrontendService {
     @Resource
     @Qualifier("planService")
     private PlanService planService;
+
+    @Resource
+    @Qualifier("noteBookService")
+    private NoteBookService noteBookService;
+
+    @Resource
+    @Qualifier("notesService")
+    private NotesService notesService;
 
     /**
      * @param entity
@@ -330,6 +332,68 @@ public class FrontendServiceImpl implements IFrontendService {
                 jsonObjectList.add(json);
             }
             return ResultUtil.success(jsonObjectList);
+        }
+    }
+
+    /**
+     * @param entity
+     * @param request
+     * @描述 获取笔记簿
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/11
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> getNoteBook(NoteBookEntity entity) throws Exception {
+        List<NoteBookEntity> list = noteBookService.getNoteBook(entity);
+        if(list.size() > 0){
+            return ResultUtil.success(list);
+        }else{
+            //未找到有效记录
+            throw new MyException(ResultEnum.NOT_EXIST);
+        }
+    }
+
+    /**
+     * @param entity
+     * @描述 获取分页的笔记
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/11
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> getNotesList(NotesEntity entity) throws Exception {
+        Paging paging =new Paging();
+        if(entity.getNowPage() == null){
+            entity.setNowPage(1);
+        }
+        if(entity.getPageSize() == null){
+            entity.setPageSize(20);
+        }
+        //每页显示记录的数量
+        paging.setPageSize(entity.getPageSize());
+        //获取满足条件的总记录（不分页）
+        Long pageSize = notesService.getNotesCount(entity);
+        if(pageSize > 0){
+            //总记录数
+            paging.setDateSum(pageSize);
+            //计算总页数
+            paging.setTotalPage();
+            //设置当前的页码-并校验是否超出页码范围
+            paging.setPageNow(entity.getNowPage());
+            //设置行索引
+            entity.setPage((paging.getPageNow()-1)*paging.getPageSize(),paging.getPageSize());
+            //获取满足条件的记录集合
+            List<NotesEntity> list = notesService.getNotesPage(entity);
+            paging.setGrid(list);
+            return ResultUtil.success(paging);
+        }else{
+            //未找到有效记录
+            throw new MyException(ResultEnum.NOT_EXIST);
         }
     }
 
