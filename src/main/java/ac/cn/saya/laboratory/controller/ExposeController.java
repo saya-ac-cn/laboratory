@@ -184,4 +184,17 @@ public class ExposeController {
         return  frontendServiceImpl.getNotesList(entity);
     }
 
+    /**
+     * @描述 查询笔记详情
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-04-02
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "/frontend/{user}/notes/info")
+    public Result<Object> getNotesInfo(@PathVariable("user") String user, NotesEntity entity) throws Exception{
+        return frontendServiceImpl.getOneNotes(user,entity);
+    }
+
 }

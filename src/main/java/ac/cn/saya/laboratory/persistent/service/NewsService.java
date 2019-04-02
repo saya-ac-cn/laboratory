@@ -193,9 +193,9 @@ public class NewsService {
         Map<String,String> result = null;
         try
         {
-            result = batchDAO.getNewsPreAndNext(newsId);
+            result = batchDAO.getNewsNotesPreAndNext(1,newsId);
         }catch (Exception e) {
-            logger.error("获取动态总数时发生异常："+Log4jUtils.getTrace(e));
+            logger.error("获取上一条和下一条动态时发生异常："+Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
         }
         return result;

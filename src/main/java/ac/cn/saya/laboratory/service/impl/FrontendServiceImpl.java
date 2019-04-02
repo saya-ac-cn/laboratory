@@ -337,7 +337,6 @@ public class FrontendServiceImpl implements IFrontendService {
 
     /**
      * @param entity
-     * @param request
      * @描述 获取笔记簿
      * @参数
      * @返回值
@@ -394,6 +393,50 @@ public class FrontendServiceImpl implements IFrontendService {
         }else{
             //未找到有效记录
             throw new MyException(ResultEnum.NOT_EXIST);
+        }
+    }
+
+    /**
+     * @描述 查询一条笔记
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-04-02
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> getOneNotes(String user,NotesEntity entity) throws Exception {
+        if(entity == null || entity.getId() == null){
+            // 缺少参数
+            throw new MyException(ResultEnum.NOT_PARAMETER);
+        }
+        // 设置查询的用户为当前的用户
+        NoteBookEntity bookEntity = entity.getNotebook();
+        if(bookEntity == null){
+            bookEntity = new NoteBookEntity();
+        }
+        bookEntity.setSource(user);
+        entity.setNotebook(bookEntity);
+        NotesEntity result = notesService.getOneNotes(entity);
+        if(result == null){
+            //未找到有效记录
+            throw new MyException(ResultEnum.NOT_EXIST);
+        }else{
+            // 寻找上一条和下一条
+            Map<String,String> preAndNext = notesService.getNotesPreAndNext(entity.getId());
+            Map<String,NotesEntity> out = new HashMap();
+            out.put("now",result);
+            if(preAndNext != null){
+                for (Map.Entry<String,String> item : preAndNext.entrySet()) {
+                    entity.setId(Integer.valueOf(item.getValue()));
+                    result = notesService.getOneNotes(entity);
+                    // 取出不必要的数据传输
+                    result.setContent(null);
+                    result.setLabel(null);
+                    out.put(item.getKey(),result);
+                }
+            }
+            return ResultUtil.success(out);
         }
     }
 

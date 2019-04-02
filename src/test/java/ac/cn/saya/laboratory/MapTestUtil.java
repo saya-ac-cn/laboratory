@@ -3,7 +3,10 @@ package ac.cn.saya.laboratory;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @Title: MapTestUtil
@@ -23,6 +26,11 @@ public class MapTestUtil {
                 new LinkedHashMap<String, String>();
         linkedHashMap.put("111", "111");
         linkedHashMap.put("222", "222");
+        linkedHashMap.get("222");
+        List list1 = new ArrayList<>();
+        list1.add("1");
+        List list2 = new LinkedList();
+        list2.add("1");
     }
 
 }

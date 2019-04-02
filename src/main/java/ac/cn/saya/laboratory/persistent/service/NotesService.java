@@ -1,6 +1,7 @@
 package ac.cn.saya.laboratory.persistent.service;
 
 import ac.cn.saya.laboratory.entity.NotesEntity;
+import ac.cn.saya.laboratory.persistent.dao.BatchDAO;
 import ac.cn.saya.laboratory.persistent.dao.NotesDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Title: NotesService
@@ -34,6 +36,10 @@ public class NotesService {
     @Resource
     @Qualifier("notesDAO")
     private NotesDAO notesDAO;
+
+    @Resource
+    @Qualifier("batchDAO")
+    private BatchDAO batchDAO;
 
     /**
      * @param entity
@@ -171,5 +177,26 @@ public class NotesService {
             logger.error(CurrentLineInfo.printCurrentLineInfo());
         }
         return total;
+    }
+
+    /**
+     * @描述 查询指定id附近的笔记
+     * @参数  [notesId]
+     * @返回值  java.util.Map<java.lang.String,java.lang.String>
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-04-02
+     * @修改人和其它信息
+     */
+    @Transactional(readOnly = true)
+    public Map<String,String> getNotesPreAndNext(Integer notesId){
+        Map<String,String> result = null;
+        try
+        {
+            result = batchDAO.getNewsNotesPreAndNext(2,notesId);
+        }catch (Exception e) {
+            logger.error("获取上下笔记时发生异常："+Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return result;
     }
 }

@@ -3,12 +3,12 @@ backup:
   dbname: laboratory
   mysqlbin: /usr/local/mysql/bin/
   mail: saya@saya.ac.cn
-  savemonth: 1
+  savemonth: -1
 
 server:
   port: 8080
-  servlet:
-    context-path: /laboratory
+#  servlet:
+#    context-path: /laboratory
 
 # 固定上传文件的大小
 spring:

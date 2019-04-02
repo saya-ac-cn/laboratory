@@ -1,9 +1,9 @@
 backup:
-  dburl: 120.132.116.155
+  dburl: 127.0.0.1
   dbname: laboratory
   mysqlbin: /usr/local/mysql/bin/
   mail: saya@saya.ac.cn
-  savemonth: 1
+  savemonth: -1
 
 server:
   port: 8080
@@ -33,7 +33,7 @@ spring:
 
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://120.132.116.155/laboratory?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    url: jdbc:mysql://127.0.0.1/laboratory?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
     username: saya
     password: Saya.ac.cn.666
     driver-class-name: com.mysql.jdbc.Driver

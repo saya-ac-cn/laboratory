@@ -102,4 +102,14 @@ public interface IFrontendService {
      */
     public Result<Object> getNotesList(NotesEntity entity) throws Exception;
 
+    /**
+     * @描述 查询一条笔记
+     * @参数  [entity]
+     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-04-02
+     * @修改人和其它信息
+     */
+    public Result<Object> getOneNotes(String user,NotesEntity entity) throws Exception;
+
 }

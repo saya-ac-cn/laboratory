@@ -45,4 +45,5 @@ public class WebConfigurerAdapter extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/files/**").addResourceLocations("classpath:/files/");
     }
 
+
 }
