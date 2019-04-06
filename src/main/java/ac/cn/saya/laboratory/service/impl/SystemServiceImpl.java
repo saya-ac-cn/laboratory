@@ -91,12 +91,10 @@ public class SystemServiceImpl implements SystemService {
     public Boolean backupDatabase() {
         try {
             Date currentTime = new Date();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
             SimpleDateFormat mailformat= new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String executeTime = mailformat.format(currentTime);
-            String datetime = formatter.format(currentTime);
-            //url路径 files/database/yyyyMMdd
-            String urlPath =  File.separator + "files"+ File.separator + "database" + File.separator+datetime;
+            //url路径 files/database
+            String urlPath =  File.separator + "files"+ File.separator + "database";
             //上传文件路径-/database/目录下当天的文件夹
             String backUppath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + urlPath;
             //保存的文件名
