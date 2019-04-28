@@ -34,7 +34,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://127.0.0.1/laboratory?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
-    username: saya
+    username: root
     password: Saya.ac.cn.666
     driver-class-name: com.mysql.jdbc.Driver
     initialSize: 1
