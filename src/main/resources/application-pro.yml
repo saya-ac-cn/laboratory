@@ -1,7 +1,7 @@
 backup:
   dburl: 127.0.0.1
   dbname: laboratory
-  mysqlbin: /usr/local/mysql/bin/
+  mysqlbin: /usr/bin/
   mail: saya@saya.ac.cn
   savemonth: -1
 
