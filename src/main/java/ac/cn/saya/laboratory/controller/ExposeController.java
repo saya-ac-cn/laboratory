@@ -166,7 +166,7 @@ public class ExposeController {
     }
 
     /**
-     * @描述 获取分页的笔记
+     * @描述 获取分页的笔记[公开]
      * @参数
      * @返回值
      * @创建人  saya.ac.cn-刘能凯
@@ -179,6 +179,7 @@ public class ExposeController {
         if(bookEntity == null){
             bookEntity = new NoteBookEntity();
         }
+        bookEntity.setStatus(1);
         bookEntity.setSource(user);
         entity.setNotebook(bookEntity);
         return  frontendServiceImpl.getNotesList(entity);

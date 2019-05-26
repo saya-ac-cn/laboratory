@@ -337,7 +337,7 @@ public class FrontendServiceImpl implements IFrontendService {
 
     /**
      * @param entity
-     * @描述 获取笔记簿
+     * @描述 获取笔记簿【公开】
      * @参数
      * @返回值
      * @创建人 saya.ac.cn-刘能凯
@@ -346,6 +346,7 @@ public class FrontendServiceImpl implements IFrontendService {
      */
     @Override
     public Result<Object> getNoteBook(NoteBookEntity entity) throws Exception {
+        entity.setStatus(1);
         List<NoteBookEntity> list = noteBookService.getNoteBook(entity);
         if(list.size() > 0){
             return ResultUtil.success(list);
