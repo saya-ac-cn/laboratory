@@ -32,26 +32,36 @@ spring:
 
 
   datasource:
+    # Druid连接池配置，官方配置参考：https://github.com/alibaba/druid/tree/master/druid-spring-boot-starter
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://120.132.116.155/laboratory?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
     username: saya
     password: Saya.ac.cn.666
     driver-class-name: com.mysql.jdbc.Driver
-    initialSize: 1
-    minIdle: 3
-    maxActive: 20
-    maxWait: 60000
-    timeBetweenEvictionRunsMillis: 60000
-    minEvictableIdleTimeMillis: 30000
-    validationQuery: select 'x'
-    testWhileIdle: true
-    testOnBorrow: false
-    testOnReturn: false
-    poolPreparedStatements: true
-    maxPoolPreparedStatementPerConnectionSize: 20
-    filters: stat,wall,slf4j
-    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
-    useGlobalDataSourceStat: true
+    # Druid其他配置
+    druid:
+      filter:
+        stat:
+          slow-sql-millis: 2000
+          log-slow-sql: true
+      min-idle: 10
+      max-active: 20
+      filters: stat,wall
+      initial-size: 5
+      max-wait: 10
+      # Druid WebStatFilter配置，说明请参考Druid Wiki，配置_配置WebStatFilter
+      web-stat-filter:
+        url-pattern: /*
+        enabled: true
+      # Druid StatViewServlet配置，说明请参考Druid Wiki，配置_StatViewServlet配置
+      stat-view-servlet:
+        allow:
+        deny:
+        url-pattern: /druid/*
+        login-password: admin
+        reset-enable: true
+        login-username: admin
+        enabled: true
 
   mail:
     host: smtp.qq.com
