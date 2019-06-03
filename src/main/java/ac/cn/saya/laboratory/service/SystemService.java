@@ -35,4 +35,14 @@ public interface SystemService {
      */
     public Boolean deleteBackup();
 
+    /**
+     * @描述 计划安排邮件发送提醒（每天4点执行）
+     * @参数  []
+     * @返回值  java.lang.Boolean
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-06-03
+     * @修改人和其它信息
+     */
+    public Boolean remindPlan();
+
 }

@@ -81,5 +81,15 @@ public interface PlanDAO {
      */
     public Long getPlanCount(PlanEntity entity);
 
+    /**
+     * @描述 获取当天的计划内容
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    public List<PlanEntity> getTodayPlanList();
+
 
 }

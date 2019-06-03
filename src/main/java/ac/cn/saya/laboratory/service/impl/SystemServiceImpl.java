@@ -1,7 +1,9 @@
 package ac.cn.saya.laboratory.service.impl;
 
 import ac.cn.saya.laboratory.entity.BackupLogEntity;
+import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.persistent.service.BackupLogService;
+import ac.cn.saya.laboratory.persistent.service.PlanService;
 import ac.cn.saya.laboratory.service.SystemService;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
@@ -68,6 +70,10 @@ public class SystemServiceImpl implements SystemService {
     @Resource
     @Qualifier("backupLogService")
     private BackupLogService backupLogService;
+
+    @Resource
+    @Qualifier("planService")
+    private PlanService planService;
 
     @Autowired
     private MailService mailService;
@@ -146,6 +152,37 @@ public class SystemServiceImpl implements SystemService {
             }
         } catch (Exception e){
             logger.error("清理备份数据库计划异常："+ Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return false;
+    }
+
+    /**
+     * @描述 计划安排邮件发送提醒（每天4点执行）
+     * @参数 []
+     * @返回值 java.lang.Boolean
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019-06-03
+     * @修改人和其它信息
+     */
+    @Override
+    // 每天4点执行
+    @Scheduled(cron = "0 0 4 * * ?")
+    public Boolean remindPlan() {
+        List<PlanEntity> list = planService.getTodayPlanList();
+        try {
+            if(list == null || list.size() <= 0){
+                // 今日无计划安排
+                return false;
+            }else{
+                // 今日有计划安排
+                for(PlanEntity item:list){
+                    sendRemndPlanMail(item.getSource(),item.getCreatetime(),item.getDescribe());
+                }
+                return true;
+            }
+        } catch (Exception e) {
+            logger.error("日程安排邮件发送定时任务异常："+ Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
         }
         return false;
@@ -233,7 +270,30 @@ public class SystemServiceImpl implements SystemService {
             logger.error("邮件发送异常："+ Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
         }
+    }
 
+    /**
+     * @描述 发送计划安排邮件提醒
+     * @参数  [userName, createTime, planContent]
+     * @返回值  void
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-06-03
+     * @修改人和其它信息
+     */
+    public void sendRemndPlanMail(String userName, String createTime, String planContent){
+        //创建邮件正文
+        Context context = new Context();
+        context.setVariable("userName", userName);
+        context.setVariable("createTime", createTime);
+        context.setVariable("planContent", planContent);
+        context.setVariable("sendTime", (new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).format(new Date()));
+        try{
+            String emailContent = templateEngine.process("mail/remindPlan", context);
+            mailService.sendHtmlMail(mail,"今日计划安排提醒",emailContent);
+        }catch (Exception e){
+            logger.error("邮件发送异常："+ Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
     }
 
 }

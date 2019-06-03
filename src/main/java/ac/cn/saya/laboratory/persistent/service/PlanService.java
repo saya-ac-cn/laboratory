@@ -204,4 +204,29 @@ public class PlanService {
         return total;
     }
 
+    /**
+     * @描述 获取当天的计划内容
+     * @参数  []
+     * @返回值  java.util.List<ac.cn.saya.laboratory.entity.PlanEntity>
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-06-03
+     * @修改人和其它信息
+     */
+    @Transactional(readOnly = true)
+    public List<PlanEntity> getTodayPlanList(){
+        List<PlanEntity> list = new ArrayList<>();
+        try
+        {
+            list = planDAO.getTodayPlanList();
+            if(list.size() <= 0) {
+                list = null;
+            }
+        }catch (Exception e) {
+            list = null;
+            logger.error("获取当天的计划内容异常："+ Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return list;
+    }
+
 }
