@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
@@ -20,8 +21,7 @@ import java.util.Date;
  * @Description: TODO
  * @Author Saya
  * @Date: 2018/9/22 22:40
- * @Description:
- * 日志记录专用类
+ * @Description: 日志记录专用类
  */
 
 @Service("recordService")
@@ -39,43 +39,43 @@ public class RecordService {
 
     /**
      * 日志记录
+     *
      * @param type
      * @param httpRequest
      */
-    public void record(String type, HttpServletRequest httpRequest)
-    {
-        try{
+    public void record(String type, HttpServletRequest httpRequest) {
+        try {
             //在session中取出管理员的名字
             String user = (String) httpRequest.getSession().getAttribute("user");
             String ip = this.getIpAddr(httpRequest);
-            City cityUtil =new City();
+            City cityUtil = new City();
             String city = cityUtil.getCity(ip, "utf-8");
             Date currentTime = new Date();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String datetime = formatter.format(currentTime);
             LogEntity entity = new LogEntity(user, type, ip, city, datetime);
             logService.insert(entity);
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-            logger.warn("记录日志异常"+ Log4jUtils.getTrace(e));
+            logger.warn("记录日志异常" + Log4jUtils.getTrace(e));
         }
     }
 
     /**
      * 获取用户真实的IP地址，主要是经过代理后，获取的ip地址有误。
+     *
      * @param request
      * @return
      */
     public String getIpAddr(HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");
-        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
         return ip;

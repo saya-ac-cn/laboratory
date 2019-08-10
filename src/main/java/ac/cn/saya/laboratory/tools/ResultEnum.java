@@ -5,6 +5,7 @@ package ac.cn.saya.laboratory.tools;
  */
 public enum ResultEnum {
 
+    DB_ERROR(-8, "数据库读写失败"),
     NOT_CHECKING(-7, "未登录"),
     NOT_PARAMETER(-6, "缺少参数"),
     FORBID_POWER(-5, "接口已关闭"),

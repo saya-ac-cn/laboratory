@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--配置事务通知-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="login*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="get*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="logout*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="set*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="out*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="update*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="fileDownload*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="download*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="create*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="insert*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="update*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="edit*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="delete*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="dashBoard*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="total*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="publish*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="query*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="backupDatabase*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="remindPlan*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 切面 -->
+    <!-- 需要引入spring-boot-aop相关包 -->
+    <aop:config>
+        <aop:pointcut id="allManagerMethod"
+                      expression="execution (* ac.cn.saya.laboratory.service.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="allManagerMethod"/>
+        <!--<aop:advisor advice-ref="txAdvice" pointcut="execution (* ac.cn.saya.laboratory.service.*.*(..))" />-->
+    </aop:config>
+
+
+
+</beans>

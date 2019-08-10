@@ -13,14 +13,14 @@ import javax.servlet.http.HttpServletResponse;
  * @Description: TODO
  * @Author Saya
  * @Date: 2018/11/4 17:03
- * @Description:
- * 财政数据库提供的相关服务
+ * @Description: 财政数据库提供的相关服务
  */
 
 public interface IFinancialService {
 
     /**
      * 获取所有的交易类别
+     *
      * @return
      * @throws Exception
      */
@@ -29,6 +29,7 @@ public interface IFinancialService {
     /**
      * 查看流水（这里不是明细）
      * 根据用户、类型、日期
+     *
      * @param entity
      * @param request
      * @return
@@ -39,6 +40,7 @@ public interface IFinancialService {
     /**
      * 查看流水子明细
      * 根据父id，本位id，flog
+     *
      * @param entity
      * @param request
      * @return
@@ -49,6 +51,7 @@ public interface IFinancialService {
     /**
      * 查询详细的流水明细总数
      * 根据用户、类型、日期
+     *
      * @param entity
      * @param request
      * @return
@@ -59,6 +62,7 @@ public interface IFinancialService {
 
     /**
      * 添加财政记录父+子
+     *
      * @param entity
      * @param request
      * @return
@@ -68,6 +72,7 @@ public interface IFinancialService {
 
     /**
      * 修改财政记录父
+     *
      * @param entity
      * @param request
      * @return
@@ -77,6 +82,7 @@ public interface IFinancialService {
 
     /**
      * 删除财政记录父+子
+     *
      * @param entity
      * @param request
      * @return
@@ -86,6 +92,7 @@ public interface IFinancialService {
 
     /**
      * 添加财政子记录
+     *
      * @param entity
      * @param request
      * @return
@@ -95,6 +102,7 @@ public interface IFinancialService {
 
     /**
      * 修改财政子记录
+     *
      * @param entity
      * @param request
      * @return
@@ -104,6 +112,7 @@ public interface IFinancialService {
 
     /**
      * 删除财政子记录
+     *
      * @param entity
      * @param request
      * @return
@@ -113,6 +122,7 @@ public interface IFinancialService {
 
     /**
      * 导出流水
+     *
      * @param entity
      * @param request
      * @param response
@@ -124,6 +134,7 @@ public interface IFinancialService {
 
     /**
      * 导出完整流水及明细
+     *
      * @param entity
      * @param request
      * @param response
@@ -134,6 +145,7 @@ public interface IFinancialService {
 
     /**
      * 按天统计流水
+     *
      * @param entity
      * @param request
      * @return
@@ -143,6 +155,7 @@ public interface IFinancialService {
 
     /**
      * 按月统计流水
+     *
      * @param entity
      * @param request
      * @return
@@ -152,6 +165,7 @@ public interface IFinancialService {
 
     /**
      * 按年统计流水
+     *
      * @param entity
      * @param request
      * @return
@@ -161,6 +175,7 @@ public interface IFinancialService {
 
     /**
      * 按天导出流水统计报表
+     *
      * @param entity
      * @param request
      * @param response
@@ -171,6 +186,7 @@ public interface IFinancialService {
 
     /**
      * 按月导出流水统计报表
+     *
      * @param entity
      * @param request
      * @param response
@@ -181,6 +197,7 @@ public interface IFinancialService {
 
     /**
      * 按年导出流水统计报表
+     *
      * @param entity
      * @param request
      * @param response
@@ -188,6 +205,5 @@ public interface IFinancialService {
      * @throws Exception
      */
     public Result<Object> outTransactionForYearExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws Exception;
-
 
 }

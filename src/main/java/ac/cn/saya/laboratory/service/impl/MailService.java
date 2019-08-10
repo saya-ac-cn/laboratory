@@ -40,29 +40,26 @@ public class MailService {
      * @param content
      * @return
      * @throws Exception
-     *
      */
-    public Boolean sendHtmlMail(String to, String subject, String content)
-    {
+    public Boolean sendHtmlMail(String to, String subject, String content) {
         MimeMessage message = javaMailSender.createMimeMessage();
         try {
             //true表示需要创建一个multipart message
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setFrom(new InternetAddress(from,"Saya.ac.cn-实验室中心" ));
+            helper.setFrom(new InternetAddress(from, "Saya.ac.cn-实验室中心"));
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(content, true);
             javaMailSender.send(message);
             return true;
         } catch (MessagingException e) {
-            logger.error("发送邮件时发生异常："+ Log4jUtils.getTrace(e));
+            logger.error("发送邮件时发生异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
-        }catch (UnsupportedEncodingException e)
-        {
-            logger.error("发送邮件时，发送者地址异常："+ Log4jUtils.getTrace(e));
+        } catch (UnsupportedEncodingException e) {
+            logger.error("发送邮件时，发送者地址异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
-        }catch (Exception e){
-            logger.error("发送邮件时发生异常："+ Log4jUtils.getTrace(e));
+        } catch (Exception e) {
+            logger.error("发送邮件时发生异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
         }
         return false;

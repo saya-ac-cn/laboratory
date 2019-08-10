@@ -2,6 +2,7 @@ package ac.cn.saya.laboratory.persistent.service;
 
 
 import ac.cn.saya.laboratory.entity.NewsEntity;
+import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.dao.BatchDAO;
 import ac.cn.saya.laboratory.persistent.dao.NewsDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
@@ -11,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.Map;
  */
 
 @Service("newsService")
-@Transactional(isolation = Isolation.READ_COMMITTED, readOnly = false, rollbackFor=Exception.class)
 public class NewsService {
 
 
@@ -53,16 +51,13 @@ public class NewsService {
      * @修改人和其它信息
      */
     public Integer publishNews(NewsEntity entity) {
-        Integer flog = null;
-        try
-        {
-            flog = newsDAO.insertNews(entity);
-        }catch (Exception e) {
-            flog = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("发布动态异常："+ Log4jUtils.getTrace(e));
+        try {
+            return newsDAO.insertNews(entity);
+        } catch (Exception e) {
+            logger.error("发布动态异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return flog;
     }
 
     /**
@@ -75,16 +70,13 @@ public class NewsService {
      * @修改人和其它信息
      */
     public Integer editNews(NewsEntity entity) {
-        Integer flog = null;
-        try
-        {
-            flog = newsDAO.updateNews(entity);
-        }catch (Exception e) {
-            flog = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("编辑修改动态异常："+ Log4jUtils.getTrace(e));
+        try {
+            return newsDAO.updateNews(entity);
+        } catch (Exception e) {
+            logger.error("编辑修改动态异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return flog;
     }
 
     /**
@@ -97,38 +89,31 @@ public class NewsService {
      * @修改人和其它信息
      */
     public Integer deleteNews(NewsEntity entity) {
-        Integer flog = null;
-        try
-        {
-            flog = newsDAO.deleteNews(entity);
-        }catch (Exception e) {
-            flog = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("删除动态异常："+ Log4jUtils.getTrace(e));
+        try {
+            return newsDAO.deleteNews(entity);
+        } catch (Exception e) {
+            logger.error("删除动态异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return flog;
     }
 
     /**
      * @描述 查询一条动态
-     * @参数  [entity]
-     * @返回值  ac.cn.saya.datacenter.entity.NewsEntity
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2019/1/12
+     * @参数 [entity]
+     * @返回值 ac.cn.saya.datacenter.entity.NewsEntity
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/12
      * @修改人和其它信息
      */
-    @Transactional(readOnly = true)
-    public NewsEntity getOneNews(NewsEntity entity){
-        NewsEntity result = null;
-        try
-        {
-            result = newsDAO.getOneNews(entity);
-        }catch (Exception e) {
-            result = null;
-            logger.error("查询动态异常："+ Log4jUtils.getTrace(e));
+    public NewsEntity getOneNews(NewsEntity entity) {
+        try {
+            return newsDAO.getOneNews(entity);
+        } catch (Exception e) {
+            logger.error("查询动态异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return result;
     }
 
     /**
@@ -140,21 +125,19 @@ public class NewsService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
-    @Transactional(readOnly = true)
     public List<NewsEntity> getNewsPage(NewsEntity entity) {
         List<NewsEntity> list = new ArrayList<>();
-        try
-        {
+        try {
             list = newsDAO.getNewsPage(entity);
-            if(list.size() <= 0) {
+            if (list.size() <= 0) {
                 list = null;
             }
-        }catch (Exception e) {
-            list = null;
-            logger.error("获取分页后的动态发生异常："+ Log4jUtils.getTrace(e));
+            return list;
+        } catch (Exception e) {
+            logger.error("获取分页后的动态发生异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return list;
     }
 
     /**
@@ -166,39 +149,32 @@ public class NewsService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
-    @Transactional(readOnly = true)
     public Long getNewsCount(NewsEntity entity) {
-        Long total = null;
-        try
-        {
-            total = newsDAO.getNewsCount(entity);
-        }catch (Exception e) {
-            total = Long.valueOf(ResultEnum.ERROP.getCode());
-            logger.error("获取动态总数时发生异常："+Log4jUtils.getTrace(e));
+        try {
+            return newsDAO.getNewsCount(entity);
+        } catch (Exception e) {
+            logger.error("获取动态总数时发生异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return total;
     }
 
     /**
      * @描述 获取上一条和下一条动态
-     * @参数  [newsId]
-     * @返回值  java.util.Map<java.lang.String,java.lang.String>
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2019-03-18
+     * @参数 [newsId]
+     * @返回值 java.util.Map<java.lang.String   ,   java.lang.String>
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019-03-18
      * @修改人和其它信息
      */
-    @Transactional(readOnly = true)
-    public Map<String,String> getNewsPreAndNext(Integer newsId){
-        Map<String,String> result = null;
-        try
-        {
-            result = batchDAO.getNewsNotesPreAndNext(1,newsId);
-        }catch (Exception e) {
-            logger.error("获取上一条和下一条动态时发生异常："+Log4jUtils.getTrace(e));
+    public Map<String, String> getNewsPreAndNext(Integer newsId) {
+        try {
+            return batchDAO.getNewsNotesPreAndNext(1, newsId);
+        } catch (Exception e) {
+            logger.error("获取上一条和下一条动态时发生异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return result;
     }
 
 }

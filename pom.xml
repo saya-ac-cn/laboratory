@@ -81,7 +81,11 @@
             <!--<artifactId>spring-boot-starter-tomcat</artifactId>-->
             <!--<scope>provided</scope>-->
         <!--</dependency>-->
-
+        <!--加入对事务的支持-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

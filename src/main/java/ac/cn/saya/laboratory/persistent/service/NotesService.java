@@ -1,6 +1,7 @@
 package ac.cn.saya.laboratory.persistent.service;
 
 import ac.cn.saya.laboratory.entity.NotesEntity;
+import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.dao.BatchDAO;
 import ac.cn.saya.laboratory.persistent.dao.NotesDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
@@ -10,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -24,11 +23,9 @@ import java.util.Map;
  * @Description: TODO
  * @Author Saya
  * @Date: 2019/1/19 18:52
- * @Description:
- * 笔记接口实现类
+ * @Description: 笔记接口实现类
  */
 @Service("notesService")
-@Transactional(isolation = Isolation.READ_COMMITTED, readOnly = false, rollbackFor=Exception.class)
 public class NotesService {
 
     private static Logger logger = LoggerFactory.getLogger(NotesService.class);
@@ -51,16 +48,13 @@ public class NotesService {
      * @修改人和其它信息
      */
     public Integer insertNotes(NotesEntity entity) {
-        Integer flog = null;
-        try
-        {
-            flog = notesDAO.insertNotes(entity);
-        }catch (Exception e) {
-            flog = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("创建笔记异常："+ Log4jUtils.getTrace(e));
+        try {
+            return notesDAO.insertNotes(entity);
+        } catch (Exception e) {
+            logger.error("创建笔记异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return flog;
     }
 
     /**
@@ -73,16 +67,13 @@ public class NotesService {
      * @修改人和其它信息
      */
     public Integer editNotes(NotesEntity entity) {
-        Integer flog = null;
-        try
-        {
-            flog = notesDAO.updateNotes(entity);
-        }catch (Exception e) {
-            flog = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("编辑修改笔记异常："+ Log4jUtils.getTrace(e));
+        try {
+            return notesDAO.updateNotes(entity);
+        } catch (Exception e) {
+            logger.error("编辑修改笔记异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return flog;
     }
 
     /**
@@ -95,16 +86,13 @@ public class NotesService {
      * @修改人和其它信息
      */
     public Integer deleteNotes(NotesEntity entity) {
-        Integer flog = null;
-        try
-        {
-            flog = notesDAO.deleteNotes(entity);
-        }catch (Exception e) {
-            flog = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("删除笔记异常："+ Log4jUtils.getTrace(e));
+        try {
+            return notesDAO.deleteNotes(entity);
+        } catch (Exception e) {
+            logger.error("删除笔记异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return flog;
     }
 
     /**
@@ -116,18 +104,14 @@ public class NotesService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
-    @Transactional(readOnly = true)
     public NotesEntity getOneNotes(NotesEntity entity) {
-        NotesEntity result = null;
-        try
-        {
-            result = notesDAO.getOneNotes(entity);
-        }catch (Exception e) {
-            result = null;
-            logger.error("查询笔记异常："+ Log4jUtils.getTrace(e));
+        try {
+            return notesDAO.getOneNotes(entity);
+        } catch (Exception e) {
+            logger.error("查询笔记异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return result;
     }
 
     /**
@@ -139,21 +123,19 @@ public class NotesService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
-    @Transactional(readOnly = true)
     public List<NotesEntity> getNotesPage(NotesEntity entity) {
         List<NotesEntity> list = new ArrayList<>();
-        try
-        {
+        try {
             list = notesDAO.getNotesPage(entity);
-            if(list.size() <= 0) {
+            if (list.size() <= 0) {
                 list = null;
             }
-        }catch (Exception e) {
-            list = null;
-            logger.error("获取分页后的笔记发生异常："+ Log4jUtils.getTrace(e));
+            return list;
+        } catch (Exception e) {
+            logger.error("获取分页后的笔记发生异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return list;
     }
 
     /**
@@ -165,38 +147,31 @@ public class NotesService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
-    @Transactional(readOnly = true)
     public Long getNotesCount(NotesEntity entity) {
-        Long total = null;
-        try
-        {
-            total = notesDAO.getNotesCount(entity);
-        }catch (Exception e) {
-            total = Long.valueOf(ResultEnum.ERROP.getCode());
-            logger.error("获取笔记总数时发生异常："+Log4jUtils.getTrace(e));
+        try {
+            return notesDAO.getNotesCount(entity);
+        } catch (Exception e) {
+            logger.error("获取笔记总数时发生异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return total;
     }
 
     /**
      * @描述 查询指定id附近的笔记
-     * @参数  [notesId]
-     * @返回值  java.util.Map<java.lang.String,java.lang.String>
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2019-04-02
+     * @参数 [notesId]
+     * @返回值 java.util.Map<java.lang.String   ,   java.lang.String>
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019-04-02
      * @修改人和其它信息
      */
-    @Transactional(readOnly = true)
-    public Map<String,String> getNotesPreAndNext(Integer notesId){
-        Map<String,String> result = null;
-        try
-        {
-            result = batchDAO.getNewsNotesPreAndNext(2,notesId);
-        }catch (Exception e) {
-            logger.error("获取上下笔记时发生异常："+Log4jUtils.getTrace(e));
+    public Map<String, String> getNotesPreAndNext(Integer notesId) {
+        try {
+            return batchDAO.getNewsNotesPreAndNext(2, notesId);
+        } catch (Exception e) {
+            logger.error("获取上下笔记时发生异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return result;
     }
 }

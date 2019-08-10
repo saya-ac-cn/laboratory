@@ -30,6 +30,7 @@
     <!-- 查询日志 分页-->
     <select id="selectPage" parameterType="log" resultMap="logList">
         select
+            a.id,
             a.user,
             a.type,
             b.describe,

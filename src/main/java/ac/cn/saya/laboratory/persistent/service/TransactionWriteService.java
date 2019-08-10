@@ -2,6 +2,7 @@ package ac.cn.saya.laboratory.persistent.service;
 
 import ac.cn.saya.laboratory.entity.TransactionInfoEntity;
 import ac.cn.saya.laboratory.entity.TransactionListEntity;
+import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.dao.TransactionWriteDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
@@ -10,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -25,8 +24,7 @@ import javax.annotation.Resource;
  */
 
 @Service("transactionWriteService")
-@Transactional(isolation = Isolation.READ_COMMITTED, readOnly = false, rollbackFor=Exception.class)
-public class TransactionWriteService{
+public class TransactionWriteService {
 
     private static Logger logger = LoggerFactory.getLogger(TransactionWriteService.class);
 
@@ -45,16 +43,13 @@ public class TransactionWriteService{
      * @修改人和其它信息
      */
     public Integer insertTransactionInfo(TransactionInfoEntity entity) {
-        Integer flog = null;
-        try
-        {
-            flog = transactionWriteDAO.insertTransactionInfo(entity);
-        }catch (Exception e) {
-            flog = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("写入到财政明细表异常："+ Log4jUtils.getTrace(e));
+        try {
+            return transactionWriteDAO.insertTransactionInfo(entity);
+        } catch (Exception e) {
+            logger.error("写入到财政明细表异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return flog;
     }
 
     /**
@@ -68,19 +63,18 @@ public class TransactionWriteService{
      */
     public Integer insertTransactionList(TransactionListEntity entity) {
         Integer tradeId = null;
-        try
-        {
+        try {
             tradeId = transactionWriteDAO.insertTransactionList(entity);
-            if(tradeId > 0) {
+            if (tradeId > 0) {
                 // 取出主键回填的值
                 tradeId = entity.getTradeId();
             }
-        }catch (Exception e) {
-            tradeId = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("写入到财政父表异常："+ Log4jUtils.getTrace(e));
+            return tradeId;
+        } catch (Exception e) {
+            logger.error("写入到财政父表异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return tradeId;
     }
 
     /**
@@ -93,16 +87,13 @@ public class TransactionWriteService{
      * @修改人和其它信息
      */
     public Integer updateTransactionInfo(TransactionInfoEntity entity) {
-        Integer flog = null;
-        try
-        {
-            flog = transactionWriteDAO.updateTransactionInfo(entity);
-        }catch (Exception e) {
-            flog = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("修改财政明细表异常："+ Log4jUtils.getTrace(e));
+        try {
+            return transactionWriteDAO.updateTransactionInfo(entity);
+        } catch (Exception e) {
+            logger.error("修改财政明细表异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return flog;
     }
 
     /**
@@ -115,16 +106,13 @@ public class TransactionWriteService{
      * @修改人和其它信息
      */
     public Integer updateTransactionList(TransactionListEntity entity) {
-        Integer flog = null;
-        try
-        {
-            flog = transactionWriteDAO.updateTransactionList(entity);
-        }catch (Exception e) {
-            flog = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("修改财政父表异常："+ Log4jUtils.getTrace(e));
+        try {
+            return transactionWriteDAO.updateTransactionList(entity);
+        } catch (Exception e) {
+            logger.error("修改财政父表异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return flog;
     }
 
     /**
@@ -138,16 +126,13 @@ public class TransactionWriteService{
      * @修改人和其它信息
      */
     public Integer deleteTransactionInfo(Integer id, String source) {
-        Integer flog = null;
-        try
-        {
-            flog = transactionWriteDAO.deleteTransactionInfo(id);
-        }catch (Exception e) {
-            flog = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("删除财政明细表异常："+ Log4jUtils.getTrace(e));
+        try {
+            return transactionWriteDAO.deleteTransactionInfo(id);
+        } catch (Exception e) {
+            logger.error("删除财政明细表异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return flog;
     }
 
     /**
@@ -161,15 +146,13 @@ public class TransactionWriteService{
      * @修改人和其它信息
      */
     public Integer deleteTransactionList(Integer tradeId, String source) {
-        Integer flog = null;
-        try
-        {
-            flog = transactionWriteDAO.deleteTransactionList(tradeId, source);
-        }catch (Exception e) {
-            flog = ResultEnum.UNKONW_ERROR.getCode();
-            logger.error("删除财政父表异常："+ Log4jUtils.getTrace(e));
+        try {
+            return transactionWriteDAO.deleteTransactionList(tradeId, source);
+        } catch (Exception e) {
+            logger.error("删除财政父表异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return flog;
     }
+
 }
