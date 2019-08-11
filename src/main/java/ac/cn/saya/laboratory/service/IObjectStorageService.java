@@ -79,7 +79,7 @@ public interface IObjectStorageService {
      * @创建时间  2019/1/15
      * @修改人和其它信息
      */
-    public Result<Object> uploadFile(MultipartFile file, HttpServletRequest request) throws  Exception;
+    public Result<Object> uploadFile(MultipartFile file, String uid, HttpServletRequest request) throws  Exception;
 
     /**
      * @描述 修改文件信息

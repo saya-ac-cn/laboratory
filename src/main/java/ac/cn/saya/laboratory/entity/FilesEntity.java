@@ -18,6 +18,11 @@ public class FilesEntity extends BaseEntity{
     private Integer id;
 
     /**
+     * 文件uid（前端uid）
+     */
+    private String uid;
+
+    /**
      * 文件名
      */
     private String filename;
@@ -51,6 +56,14 @@ public class FilesEntity extends BaseEntity{
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getFilename() {

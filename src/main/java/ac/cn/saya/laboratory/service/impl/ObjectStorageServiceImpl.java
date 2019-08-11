@@ -263,7 +263,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
      * @修改人和其它信息
      */
     @Override
-    public Result<Object> uploadFile(MultipartFile file, HttpServletRequest request) throws Exception {
+    public Result<Object> uploadFile(MultipartFile file, String uid, HttpServletRequest request) throws Exception {
         Result<String> upload = UploadUtils.uploadFile(file, request);
         if (upload.getCode() == 0) {
             //logo上传成功
@@ -278,6 +278,12 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             entity.setStatus("2");
             // 文件在服务器的存放目录
             entity.setFileurl(successUrl);
+            // 设置文件前端uid，方便删除
+            if (StringUtils.isEmpty(uid)){
+                entity.setUid("null");
+            }else {
+                entity.setUid(uid);
+            }
             if (filesService.insertFile(entity) > 0) {
                 /**
                  * 记录日志

@@ -118,8 +118,8 @@ public class ObjectStorageController {
      * @修改人和其它信息
      */
     @PostMapping(value = "files/upload")
-    public Result<Object> uploadFile(@RequestBody MultipartFile file, HttpServletRequest request) throws Exception{
-        return objectStorageServiceImpl.uploadFile(file, request);
+    public Result<Object> uploadFile(@RequestBody MultipartFile file,@RequestParam(value = "uid", required = false) String uid, HttpServletRequest request) throws Exception{
+        return objectStorageServiceImpl.uploadFile(file, uid, request);
     }
 
     /**

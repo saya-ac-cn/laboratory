@@ -8,6 +8,7 @@
     <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->
     <insert id="insertFile" useGeneratedKeys="true" keyProperty="id" parameterType="files" >
         INSERT INTO `files` (
+            `uid`,
             `filename`,
             `fileurl`,
             `source`,
@@ -16,6 +17,7 @@
         )
         VALUES
             (
+                #{uid},
                 #{filename},
                 #{fileurl},
                 #{source},
@@ -36,7 +38,7 @@
 
     <!--删除文件记录-->
     <delete id="deleteFile" parameterType="files">
-        delete from `files` where  `id` = #{id} and source = #{source}
+        delete from `files` where source = #{source} and (`id` = #{id} or `uid` = #{uid})
     </delete>
 
     <!-- 获取一条文件信息-->
@@ -46,8 +48,11 @@
         from
         files a
         <where>
-            <if test = "id != null and id != ''">
+            <if test = "id != null">
                 and a.id  = #{id}
+            </if>
+            <if test = "uid != null and uid != ''">
+                and a.uid  = #{uid}
             </if>
             <if test="status != null and status != ''">
                 and a.status = #{status}
@@ -72,8 +77,11 @@
         from
             files a
         <where>
-            <if test = "id != null and id != ''">
+            <if test = "id != null">
                 and a.id  = #{id}
+            </if>
+            <if test = "uid != null and uid != ''">
+                and a.uid  = #{uid}
             </if>
             <if test="status != null and status != ''">
                 and a.status = #{status}

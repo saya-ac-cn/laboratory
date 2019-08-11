@@ -32,6 +32,7 @@
             <tx:method name="query*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
             <tx:method name="backupDatabase*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
             <tx:method name="remindPlan*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
+            <tx:method name="upload*" read-only="false" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
             <tx:method name="*" read-only="true" propagation="REQUIRED" isolation="REPEATABLE_READ" rollback-for="MyException"/>
         </tx:attributes>
     </tx:advice>

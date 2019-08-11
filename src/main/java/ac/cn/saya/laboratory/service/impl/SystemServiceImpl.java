@@ -147,7 +147,7 @@ public class SystemServiceImpl implements SystemService {
                 for (BackupLogEntity item : list) {
                     UploadUtils.deleteFile(item.getUrl());
                 }
-                // 删除数据库激励
+                // 删除数据库记录
                 backupLogService.deleteBackup(queryEntity);
             }
         } catch (Exception e) {
