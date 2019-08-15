@@ -431,6 +431,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     public Result<Object> downloadFileForAdmin(Integer id, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (id == null) {
             // 缺少参数
+            response.setStatus(400);
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
@@ -445,6 +446,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             File thisFile = UploadUtils.getFilePath(resultEntity.getFileurl());
             if (thisFile == null) {
                 // 文件不存在
+                response.setStatus(404);
                 throw new MyException(ResultEnum.NOT_EXIST);
             }
             FileInputStream fis = null;
@@ -484,6 +486,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     public Result<Object> downloadBackUpDB(String archiveDate, HttpServletResponse response) throws Exception {
         if (StringUtils.isEmpty(archiveDate)) {
             // 缺少参数
+            response.setStatus(400);
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         BackupLogEntity queryEntity = new BackupLogEntity();
@@ -495,6 +498,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             File thisFile = UploadUtils.getFilePath(resultEntity.getUrl());
             if (thisFile == null) {
                 // 文件不存在
+                response.setStatus(404);
                 throw new MyException(ResultEnum.NOT_EXIST);
             }
             FileInputStream fis = null;

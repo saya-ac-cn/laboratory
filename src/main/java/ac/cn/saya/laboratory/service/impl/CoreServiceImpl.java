@@ -337,6 +337,7 @@ public class CoreServiceImpl implements ICoreService {
             //获取满足条件的总记录（不分页）
             Long pageSize = logService.selectCount(entity);
             if (pageSize <= 0) {
+                response.setStatus(404);
                 return ResultUtil.error(-1, "没有可导出的数据");
             }
             //设置行索引
@@ -363,6 +364,7 @@ public class CoreServiceImpl implements ICoreService {
             response.flushBuffer();
             OutExcelUtils.outExcelTemplateSimple(keys, titles, jsonObjectList, out);
         } catch (Exception e) {
+            response.setStatus(500);
             e.printStackTrace();
         }
         return null;
@@ -447,6 +449,7 @@ public class CoreServiceImpl implements ICoreService {
                     i = bis.read(buff);
                 }
             } catch (IOException e) {
+                response.setStatus(500);
                 e.printStackTrace();
             } finally {
                 if (bis != null) {

@@ -2,6 +2,8 @@ package ac.cn.saya.laboratory.tools;
 
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Random;
 
@@ -23,13 +25,13 @@ public class RandomUtil {
      * @return
      */
     public static String getRandomFileName() {
-        SimpleDateFormat simpleDateFormat;
-        simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-        Date date = new Date();
-        String str = simpleDateFormat.format(date);
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String str = now.format(format);
         Random random = new Random();
-        int rannum = (int) (random.nextDouble() * (99999 - 10000 + 1)) + 10000;// 获取5位随机数
-        return str + rannum;// 当前时间
+        // 获取5位随机数
+        int rannum = (int) (random.nextDouble() * (99999 - 10000 + 1)) + 10000;
+        return str + rannum;
     }
     public static void main(String[] args) {
         String fileName = RandomUtil.getRandomFileName();
