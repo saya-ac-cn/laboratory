@@ -197,6 +197,7 @@ public class FrontendServiceImpl implements IFrontendService {
     public Result<Object> downloadFile(String user, Integer id, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (id == null) {
             // 缺少参数
+            response.setStatus(400);
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         FilesEntity queryEntity = new FilesEntity();
@@ -209,6 +210,7 @@ public class FrontendServiceImpl implements IFrontendService {
             File thisFile = UploadUtils.getFilePath(resultEntity.getFileurl());
             if (thisFile == null) {
                 // 文件不存在
+                response.setStatus(404);
                 throw new MyException(ResultEnum.NOT_EXIST);
             }
             FileInputStream fis = null;

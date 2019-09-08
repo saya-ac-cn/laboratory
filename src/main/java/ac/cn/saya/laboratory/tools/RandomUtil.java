@@ -20,7 +20,7 @@ import java.util.Random;
 public class RandomUtil {
 
     /**
-     * 生成随机文件名：当前年月日时分秒+五位随机数
+     * 生成随机文件名：当前年月日+五位随机数
      *
      * @return
      */

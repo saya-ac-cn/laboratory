@@ -666,7 +666,7 @@ public class FinancialServiceImpl implements IFinancialService {
             List<JSONObject> jsonObjectList = new ArrayList<>();
             for (TransactionInfoEntity item : entityList) {
                 JSONObject json = new JSONObject();
-                json.put("tradeId", item.getTradeId());
+                json.put("tradeId", item.getTransactionListEntity().getTradeId());
                 json.put("deposited", item.getTransactionListEntity().getDeposited());
                 json.put("expenditure", item.getTransactionListEntity().getExpenditure());
                 json.put("transactionType", item.getTransactionListEntity().getTradeTypeEntity().getTransactionType());
