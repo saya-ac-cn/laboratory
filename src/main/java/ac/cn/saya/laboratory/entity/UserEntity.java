@@ -53,6 +53,10 @@ public class UserEntity extends BaseEntity {
      */
     private String logo;
     /**
+     * 用户设置的背景
+     */
+    private String background;
+    /**
      * 修改时间
      */
     private String updateTime;
@@ -138,6 +142,14 @@ public class UserEntity extends BaseEntity {
 
     public void setLogo(String logo) {
         this.logo = logo;
+    }
+
+    public String getBackground() {
+        return background;
+    }
+
+    public void setBackground(String background) {
+        this.background = background;
     }
 
     public String getUpdateTime() {
