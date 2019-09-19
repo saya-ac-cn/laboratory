@@ -109,11 +109,13 @@ public class CoreServiceImpl implements ICoreService {
             throw new MyException(ResultEnum.ERROP);
         }
         if (userSession != null) {
+            Map<String, Object> result = userService.queryUserRecentlyInfo(user.getUser());
             // session 检查到已登录（同一机器设备中）
             entity.setPassword(null);
             // 转换成浏览器可以直接识别的url
             entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
-            return ResultUtil.success(entity);
+            result.put("user",entity);
+            return ResultUtil.success(result);
         } else {
             // 未登录（当前设备）
             // 在系统中查询该用户是否存在
@@ -143,8 +145,10 @@ public class CoreServiceImpl implements ICoreService {
                 entity.setPassword(null);
                 // 转换成浏览器可以直接识别的url
                 entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
+                Map<String, Object> result = userService.queryUserRecentlyInfo(user.getUser());
+                result.put("user",entity);
                 //返回登录成功
-                return ResultUtil.success(entity);
+                return ResultUtil.success(result);
             } else {
                 //密码错误
                 throw new MyException(ResultEnum.ERROP);

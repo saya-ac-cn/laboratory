@@ -1,9 +1,13 @@
 package ac.cn.saya.laboratory.persistent.service;
 
+import ac.cn.saya.laboratory.entity.LogEntity;
+import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.dao.BatchDAO;
+import ac.cn.saya.laboratory.persistent.dao.LogDAO;
+import ac.cn.saya.laboratory.persistent.dao.PlanDAO;
 import ac.cn.saya.laboratory.persistent.dao.UserDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +43,14 @@ public class UserService {
     @Resource
     @Qualifier("batchDAO")
     private BatchDAO batchDAO;
+
+    @Resource
+    @Qualifier("logDAO")
+    private LogDAO logDAO;
+
+    @Resource
+    @Qualifier("planDAO")
+    private PlanDAO planDAO;
 
     /**
      * @描述 获取用户的信息
@@ -173,6 +186,39 @@ public class UserService {
             logger.error(CurrentLineInfo.printCurrentLineInfo());
             throw new MyException(ResultEnum.DB_ERROR);
         }
+    }
+
+    /**
+     * @描述 查询用户当日的计划安排，最近的一次操作
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-09-19
+     * @修改人和其它信息
+     */
+    public Map<String, Object> queryUserRecentlyInfo(String user) {
+        List<PlanEntity> plan = null;
+        LogEntity log = null;
+        Map<String, Object> result = new HashMap<>();
+        try {
+            // 查询用户当日安排
+            plan = planDAO.getTodayPlanListByUser(user);
+            result.put("plan",plan);
+        } catch (Exception e) {
+            logger.error("查询用户当日安排失败" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            result.put("plan",null);
+        }
+        try {
+            // 查询用户最近的操作
+            log = logDAO.queryRecentlyLog(user);
+            result.put("log",log);
+        } catch (Exception e) {
+            logger.error("查询用户最近的操作失败" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            result.put("log",null);
+        }
+        return result;
     }
 
 }

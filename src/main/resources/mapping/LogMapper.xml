@@ -75,6 +75,25 @@
         </where>
     </select>
 
+    <!-- 查询该用户最近的一次操作-->
+    <select id="queryRecentlyLog" resultMap="logList">
+        select
+            a.id,
+            a.user,
+            a.type,
+            b.describe,
+            a.ip,
+            a.city,
+            a.date
+        from
+          log a
+          left join logtype b on a.type = b.type
+        where
+          a.user  = #{user}
+        order by a.id desc
+        limit 1
+    </select>
+
 
 
 </mapper> 

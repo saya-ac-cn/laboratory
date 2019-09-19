@@ -3,6 +3,7 @@ package ac.cn.saya.laboratory.persistent.dao;
 
 import ac.cn.saya.laboratory.entity.PlanEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -82,7 +83,7 @@ public interface PlanDAO {
     public Long getPlanCount(PlanEntity entity);
 
     /**
-     * @描述 获取当天的计划内容
+     * @描述 获取所有用户当天的计划内容
      * @参数
      * @返回值
      * @创建人  saya.ac.cn-刘能凯
@@ -90,6 +91,16 @@ public interface PlanDAO {
      * @修改人和其它信息
      */
     public List<PlanEntity> getTodayPlanList();
+
+    /**
+     * @描述 获取指定用户当天的计划内容
+     * @参数 source 查询的用户
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    public List<PlanEntity> getTodayPlanListByUser(@Param("source") String source);
 
 
 }

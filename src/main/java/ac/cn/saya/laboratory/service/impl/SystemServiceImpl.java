@@ -177,7 +177,7 @@ public class SystemServiceImpl implements SystemService {
             } else {
                 // 今日有计划安排
                 for (PlanEntity item : list) {
-                    sendRemndPlanMail(item.getSource(), item.getCreatetime(), item.getDescribe());
+                    sendRemndPlanMail(item.getUpdatetime(), item.getSource(), item.getCreatetime(), item.getDescribe());
                 }
                 return true;
             }
@@ -274,13 +274,13 @@ public class SystemServiceImpl implements SystemService {
 
     /**
      * @描述 发送计划安排邮件提醒
-     * @参数 [userName, createTime, planContent]
+     * @参数 [userEmail, userName, createTime, planContent]
      * @返回值 void
      * @创建人 saya.ac.cn-刘能凯
      * @创建时间 2019-06-03
      * @修改人和其它信息
      */
-    public void sendRemndPlanMail(String userName, String createTime, String planContent) {
+    public void sendRemndPlanMail(String userEmail, String userName, String createTime, String planContent) {
         //创建邮件正文
         Context context = new Context();
         context.setVariable("userName", userName);
@@ -289,7 +289,7 @@ public class SystemServiceImpl implements SystemService {
         context.setVariable("sendTime", (new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).format(new Date()));
         try {
             String emailContent = templateEngine.process("mail/remindPlan", context);
-            mailService.sendHtmlMail(mail, "今日计划安排提醒", emailContent);
+            mailService.sendHtmlMail(userEmail, "今日计划安排提醒", emailContent);
         } catch (Exception e) {
             logger.error("邮件发送异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());

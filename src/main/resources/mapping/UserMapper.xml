@@ -37,6 +37,9 @@
             <if test="autograph != null and autograph != ''">
                 autograph = #{autograph},
             </if>
+            <if test="background != null and background != ''">
+                background = #{background},
+            </if>
             <if test="logo != null and logo != ''">
                 logo = #{logo},
             </if>

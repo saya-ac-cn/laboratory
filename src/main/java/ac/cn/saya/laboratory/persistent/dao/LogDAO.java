@@ -3,6 +3,7 @@ package ac.cn.saya.laboratory.persistent.dao;
 import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.LogTypeEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -50,5 +51,15 @@ public interface LogDAO {
      * @return
      */
     public Long selectCount(LogEntity entity);
+
+    /**
+     * @描述 查询该用户最近的一次操作
+     * @param user 查询的用户
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-09-19
+     * @修改人和其它信息
+     */
+    public LogEntity queryRecentlyLog(@Param("user") String user);
 
 }

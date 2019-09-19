@@ -110,13 +110,22 @@
         </where>
     </select>
 
-    <!--获取当天的计划内容-->
+    <!--获取所有用户当天的计划内容-->
     <select id="getTodayPlanList" resultType="plan">
         select
             a.`id`,a.`source`,a.`describe`,a.`plandate`,a.`createtime`,b.email as updatetime
         from
               `plan` a left join `user` b on a.source = b.`user`
         where date_format(a.plandate,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')
+    </select>
+
+    <!--获取指定用户当天的计划内容-->
+    <select id="getTodayPlanListByUser" resultType="plan">
+        select
+            a.`id`,a.`source`,a.`describe`,a.`plandate`,a.`createtime`
+        from
+              `plan` a
+        where a.source = #{source} and date_format(a.plandate,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')
     </select>
 
 </mapper>
