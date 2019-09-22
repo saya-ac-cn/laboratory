@@ -34,7 +34,6 @@ public class PlanService {
     private PlanDAO planDAO;
 
     /**
-     * @param entity
      * @描述 发布计划安排
      * @参数
      * @返回值
@@ -54,7 +53,7 @@ public class PlanService {
             }
             return flog;
         } catch (Exception e) {
-            logger.error("发布计划安排：" + Log4jUtils.getTrace(e));
+            logger.error("发布计划安排异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
             throw new MyException(ResultEnum.DB_ERROR);
         }
@@ -153,9 +152,8 @@ public class PlanService {
      * @修改人和其它信息
      */
     public List<PlanEntity> getPlanList(PlanEntity entity) {
-        List<PlanEntity> list = new ArrayList<>();
         try {
-            list = planDAO.getPlanList(entity);
+            List<PlanEntity> list = planDAO.getPlanList(entity);
             if (list.size() <= 0) {
                 list = null;
             }

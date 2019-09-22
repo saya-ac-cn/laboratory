@@ -6,7 +6,7 @@
 
     <!--查询用户-->
     <select id="queryUser"  parameterType="String"  resultType="user">
-        select * from user a where a.user = #{user} or a.email = #{user}
+        select `user`,`password`,`sex`,`qq`,`email`,`phone`,`birthday`,`hometown`,`autograph`,`logo`,`background` as backgroundId,b.weburl as background,`updateTime` from user a left join (select id, weburl from pictures where type = 1 and source = 'Pandora') b on a.background = b.id where a.user = #{user} or a.email = #{user}
     </select>
 
     <!-- 修改用户资料  -->

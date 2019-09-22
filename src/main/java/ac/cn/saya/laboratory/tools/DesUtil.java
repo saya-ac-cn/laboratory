@@ -21,7 +21,8 @@ public class DesUtil {
 
     private final static String DES = "DES";
     private final static String ENCODE = "UTF-8";
-    private final static String defaultKey = "testsaya";//密钥，必须为8位，不要随意更改
+    //密钥，必须为8位，不要随意更改
+    private final static String defaultKey = "testsaya";
 
     /**
      * 使用 默认key 加密

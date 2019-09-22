@@ -52,6 +52,12 @@ public class UserEntity extends BaseEntity {
      * 头像地址
      */
     private String logo;
+
+    /**
+     * 用户设置的背景图片编号
+     */
+    private Integer backgroundId;
+
     /**
      * 用户设置的背景
      */
@@ -142,6 +148,14 @@ public class UserEntity extends BaseEntity {
 
     public void setLogo(String logo) {
         this.logo = logo;
+    }
+
+    public Integer getBackgroundId() {
+        return backgroundId;
+    }
+
+    public void setBackgroundId(Integer backgroundId) {
+        this.backgroundId = backgroundId;
     }
 
     public String getBackground() {

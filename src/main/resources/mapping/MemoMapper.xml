@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.cn.saya.laboratory.persistent.dao.MemoDAO">
+
+    <!--创建便笺-->
+    <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="memo" >
+        insert into memo(`source`,`title`,`content`,`createtime`) values(#{source},#{title},#{content},now())
+    </insert>
+
+    <!-- 查询一条便笺-->
+    <select id="query" parameterType="memo" resultType="memo">
+        select
+          id,title,source,content,createtime,updatetime
+        from
+        memo a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test = "title != null and title != ''">
+                and a.title  = #{title}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+    <!--修改便笺-->
+    <update id="update" parameterType="memo">
+        update memo
+        <set>
+            <if test = "title != null and title != ''">
+                title  = #{title},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            updatetime = now()
+        </set>
+        where `id` = #{id} and `source` = #{source}
+    </update>
+
+    <!--删除便笺-->
+    <delete id="delete" parameterType="memo">
+        delete from memo where `id` = #{id} and `source` = #{source}
+    </delete>
+
+
+    <!-- 获取分页后的便笺-->
+    <select id="queryPage" parameterType="memo" resultType="memo">
+        select
+          id,source,title,createtime,updatetime
+        from
+          memo a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test = "title != null and title != ''">
+                and a.title  = #{title}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.id desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!-- 获取便笺总数-->
+    <select id="queryCount" parameterType="memo" resultType="java.lang.Long">
+        select
+          count(*)
+        from
+          memo a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test = "title != null and title != ''">
+                and a.title  = #{title}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
+
+
+
+
+
+

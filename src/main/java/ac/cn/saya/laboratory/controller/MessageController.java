@@ -1,9 +1,6 @@
 package ac.cn.saya.laboratory.controller;
 
-import ac.cn.saya.laboratory.entity.GuestBookEntity;
-import ac.cn.saya.laboratory.entity.NewsEntity;
-import ac.cn.saya.laboratory.entity.NoteBookEntity;
-import ac.cn.saya.laboratory.entity.NotesEntity;
+import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.tools.Result;
 import ac.cn.saya.laboratory.service.impl.MessageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,6 +272,71 @@ public class MessageController {
     @GetMapping(value = "notes/show")
     public Result<Object> getOneNotes(NotesEntity entity,HttpServletRequest request) throws Exception{
         return messageServiceImpl.getOneNotes(entity,request);
+    }
+
+    /**
+     * @描述 创建便笺
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-09-21
+     * @修改人和其它信息
+     */
+    @PostMapping(value = "memo/create")
+    public Result<Object> createMemo(@RequestBody MemoEntity entity, HttpServletRequest request) throws Exception{
+        return messageServiceImpl.createMemo(entity,request);
+    }
+
+    /**
+     * @描述 编辑便笺
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    @PutMapping(value = "memo/edit")
+    public Result<Object> editMemo(@RequestBody MemoEntity entity, HttpServletRequest request) throws Exception{
+        return messageServiceImpl.updateMemo(entity,request);
+    }
+
+    /**
+     * @描述
+     * @参数  删除便笺
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    @DeleteMapping(value = "memo/delete")
+    public Result<Object> deleteNoteBook(MemoEntity entity, HttpServletRequest request) throws Exception{
+        return messageServiceImpl.deleteMemo(entity,request);
+    }
+
+    /**
+     * @描述 获取分页的便笺
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/12
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "memo")
+    public Result<Object> getNoteBookList(MemoEntity entity, HttpServletRequest request) throws Exception{
+        return  messageServiceImpl.getMemoList(entity,request);
+    }
+
+    /**
+     * @描述 查询一条便笺
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/12
+     * @修改人和其它信息
+     */
+    @GetMapping(value = "memo/show")
+    public Result<Object> getOneMemo(MemoEntity entity,HttpServletRequest request) throws Exception{
+        return messageServiceImpl.getOneMemo(entity,request);
     }
 
 }

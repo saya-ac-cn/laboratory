@@ -23,6 +23,11 @@ public class MemoEntity extends BaseEntity{
     private String source;
 
     /**
+     * 标题
+     */
+    private String title;
+
+    /**
      * 便笺内容
      */
     private String content;
@@ -54,6 +59,14 @@ public class MemoEntity extends BaseEntity{
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {

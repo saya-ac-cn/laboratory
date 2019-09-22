@@ -1,14 +1,8 @@
 package ac.cn.saya.laboratory.service.impl;
 
-import ac.cn.saya.laboratory.entity.GuestBookEntity;
-import ac.cn.saya.laboratory.entity.NewsEntity;
-import ac.cn.saya.laboratory.entity.NoteBookEntity;
-import ac.cn.saya.laboratory.entity.NotesEntity;
+import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.service.GuestBookService;
-import ac.cn.saya.laboratory.persistent.service.NewsService;
-import ac.cn.saya.laboratory.persistent.service.NoteBookService;
-import ac.cn.saya.laboratory.persistent.service.NotesService;
+import ac.cn.saya.laboratory.persistent.service.*;
 import ac.cn.saya.laboratory.tools.Paging;
 import ac.cn.saya.laboratory.tools.Result;
 import ac.cn.saya.laboratory.tools.ResultEnum;
@@ -18,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -55,6 +50,10 @@ public class MessageServiceImpl implements IMessageService {
     @Resource
     @Qualifier("notesService")
     private NotesService notesService;
+
+    @Resource
+    @Qualifier("memoService")
+    private MemoService memoService;
 
     /**
      * @param entity
@@ -666,6 +665,161 @@ public class MessageServiceImpl implements IMessageService {
             entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
             //获取满足条件的记录集合
             List<NotesEntity> list = notesService.getNotesPage(entity);
+            paging.setGrid(list);
+            return ResultUtil.success(paging);
+        } else {
+            //未找到有效记录
+            throw new MyException(ResultEnum.NOT_EXIST);
+        }
+    }
+
+    /**
+     * @描述 创建便笺
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/11
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> createMemo(MemoEntity entity, HttpServletRequest request) throws Exception {
+        // 校验用户输入的参数
+        if (entity == null || StringUtils.isEmpty(entity.getTitle()) || StringUtils.isEmpty(entity.getContent())) {
+            // 缺少参数
+            throw new MyException(ResultEnum.NOT_PARAMETER);
+        }
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        entity.setSource(userSession);
+        if (memoService.insert(entity) > 0) {
+            /**
+             * 记录日志
+             */
+            recordService.record("OX034", request);
+            return ResultUtil.success();
+        } else {
+            throw new MyException(ResultEnum.ERROP);
+        }
+    }
+
+    /**
+     * @描述 修改便笺
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/11
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> updateMemo(MemoEntity entity, HttpServletRequest request) throws Exception {
+        // 校验用户输入的参数
+        if (entity == null || null == entity.getId() || StringUtils.isEmpty(entity.getTitle()) || StringUtils.isEmpty(entity.getContent())) {
+            // 缺少参数
+            throw new MyException(ResultEnum.NOT_PARAMETER);
+        }
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        entity.setSource(userSession);
+        if (memoService.update(entity) > 0) {
+            /**
+             * 记录日志
+             */
+            recordService.record("OX035", request);
+            return ResultUtil.success();
+        } else {
+            throw new MyException(ResultEnum.ERROP);
+        }
+    }
+
+    /**
+     * @描述 删除便笺
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/11
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> deleteMemo(MemoEntity entity, HttpServletRequest request) throws Exception {
+        // 校验用户输入的参数
+        if (null == entity || null == entity.getId()) {
+            // 缺少参数
+            throw new MyException(ResultEnum.NOT_PARAMETER);
+        }
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        entity.setSource(userSession);
+        if (memoService.delete(entity) > 0) {
+            /**
+             * 记录日志
+             */
+            recordService.record("OX035", request);
+            return ResultUtil.success();
+        } else {
+            throw new MyException(ResultEnum.ERROP);
+        }
+    }
+
+    /**
+     * @描述 查询一条便笺
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/12
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> getOneMemo(MemoEntity entity, HttpServletRequest request) throws Exception {
+        if (entity == null || entity.getId() == null) {
+            // 缺少参数
+            throw new MyException(ResultEnum.NOT_PARAMETER);
+        }
+        MemoEntity result = memoService.getOne(entity);
+        if (result == null) {
+            //未找到有效记录
+            throw new MyException(ResultEnum.NOT_EXIST);
+        } else {
+            return ResultUtil.success(result);
+        }
+    }
+
+    /**
+     * @param entity
+     * @param request
+     * @描述 获取分页的便笺
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019/1/11
+     * @修改人和其它信息
+     */
+    @Override
+    public Result<Object> getMemoList(MemoEntity entity, HttpServletRequest request) throws Exception {
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        String userSession = (String) request.getSession().getAttribute("user");
+        entity.setSource(userSession);
+        Paging paging = new Paging();
+        if (entity.getNowPage() == null) {
+            entity.setNowPage(1);
+        }
+        if (entity.getPageSize() == null) {
+            entity.setPageSize(20);
+        }
+        //每页显示记录的数量
+        paging.setPageSize(entity.getPageSize());
+        //获取满足条件的总记录（不分页）
+        Long pageSize = memoService.getCount(entity);
+        if (pageSize > 0) {
+            //总记录数
+            paging.setDateSum(pageSize);
+            //计算总页数
+            paging.setTotalPage();
+            //设置当前的页码-并校验是否超出页码范围
+            paging.setPageNow(entity.getNowPage());
+            //设置行索引
+            entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
+            //获取满足条件的记录集合
+            List<MemoEntity> list = memoService.getPage(entity);
             paging.setGrid(list);
             return ResultUtil.success(paging);
         } else {

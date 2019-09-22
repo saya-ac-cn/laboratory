@@ -109,11 +109,12 @@ public class CoreServiceImpl implements ICoreService {
             throw new MyException(ResultEnum.ERROP);
         }
         if (userSession != null) {
-            Map<String, Object> result = userService.queryUserRecentlyInfo(user.getUser());
+            Map<String, Object> result = userService.queryUserRecentlyInfo(userSession);
             // session 检查到已登录（同一机器设备中）
             entity.setPassword(null);
             // 转换成浏览器可以直接识别的url
             entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
+            entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
             result.put("user",entity);
             return ResultUtil.success(result);
         } else {
@@ -138,13 +139,14 @@ public class CoreServiceImpl implements ICoreService {
                 session.setAttribute("user", entity.getUser());
                 //放入用户的session 到数据库中
                 ///redisUtils.hmSet("DataCenter:SessionMap",user.getUser(),session.getId());
-                RepeatLogin.sessionMap.put(user.getUser(), session);
+                RepeatLogin.sessionMap.put(entity.getUser(), session);
                 // 登录
                 recordService.record("OX001", request);
                 // 对密码脱敏处理
                 entity.setPassword(null);
                 // 转换成浏览器可以直接识别的url
                 entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
+                entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
                 Map<String, Object> result = userService.queryUserRecentlyInfo(user.getUser());
                 result.put("user",entity);
                 //返回登录成功

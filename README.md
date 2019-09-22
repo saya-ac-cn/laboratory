@@ -1,5 +1,6 @@
 # laboratory
 实验室项目单体应用
+部署打包 mvn clean package -Dmaven.test.skip=true
 
 ## 2019-08-10 修改记录-重大修改
 * 增加事务（已xml配置为主，亦支持注解式）

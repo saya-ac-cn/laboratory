@@ -1,9 +1,6 @@
 package ac.cn.saya.laboratory.service;
 
-import ac.cn.saya.laboratory.entity.GuestBookEntity;
-import ac.cn.saya.laboratory.entity.NewsEntity;
-import ac.cn.saya.laboratory.entity.NoteBookEntity;
-import ac.cn.saya.laboratory.entity.NotesEntity;
+import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.tools.Result;
 
 import javax.servlet.http.HttpServletRequest;
@@ -209,5 +206,55 @@ public interface IMessageService {
      * @修改人和其它信息
      */
     public Result<Object> getNotesList(NotesEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * @描述 创建便笺
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    public Result<Object> createMemo(MemoEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * @描述 修改便笺
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    public Result<Object> updateMemo(MemoEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * @描述 删除便笺
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    public Result<Object> deleteMemo(MemoEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * @描述 查询一条便笺
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/12
+     * @修改人和其它信息
+     */
+    public Result<Object> getOneMemo(MemoEntity entity, HttpServletRequest request) throws Exception;
+
+    /**
+     * @描述 获取分页的便笺
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019/1/11
+     * @修改人和其它信息
+     */
+    public Result<Object> getMemoList(MemoEntity entity, HttpServletRequest request) throws Exception;
 
 }
