@@ -140,8 +140,6 @@ public class CoreServiceImpl implements ICoreService {
                 //放入用户的session 到数据库中
                 ///redisUtils.hmSet("DataCenter:SessionMap",user.getUser(),session.getId());
                 RepeatLogin.sessionMap.put(entity.getUser(), session);
-                // 登录
-                recordService.record("OX001", request);
                 // 对密码脱敏处理
                 entity.setPassword(null);
                 // 转换成浏览器可以直接识别的url
@@ -149,6 +147,8 @@ public class CoreServiceImpl implements ICoreService {
                 entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
                 Map<String, Object> result = userService.queryUserRecentlyInfo(user.getUser());
                 result.put("user",entity);
+                // 登录
+                recordService.record("OX001", request);
                 //返回登录成功
                 return ResultUtil.success(result);
             } else {
