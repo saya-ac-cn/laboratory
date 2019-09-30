@@ -3,6 +3,8 @@ package ac.cn.saya.laboratory.tools;
 /**
  * 统一返回的子内容
  * @param <T>
+ * @author saya
+ * @date 2016/10/31
  */
 public class Result<T> {
 

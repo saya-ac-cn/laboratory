@@ -41,6 +41,7 @@ public class City {
         content = "ip=" + content;
         // 这里调用pconline的接口
         String urlStr = "http://ip.taobao.com/service/getIpInfo.php";
+        //String urlStr = "http://whois.pconline.com.cn";
         // 从http://whois.pconline.com.cn取得IP所在的省市区信息
         String returnStr = this.getResult(urlStr, content, encodingString);
         if (returnStr != null) {
@@ -115,9 +116,9 @@ public class City {
             // 新建连接实例
             connection = (HttpURLConnection) url.openConnection();
             // 设置连接超时时间，单位毫秒
-            connection.setConnectTimeout(2000);
+            connection.setConnectTimeout(8000);
             // 设置读取数据超时时间，单位毫秒
-            connection.setReadTimeout(2000);
+            connection.setReadTimeout(8000);
             // 是否打开输出流 true|false
             connection.setDoOutput(true);
             // 是否打开输入流true|false

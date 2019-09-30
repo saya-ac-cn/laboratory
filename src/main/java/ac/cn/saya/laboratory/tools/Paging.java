@@ -26,12 +26,30 @@ package ac.cn.saya.laboratory.tools;
  * 但是在数据库中是按照0开始，用的时候请注意
  */
 public class Paging {
-    private int pageNow;	//当前页
-    private int pageSize;	//页面显示数据的条数
-    private Long dateSum;    //总记录数
-    private Long totalPage;	//总页数
+    /**
+     * 当前页
+     */
+    private int pageNow;
 
-    private Object grid; //分页后的参数
+    /**
+     * 页面显示数据的条数
+     */
+    private int pageSize;
+
+    /**
+     * 总记录数
+     */
+    private Long dateSum;
+
+    /**
+     * 总页数
+     */
+    private Long totalPage;
+
+    /**
+     * 分页后的参数
+     */
+    private Object grid;
 
 
     public Long gettotalPage() {
@@ -52,11 +70,13 @@ public class Paging {
 
 
     public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;//设置每页显示的记录数据量
+        //设置每页显示的记录数据量
+        this.pageSize = pageSize;
     }
 
 	public void setDateSum(Long dateSum) {
-		this.dateSum = dateSum;//设置总记录数
+        //设置总记录数
+		this.dateSum = dateSum;
 	}
 
 	public void setTotalPage() {//设置总页数
