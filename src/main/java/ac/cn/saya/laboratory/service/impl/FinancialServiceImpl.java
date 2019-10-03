@@ -3,6 +3,7 @@ package ac.cn.saya.laboratory.service.impl;
 import ac.cn.saya.laboratory.entity.TransactionInfoEntity;
 import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.entity.TransactionTypeEntity;
+import ac.cn.saya.laboratory.entity.UserMemory;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.service.TransactionReadService;
 import ac.cn.saya.laboratory.persistent.service.TransactionWriteService;
@@ -80,8 +81,8 @@ public class FinancialServiceImpl implements IFinancialService {
     @Override
     public Result<Object> getTransaction(TransactionListEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);
@@ -123,8 +124,6 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     public Result<Object> getTransactionInfo(TransactionInfoEntity entity, HttpServletRequest request) throws Exception {
-        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);
@@ -167,8 +166,8 @@ public class FinancialServiceImpl implements IFinancialService {
     @Override
     public Result<Object> getTransactionFinal(TransactionListEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);
@@ -238,8 +237,8 @@ public class FinancialServiceImpl implements IFinancialService {
         // 设置交易总金额
         entity.setCurrencyNumber(happenMoney);
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         // 开始写入父表的数据
         Integer backfillValue = transactionWriteService.insertTransactionList(entity);
         if (backfillValue > 0) {
@@ -276,8 +275,8 @@ public class FinancialServiceImpl implements IFinancialService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         } else {
             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-            String userSession = (String) request.getSession().getAttribute("user");
-            entity.setSource(userSession);
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+            entity.setSource(userSession.getUser());
             if (transactionWriteService.updateTransactionList(entity) > 0) {
                 /**
                  * 修改流水
@@ -305,8 +304,8 @@ public class FinancialServiceImpl implements IFinancialService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         } else {
             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-            String userSession = (String) request.getSession().getAttribute("user");
-            if (transactionWriteService.deleteTransactionList(entity.getTradeId(), userSession) > 0) {
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+            if (transactionWriteService.deleteTransactionList(entity.getTradeId(), userSession.getUser()) > 0) {
                 /**
                  * 删除流水
                  */
@@ -374,8 +373,8 @@ public class FinancialServiceImpl implements IFinancialService {
                     // 设置交易总金额
                     writeEntity.setCurrencyNumber(happenMoney);
                     //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-                    String userSession = (String) request.getSession().getAttribute("user");
-                    writeEntity.setSource(userSession);
+                    UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+                    writeEntity.setSource(userSession.getUser());
                     // 开始写入父表的数据
                     if (transactionWriteService.updateTransactionList(writeEntity) > 0) {
                         /**
@@ -455,8 +454,8 @@ public class FinancialServiceImpl implements IFinancialService {
                     // 设置交易总金额
                     writeEntity.setCurrencyNumber(happenMoney);
                     //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-                    String userSession = (String) request.getSession().getAttribute("user");
-                    writeEntity.setSource(userSession);
+                    UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+                    writeEntity.setSource(userSession.getUser());
                     // 开始写入父表的数据
                     if (transactionWriteService.updateTransactionList(writeEntity) > 0) {
                         /**
@@ -496,10 +495,10 @@ public class FinancialServiceImpl implements IFinancialService {
         // 财政子表记录总行数
         Long itemConut = transactionReadService.selectTransactionInfoCount(queryEntity);
         if (itemConut > 0) {
-            String userSession = (String) request.getSession().getAttribute("user");
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
             if (itemConut == 1 || itemConut.equals(1)) {
                 // 只有一条记录时，直接调用父表的方法级联删除即可
-                if (transactionWriteService.deleteTransactionList(entity.getTradeId(), userSession) > 0) {
+                if (transactionWriteService.deleteTransactionList(entity.getTradeId(), userSession.getUser()) > 0) {
                     /**
                      * 删除流水明细
                      */
@@ -511,7 +510,7 @@ public class FinancialServiceImpl implements IFinancialService {
                 }
             } else {
                 // 先删除子表，然后修改父表的值
-                if (transactionWriteService.deleteTransactionInfo(entity.getId(), userSession) > 0) {
+                if (transactionWriteService.deleteTransactionInfo(entity.getId(), userSession.getUser()) > 0) {
                     // 查询本流水号下的所有子记录
                     // 财政子表记录总行数
                     itemConut = transactionReadService.selectTransactionInfoCount(queryEntity);
@@ -553,7 +552,7 @@ public class FinancialServiceImpl implements IFinancialService {
                             // 设置交易总金额
                             writeEntity.setCurrencyNumber(happenMoney);
                             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-                            writeEntity.setSource(userSession);
+                            writeEntity.setSource(userSession.getUser());
                             // 开始写入父表的数据
                             if (transactionWriteService.updateTransactionList(writeEntity) > 0) {
                                 /**
@@ -596,7 +595,7 @@ public class FinancialServiceImpl implements IFinancialService {
         //放置到第一行的字段名
         String[] titles = {"流水号", "存入", "取出", "交易方式", "产生总额", "产生日期", "摘要", "创建时间", "修改时间"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         try {
             //获取满足条件的总记录（不分页）
             Long pageSize = transactionReadService.selectTransactionCount(entity);
@@ -605,7 +604,7 @@ public class FinancialServiceImpl implements IFinancialService {
             }
             //设置行索引
             entity.setPage(0, pageSize.intValue());
-            entity.setSource(userSession);
+            entity.setSource(userSession.getUser());
             //获取满足条件的记录集合
             List<TransactionListEntity> entityList = transactionReadService.selectTransactionPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
@@ -651,7 +650,7 @@ public class FinancialServiceImpl implements IFinancialService {
         //放置到第一行的字段名
         String[] titles = {"流水号", "存入", "取出", "交易方式", "产生总额", "产生日期", "摘要", "标志", "金额", "详情", "创建时间", "修改时间"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         try {
             //获取满足条件的总记录（不分页）
             Long pageSize = transactionReadService.selectTransactionFinalCount(entity);
@@ -660,7 +659,7 @@ public class FinancialServiceImpl implements IFinancialService {
             }
             //设置行索引
             entity.setPage(0, pageSize.intValue());
-            entity.setSource(userSession);
+            entity.setSource(userSession.getUser());
             //获取满足条件的记录集合
             List<TransactionInfoEntity> entityList = transactionReadService.selectTransactionFinalPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
@@ -709,7 +708,7 @@ public class FinancialServiceImpl implements IFinancialService {
     @Override
     public Result<Object> totalTransactionForDay(TransactionListEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);
@@ -717,7 +716,7 @@ public class FinancialServiceImpl implements IFinancialService {
         if (entity.getPageSize() == null) {
             entity.setPageSize(20);
         }
-        entity.setSource(userSession);
+        entity.setSource(userSession.getUser());
         //每页显示记录的数量
         paging.setPageSize(entity.getPageSize());
         //获取满足条件的总记录（不分页）
@@ -752,7 +751,7 @@ public class FinancialServiceImpl implements IFinancialService {
     @Override
     public Result<Object> totalTransactionForMonth(TransactionListEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);
@@ -760,7 +759,7 @@ public class FinancialServiceImpl implements IFinancialService {
         if (entity.getPageSize() == null) {
             entity.setPageSize(20);
         }
-        entity.setSource(userSession);
+        entity.setSource(userSession.getUser());
         //每页显示记录的数量
         paging.setPageSize(entity.getPageSize());
         //获取满足条件的总记录（不分页）
@@ -795,7 +794,7 @@ public class FinancialServiceImpl implements IFinancialService {
     @Override
     public Result<Object> totalTransactionForYear(TransactionListEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);
@@ -803,7 +802,7 @@ public class FinancialServiceImpl implements IFinancialService {
         if (entity.getPageSize() == null) {
             entity.setPageSize(20);
         }
-        entity.setSource(userSession);
+        entity.setSource(userSession.getUser());
         //每页显示记录的数量
         paging.setPageSize(entity.getPageSize());
         //获取满足条件的总记录（不分页）
@@ -842,8 +841,8 @@ public class FinancialServiceImpl implements IFinancialService {
         //放置到第一行的字段名
         String[] titles = {"产生日期", "流入", "流出", "产生总额"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         try {
             //获取满足条件的总记录（不分页）
             Long pageSize = transactionReadService.selectTransactionForDayCount(entity);
@@ -892,8 +891,8 @@ public class FinancialServiceImpl implements IFinancialService {
         //放置到第一行的字段名
         String[] titles = {"产生日期", "流入", "流出", "产生总额"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         try {
             //获取满足条件的总记录（不分页）
             Long pageSize = transactionReadService.selectTransactionForMonthCount(entity);
@@ -942,8 +941,8 @@ public class FinancialServiceImpl implements IFinancialService {
         //放置到第一行的字段名
         String[] titles = {"产生日期", "流入", "流出", "产生总额"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         try {
             //获取满足条件的总记录（不分页）
             Long pageSize = transactionReadService.selectTransactionForYearCount(entity);

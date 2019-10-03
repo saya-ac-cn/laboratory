@@ -6,16 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.WebUtils;
 import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
 
 /**
  * @Title: UploadUtils
@@ -52,9 +47,7 @@ public class UploadUtils {
                 BASE64Decoder decoder = new BASE64Decoder();
                 byte[] decodedBytes = decoder.decodeBuffer(image);
                 /********生成今天的日期**********/
-                Date currentTime = new Date();
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-                String datetime = formatter.format(currentTime);
+                String datetime = DateUtils.getCurrentDateTime(DateUtils.fileFormat);
                 //url路径 files/picture/logo/用户名/yyyyMMdd
                 String urlPath =  File.separator + "files"+ File.separator + "picture"+ File.separator +"logo"+File.separator+String.valueOf(request.getSession().getAttribute("user"))+File.separator+datetime;
                 //上传文件路径-/picture/目录下该用户当天的文件夹
@@ -110,9 +103,7 @@ public class UploadUtils {
                 BASE64Decoder decoder = new BASE64Decoder();
                 byte[] decodedBytes = decoder.decodeBuffer(image);
                 /********生成今天的日期**********/
-                Date currentTime = new Date();
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-                String datetime = formatter.format(currentTime);
+                String datetime = DateUtils.getCurrentDateTime(DateUtils.fileFormat);
                 //url路径 files/picture/{wallpaper,news}/用户名/yyyyMMdd
                 String urlPath =  File.separator + "files"+ File.separator + "picture"+ File.separator + imgeUrl +File.separator+String.valueOf(request.getSession().getAttribute("user"))+File.separator+datetime;
                 //上传文件路径-/picture/目录下该用户当天的文件夹
@@ -171,9 +162,7 @@ public class UploadUtils {
                     // 写入磁盘标志
                     String success = "fail";
                     /********生成今天的日期**********/
-                    Date currentTime = new Date();
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-                    String datetime = formatter.format(currentTime);
+                    String datetime = DateUtils.getCurrentDateTime(DateUtils.fileFormat);
                     //url路径 files/picture/document/用户名/yyyyMMdd
                     String urlPath =  File.separator + "files"+ File.separator + "document"+ File.separator + "file" +File.separator+String.valueOf(request.getSession().getAttribute("user"))+File.separator+datetime;
                     //上传文件路径-/picture/目录下该用户当天的文件夹
@@ -230,9 +219,7 @@ public class UploadUtils {
                     // 写入磁盘标志
                     String success = "fail";
                     /********生成今天的日期**********/
-                    Date currentTime = new Date();
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-                    String datetime = formatter.format(currentTime);
+                    String datetime = DateUtils.getCurrentDateTime(DateUtils.fileFormat);
                     //url路径 files/picture/{wallpaper,news}/用户名/yyyyMMdd
                     String urlPath =  File.separator + "files"+ File.separator + "picture"+ File.separator + "wallpaper" +File.separator+String.valueOf(request.getSession().getAttribute("user"))+File.separator+datetime;
                     //上传文件路径-/picture/目录下该用户当天的文件夹
@@ -260,30 +247,6 @@ public class UploadUtils {
         }
     }
 
-
-    /**
-     * @描述 随机生成文件名
-     * @参数
-     * @返回值  
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2018/11/11
-     * @修改人和其它信息
-     */
-    public static String generateRandomFilename(){
-        String RandomFilename = "";
-        //生成随机数
-        Random rand = new Random();
-        int random = rand.nextInt();
-
-        Calendar calCurrent = Calendar.getInstance();
-        int intDay = calCurrent.get(Calendar.DATE);
-        int intMonth = calCurrent.get(Calendar.MONTH) + 1;
-        int intYear = calCurrent.get(Calendar.YEAR);
-        String now = String.valueOf(intYear) + "_" + String.valueOf(intMonth) + "_" +
-                String.valueOf(intDay) + "_";
-        RandomFilename = now + String.valueOf(random > 0 ? random : ( -1) * random) + ".";
-        return RandomFilename;
-    }
 
     /**
      * @描述 删除文件

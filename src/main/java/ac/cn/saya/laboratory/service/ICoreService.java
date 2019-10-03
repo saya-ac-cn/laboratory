@@ -112,14 +112,14 @@ public interface ICoreService {
 
     /**
      * @描述 
-     * @参数  [data, request]
+     * @参数  [date, request]
      * @返回值  ac.cn.saya.datacenter.tools.Result<java.lang.Object>
      * @创建人  saya.ac.cn-刘能凯
      * @创建时间  2019/1/24
      * @修改人和其它信息
      * 查询该月的计划
      */
-    public Result<Object> getPlan(String data, HttpServletRequest request) throws Exception;
+    public Result<Object> getPlan(String date, HttpServletRequest request) throws Exception;
 
     /**
      * @描述 

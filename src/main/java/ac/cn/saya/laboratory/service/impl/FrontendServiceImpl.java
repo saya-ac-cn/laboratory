@@ -263,9 +263,6 @@ public class FrontendServiceImpl implements IFrontendService {
 
     /**
      * 查看行程安排
-     *
-     * @param data
-     * @param user
      * @描述
      * @参数 [data, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -274,17 +271,15 @@ public class FrontendServiceImpl implements IFrontendService {
      * @修改人和其它信息 查询该月的计划
      */
     @Override
-    public Result<Object> getPlan(String data, String user) throws Exception {
-        // 日期准备
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    public Result<Object> getPlan(String date, String user) throws Exception {
         // 第一天
-        String firstDay = DateUtil.getFirstDay(format.parse(data));
+        String firstDay = DateUtils.getFirstDayOfMonth(date);
         // 最后一天
-        String lastDay = DateUtil.getLastDay(format.parse(data));
+        String lastDay = DateUtils.getLastDayOfMonth(date);
         // 获取该月的总天数
-        Integer monthCount = DateUtil.getDaysOfMonth(format.parse(data));
+        int monthCount = DateUtils.getLengthOfMonth(date);
         // 获取该月第一天是星期几--星期日i==1，星期六i==7
-        Integer firstDayWeek = DateUtil.getFirstDayWeek(format.parse(firstDay));
+        int firstDayWeek = DateUtils.getFirstDayWeek(date);
         PlanEntity query = new PlanEntity();
         // 查询该用户的计划
         query.setSource(user);

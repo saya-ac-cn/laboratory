@@ -1,9 +1,9 @@
-package ac.cn.saya.laboratory.handle;/**
- * Created by Administrator on 2018/9/30 0030.
- */
+package ac.cn.saya.laboratory.handle;
 
 
 import java.util.Enumeration;
+
+import ac.cn.saya.laboratory.entity.UserMemory;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
@@ -11,9 +11,9 @@ import java.util.HashMap;
 
 /**
  * @Title: RepeatLong
- * @ProjectName spring-boot-dubbo-pro
+ * @ProjectName laboratory
  * @Description: TODO
- * @Author Administrator
+ * @Author saya
  * @Date: 2018/9/30 0030 23:39
  * @Description:
  */
@@ -45,8 +45,8 @@ public class RepeatLogin {
                  */
                 ///String user = (String) session.getAttribute("user");
                 ///redisUtils.hmDelete("DataCenter:SessionMap",user);
-                String user = (String) session.getAttribute("user");
-                RepeatLogin.sessionMap.remove(user);
+                UserMemory user = (UserMemory) session.getAttribute("user");
+                RepeatLogin.sessionMap.remove(user.getUser());
             }
         }
     }

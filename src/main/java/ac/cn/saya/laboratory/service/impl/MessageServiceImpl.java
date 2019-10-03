@@ -3,11 +3,11 @@ package ac.cn.saya.laboratory.service.impl;
 import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.service.*;
+import ac.cn.saya.laboratory.service.IMessageService;
 import ac.cn.saya.laboratory.tools.Paging;
 import ac.cn.saya.laboratory.tools.Result;
 import ac.cn.saya.laboratory.tools.ResultEnum;
 import ac.cn.saya.laboratory.tools.ResultUtil;
-import ac.cn.saya.laboratory.service.IMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,8 +73,8 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (newsService.publishNews(entity) > 0) {
             /**
              * 记录日志
@@ -104,8 +104,8 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (newsService.editNews(entity) > 0) {
             /**
              * 记录日志
@@ -135,8 +135,8 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (newsService.deleteNews(entity) > 0) {
             /**
              * 记录日志
@@ -163,8 +163,8 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         NewsEntity result = newsService.getOneNews(entity);
         if (result == null) {
             //未找到有效记录
@@ -187,8 +187,8 @@ public class MessageServiceImpl implements IMessageService {
     @Override
     public Result<Object> getNewsList(NewsEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);
@@ -237,8 +237,8 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (guestBookService.updateGuestBook(entity) > 0) {
             /**
              * 记录日志
@@ -333,8 +333,8 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (noteBookService.insertNoteBook(entity) > 0) {
             /**
              * 记录日志
@@ -364,8 +364,8 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (noteBookService.editNoteBook(entity) > 0) {
             /**
              * 记录日志
@@ -395,8 +395,8 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (noteBookService.deleteNoteBook(entity) > 0) {
             /**
              * 记录日志
@@ -446,8 +446,8 @@ public class MessageServiceImpl implements IMessageService {
     @Override
     public Result<Object> getNoteBookList(NoteBookEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);
@@ -491,8 +491,8 @@ public class MessageServiceImpl implements IMessageService {
     @Override
     public Result<Object> getNoteBook(NoteBookEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         List<NoteBookEntity> list = noteBookService.getNoteBook(entity);
         if (list.size() > 0) {
             return ResultUtil.success(list);
@@ -548,9 +548,9 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         NoteBookEntity bookEntity = new NoteBookEntity();
-        bookEntity.setSource(userSession);
+        bookEntity.setSource(userSession.getUser());
         entity.setNotebook(bookEntity);
         if (notesService.editNotes(entity) > 0) {
             /**
@@ -607,12 +607,12 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         NoteBookEntity bookEntity = entity.getNotebook();
         if (bookEntity == null) {
             bookEntity = new NoteBookEntity();
         }
-        bookEntity.setSource(userSession);
+        bookEntity.setSource(userSession.getUser());
         entity.setNotebook(bookEntity);
         NotesEntity result = notesService.getOneNotes(entity);
         if (result == null) {
@@ -645,13 +645,13 @@ public class MessageServiceImpl implements IMessageService {
         //每页显示记录的数量
         paging.setPageSize(entity.getPageSize());
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         //获取满足条件的总记录（不分页）
         NoteBookEntity bookEntity = entity.getNotebook();
         if (bookEntity == null) {
             bookEntity = new NoteBookEntity();
         }
-        bookEntity.setSource(userSession);
+        bookEntity.setSource(userSession.getUser());
         entity.setNotebook(bookEntity);
         Long pageSize = notesService.getNotesCount(entity);
         if (pageSize > 0) {
@@ -689,8 +689,8 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (memoService.insert(entity) > 0) {
             /**
              * 记录日志
@@ -718,8 +718,8 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (memoService.update(entity) > 0) {
             /**
              * 记录日志
@@ -747,8 +747,8 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (memoService.delete(entity) > 0) {
             /**
              * 记录日志
@@ -796,8 +796,8 @@ public class MessageServiceImpl implements IMessageService {
     @Override
     public Result<Object> getMemoList(MemoEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);

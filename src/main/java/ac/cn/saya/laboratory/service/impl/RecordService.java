@@ -1,19 +1,17 @@
 package ac.cn.saya.laboratory.service.impl;
 
-import ac.cn.saya.laboratory.persistent.dao.LogDAO;
 import ac.cn.saya.laboratory.entity.LogEntity;
+import ac.cn.saya.laboratory.entity.UserMemory;
 import ac.cn.saya.laboratory.persistent.service.LogService;
-import ac.cn.saya.laboratory.tools.City;
+import ac.cn.saya.laboratory.tools.DateUtils;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @Title: RecordService
@@ -46,39 +44,14 @@ public class RecordService {
     public void record(String type, HttpServletRequest httpRequest) {
         try {
             //在session中取出管理员的名字
-            String user = (String) httpRequest.getSession().getAttribute("user");
-            String ip = this.getIpAddr(httpRequest);
-            City cityUtil = new City();
-            String city = cityUtil.getCity(ip, "utf-8");
-            Date currentTime = new Date();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String datetime = formatter.format(currentTime);
-            LogEntity entity = new LogEntity(user, type, ip, city, datetime);
+            UserMemory user = (UserMemory) httpRequest.getSession().getAttribute("user");
+            String datetime = DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat);
+            LogEntity entity = new LogEntity(user.getUser(), type, user.getIp(), user.getIp(), datetime);
             logService.insert(entity);
         } catch (Exception e) {
             e.printStackTrace();
             logger.warn("记录日志异常" + Log4jUtils.getTrace(e));
         }
-    }
-
-    /**
-     * 获取用户真实的IP地址，主要是经过代理后，获取的ip地址有误。
-     *
-     * @param request
-     * @return
-     */
-    public String getIpAddr(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
     }
 
 }

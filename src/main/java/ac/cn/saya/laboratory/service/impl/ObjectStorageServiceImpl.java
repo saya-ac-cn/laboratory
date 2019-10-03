@@ -3,16 +3,13 @@ package ac.cn.saya.laboratory.service.impl;
 import ac.cn.saya.laboratory.entity.BackupLogEntity;
 import ac.cn.saya.laboratory.entity.FilesEntity;
 import ac.cn.saya.laboratory.entity.PictureEntity;
+import ac.cn.saya.laboratory.entity.UserMemory;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.service.BackupLogService;
 import ac.cn.saya.laboratory.persistent.service.FilesService;
 import ac.cn.saya.laboratory.persistent.service.PictureStorageService;
-import ac.cn.saya.laboratory.tools.Paging;
-import ac.cn.saya.laboratory.tools.Result;
-import ac.cn.saya.laboratory.tools.ResultEnum;
-import ac.cn.saya.laboratory.tools.ResultUtil;
 import ac.cn.saya.laboratory.service.IObjectStorageService;
-import ac.cn.saya.laboratory.tools.UploadUtils;
+import ac.cn.saya.laboratory.tools.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -75,8 +72,8 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             //得到文件上传成功的回传地址
             String successUrl = String.valueOf(upload.getData());
             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-            String userSession = (String) request.getSession().getAttribute("user");
-            entity.setSource(userSession);
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+            entity.setSource(userSession.getUser());
             entity.setType(2);
             // 文件在服务器的存放目录
             entity.setFileurl(successUrl);
@@ -117,11 +114,11 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             //得到文件上传成功的回传地址
             String successUrl = String.valueOf(upload.getData());
             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-            String userSession = (String) request.getSession().getAttribute("user");
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
             PictureEntity entity = new PictureEntity();
             // 原文件名称
             entity.setFilename(file.getOriginalFilename());
-            entity.setSource(userSession);
+            entity.setSource(userSession.getUser());
             entity.setType(1);
             // 文件在服务器的存放目录
             entity.setFileurl(successUrl);
@@ -165,8 +162,8 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         PictureEntity result = pictureStorageService.getOnePictuBase64(entity);
         if (result == null || StringUtils.isEmpty(result.getFileurl())) {
             //未找到有效记录
@@ -197,8 +194,8 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     @Override
     public Result<Object> getPictuBase64List(PictureEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);
@@ -270,11 +267,11 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             //得到文件上传成功的回传地址
             String successUrl = String.valueOf(upload.getData());
             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-            String userSession = (String) request.getSession().getAttribute("user");
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
             FilesEntity entity = new FilesEntity();
             // 原文件名称
             entity.setFilename(file.getOriginalFilename());
-            entity.setSource(userSession);
+            entity.setSource(userSession.getUser());
             entity.setStatus("2");
             // 文件在服务器的存放目录
             entity.setFileurl(successUrl);
@@ -321,8 +318,8 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (filesService.updateFile(entity) > 0) {
             /**
              * 记录日志
@@ -352,8 +349,8 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         FilesEntity result = filesService.getOneFile(entity);
         if (result == null || StringUtils.isEmpty(result.getFileurl())) {
             // 未找到有效记录
@@ -386,8 +383,8 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     @Override
     public Result<Object> getFileList(FilesEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);
@@ -435,9 +432,9 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         FilesEntity queryEntity = new FilesEntity();
-        queryEntity.setSource(userSession);
+        queryEntity.setSource(userSession.getUser());
         queryEntity.setId(id);
         FilesEntity resultEntity = filesService.getOneFile(queryEntity);
         if (resultEntity == null || StringUtils.isEmpty(resultEntity.getFileurl())) {

@@ -71,8 +71,6 @@ public interface IFrontendService {
 
     /**
      * 查看行程安排
-     * @param data
-     * @param user
      * @描述
      * @参数 [data, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -80,7 +78,7 @@ public interface IFrontendService {
      * @创建时间 2019/1/24
      * @修改人和其它信息 查询该月的计划
      */
-    public Result<Object> getPlan(String data, String user) throws Exception;
+    public Result<Object> getPlan(String date, String user) throws Exception;
 
     /**
      * @描述 获取笔记簿

@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +83,10 @@ public class CoreServiceImpl implements ICoreService {
     @Qualifier("recordService")//日志助手表
     private RecordService recordService;
 
+    @Resource
+    @Qualifier("amapLocateUtils")
+    private AmapLocateUtils amapLocateUtils;
+
 
     /**
      * 用户登录
@@ -101,7 +104,7 @@ public class CoreServiceImpl implements ICoreService {
         }
         HttpSession session = request.getSession();
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) session.getAttribute("user");
+        UserMemory userSession = (UserMemory) session.getAttribute("user");
         UserEntity entity = userService.getUser(user.getUser());
         if (entity == null) {
             // 没有该用户的信息 直接中断返回
@@ -109,12 +112,15 @@ public class CoreServiceImpl implements ICoreService {
             throw new MyException(ResultEnum.ERROP);
         }
         if (userSession != null) {
-            Map<String, Object> result = userService.queryUserRecentlyInfo(userSession);
+            // 读取该用户最近的登录及安排信息
+            Map<String, Object> result = userService.queryUserRecentlyInfo(userSession.getUser());
             // session 检查到已登录（同一机器设备中）
             entity.setPassword(null);
             // 转换成浏览器可以直接识别的url
+            // 用户logo，及背景图片的返回
             entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
             entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
+            // 注入用户个人信息
             result.put("user",entity);
             return ResultUtil.success(result);
         } else {
@@ -135,19 +141,27 @@ public class CoreServiceImpl implements ICoreService {
             user.setPassword(DesUtil.encrypt(user.getPassword()));
             if (entity.getPassword().equals(user.getPassword())) {
                 //设置session
-                //为之注入用户名
-                session.setAttribute("user", entity.getUser());
-                //放入用户的session 到数据库中
+                // 设置封装到session中的实体信息
+                UserMemory memory = new UserMemory();
+                String ip = HttpRequestUtil.getIpAddress(request);
+                memory.setUser(entity.getUser());
+                memory.setIp(ip);
+                memory.setCity(amapLocateUtils.getCityByIp(ip));
+                //为之注入用户信息
+                session.setAttribute("user", memory);
+                //放入用户的session 到数据库中（或本服务器的内存中），防止重复登录
                 ///redisUtils.hmSet("DataCenter:SessionMap",user.getUser(),session.getId());
                 RepeatLogin.sessionMap.put(entity.getUser(), session);
                 // 对密码脱敏处理
                 entity.setPassword(null);
                 // 转换成浏览器可以直接识别的url
+                // 用户logo，及背景图片的返回
                 entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
                 entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
+                // 返回用户的个人信息
                 Map<String, Object> result = userService.queryUserRecentlyInfo(user.getUser());
                 result.put("user",entity);
-                // 登录
+                // 记录本次登录
                 recordService.record("OX001", request);
                 //返回登录成功
                 return ResultUtil.success(result);
@@ -171,7 +185,7 @@ public class CoreServiceImpl implements ICoreService {
     public Result<Object> logout(HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession();
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) session.getAttribute("user");
+        UserMemory userSession = (UserMemory) session.getAttribute("user");
         if (userSession != null) {
             // 删除数据库里面的登录信息
             RepeatLogin.delSession(session);
@@ -190,9 +204,9 @@ public class CoreServiceImpl implements ICoreService {
     @Override
     public Result<Object> getUserInfo(HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         // 在系统中查询该用户是否存在
-        UserEntity entity = userService.getUser(userSession);
+        UserEntity entity = userService.getUser(userSession.getUser());
         if (entity == null) {
             // 没有该用户的信息 直接中断返回
             //未找到该用户
@@ -219,8 +233,8 @@ public class CoreServiceImpl implements ICoreService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        user.setUser(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        user.setUser(userSession.getUser());
         if (userService.setUser(user) > 0) {
             /**
              * 记录日志
@@ -248,8 +262,8 @@ public class CoreServiceImpl implements ICoreService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        user.setUser(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        user.setUser(userSession.getUser());
         //加密后用户的密码
         user.setPassword(DesUtil.encrypt(user.getPassword()));
         if (userService.setUser(user) > 0) {
@@ -291,8 +305,8 @@ public class CoreServiceImpl implements ICoreService {
     @Override
     public Result<Object> getLog(LogEntity entity, HttpServletRequest request) throws Exception {
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setUser(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setUser(userSession.getUser());
         Paging paging = new Paging();
         if (entity.getNowPage() == null) {
             entity.setNowPage(1);
@@ -338,7 +352,7 @@ public class CoreServiceImpl implements ICoreService {
         //放置到第一行的字段名
         String[] titles = {"用户", "操作详情", "IP", "城市", "日期"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         try {
             //获取满足条件的总记录（不分页）
             Long pageSize = logService.selectCount(entity);
@@ -348,7 +362,7 @@ public class CoreServiceImpl implements ICoreService {
             }
             //设置行索引
             entity.setPage(0, pageSize.intValue());
-            entity.setUser(userSession);
+            entity.setUser(userSession.getUser());
             //获取满足条件的记录集合
             List<LogEntity> entityList = logService.selectPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
@@ -393,9 +407,9 @@ public class CoreServiceImpl implements ICoreService {
             //得到文件上传成功的回传地址
             String successUrl = String.valueOf(upload.getData());
             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-            String userSession = (String) request.getSession().getAttribute("user");
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
             UserEntity user = new UserEntity();
-            user.setUser(userSession);
+            user.setUser(userSession.getUser());
             user.setLogo(successUrl);
             if (userService.setUser(user) > 0) {
                 /**
@@ -470,8 +484,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param data
-     * @param request
      * @描述
      * @参数 [data, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -480,21 +492,20 @@ public class CoreServiceImpl implements ICoreService {
      * @修改人和其它信息 查询该月的计划
      */
     @Override
-    public Result<Object> getPlan(String data, HttpServletRequest request) throws Exception {
+    public Result<Object> getPlan(String date, HttpServletRequest request) throws Exception {
         // 日期准备
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         // 第一天
-        String firstDay = DateUtil.getFirstDay(format.parse(data));
+        String firstDay = DateUtils.getFirstDayOfMonth(date);
         // 最后一天
-        String lastDay = DateUtil.getLastDay(format.parse(data));
+        String lastDay = DateUtils.getLastDayOfMonth(date);
         // 获取该月的总天数
-        Integer monthCount = DateUtil.getDaysOfMonth(format.parse(data));
+        int monthCount = DateUtils.getLengthOfMonth(date);
         // 获取该月第一天是星期几--星期日i==1，星期六i==7
-        Integer firstDayWeek = DateUtil.getFirstDayWeek(format.parse(firstDay));
-        String userSession = (String) request.getSession().getAttribute("user");
+        int firstDayWeek = DateUtils.getFirstDayWeek(date);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         PlanEntity query = new PlanEntity();
         // 查询该用户的计划
-        query.setSource(userSession);
+        query.setSource(userSession.getUser());
         // 查询该月的计划
         query.setBeginTime(firstDay);
         query.setEndTime(lastDay);
@@ -557,8 +568,8 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> getPlanDetail(PlanEntity entity, HttpServletRequest request) throws Exception {
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (entity == null || entity.getId() == null) {
             // 缺少参数
             throw new MyException(ResultEnum.NOT_PARAMETER);
@@ -589,8 +600,8 @@ public class CoreServiceImpl implements ICoreService {
             // 缺少参数
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         Integer flog = planService.insertPlan(entity);
         if (flog > 0) {
             /**
@@ -607,8 +618,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -624,11 +633,10 @@ public class CoreServiceImpl implements ICoreService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         // 日期准备
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        entity.setPlandate(format.format(format.parse(entity.getPlandate())));
+        entity.setPlandate(DateUtils.getCurrentDateTime(DateUtils.dateFormat));
         Integer flog = planService.editPlan(entity);
         if (flog > 0) {
             /**
@@ -662,8 +670,8 @@ public class CoreServiceImpl implements ICoreService {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        String userSession = (String) request.getSession().getAttribute("user");
-        entity.setSource(userSession);
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         if (planService.deletePlan(entity) > 0) {
             /**
              * 记录日志
@@ -813,20 +821,20 @@ public class CoreServiceImpl implements ICoreService {
     @Override
     public Result<Object> dashBoard(HttpServletRequest request) throws Exception {
         Map<String, Object> result = new HashMap<>();
-        String userSession = (String) request.getSession().getAttribute("user");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         // 统计图片总数
         PictureEntity pictureEntity = new PictureEntity();
-        pictureEntity.setSource(userSession);
+        pictureEntity.setSource(userSession.getUser());
         Long pictureCount = pictureStorageService.getPictuBase64Count(pictureEntity);
         result.put("pictureCount", pictureCount);
         // 统计文件总数
         FilesEntity filesEntity = new FilesEntity();
-        filesEntity.setSource(userSession);
+        filesEntity.setSource(userSession.getUser());
         Long fileCount = filesService.getFileCount(filesEntity);
         result.put("fileCount", fileCount);
         // 统计笔记簿总数
         NoteBookEntity bookEntity = new NoteBookEntity();
-        bookEntity.setSource(userSession);
+        bookEntity.setSource(userSession.getUser());
         Long bookCount = noteBookService.getNoteBookCount(bookEntity);
         result.put("bookCount", bookCount);
         // 统计笔记总数
@@ -836,12 +844,12 @@ public class CoreServiceImpl implements ICoreService {
         result.put("notesCount", notesCount);
         // 统计计划总数
         PlanEntity planEntity = new PlanEntity();
-        planEntity.setSource(userSession);
+        planEntity.setSource(userSession.getUser());
         Long planCount = planService.getPlanCount(planEntity);
         result.put("planCount", planCount);
         // 统计公告总数
         NewsEntity newsEntity = new NewsEntity();
-        newsEntity.setSource(userSession);
+        newsEntity.setSource(userSession.getUser());
         Long newsCount = newsService.getNewsCount(newsEntity);
         result.put("newsCount", newsCount);
         // 统计留言总数
@@ -850,7 +858,7 @@ public class CoreServiceImpl implements ICoreService {
         result.put("guestCount", guestCount);
         // 统计登录总数
         LogEntity logEntity = new LogEntity();
-        logEntity.setUser(userSession);
+        logEntity.setUser(userSession.getUser());
         logEntity.setType("OX001");
         Long logCount = logService.selectCount(logEntity);
         result.put("logCount", logCount);
@@ -859,11 +867,11 @@ public class CoreServiceImpl implements ICoreService {
         bookEntity.setEndLine(bookCount.intValue());
         List<NoteBookEntity> bookList = noteBookService.getNoteBook(bookEntity);
         result.put("bookList", bookList);
-        result.put("news6", userService.countPre6MonthNews(userSession));
-        result.put("log6", userService.countPre6Logs(userSession));
-        result.put("files6", userService.countPre6Files(userSession));
+        result.put("news6", userService.countPre6MonthNews(userSession.getUser()));
+        result.put("log6", userService.countPre6Logs(userSession.getUser()));
+        result.put("files6", userService.countPre6Files(userSession.getUser()));
         result.put("board", userService.countPre6Board());
-        result.put("financial6", userService.countPre6Financial(userSession));
+        result.put("financial6", userService.countPre6Financial(userSession.getUser()));
         return ResultUtil.success(result);
     }
 }

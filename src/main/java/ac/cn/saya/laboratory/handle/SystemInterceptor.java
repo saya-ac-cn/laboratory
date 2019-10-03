@@ -1,6 +1,7 @@
 package ac.cn.saya.laboratory.handle;
 
 
+import ac.cn.saya.laboratory.entity.UserMemory;
 import ac.cn.saya.laboratory.tools.ResultUtil;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public class SystemInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //在session中取出管理员的信息
-        String sessionUdmin= (String) request.getSession().getAttribute("user");
+        UserMemory sessionUdmin= (UserMemory) request.getSession().getAttribute("user");
         if (sessionUdmin!= null) {
             ///logger.warn("you can go to controller");
             return true;

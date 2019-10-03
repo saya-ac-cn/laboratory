@@ -23,7 +23,7 @@ public  class CryptDES {
     }
 
     public CryptDES(String desKey) {
-        this.desKey = desKey.getBytes();
+        CryptDES.desKey = desKey.getBytes();
     }
 
     public static byte[] desEncrypt(byte[] plainText) throws Exception {

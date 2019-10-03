@@ -1,10 +1,7 @@
 package ac.cn.saya.laboratory.tools;
 
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Random;
 
 /**
@@ -13,13 +10,11 @@ import java.util.Random;
  * @Description: TODO
  * @Author Saya
  * @Date: 2018/11/11 20:22
- * @Description:
- * 随机文件命名
+ * @Description: 随机文件命名
  */
 
 public class RandomUtil {
 
-    public static DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     /**
      * 生成随机文件名：当前年月日+五位随机数
@@ -28,8 +23,7 @@ public class RandomUtil {
      */
     public static String getRandomFileName() {
         LocalDateTime now = LocalDateTime.now();
-
-        String str = now.format(format);
+        String str = now.format(DateUtils.fileFormat);
         Random random = new Random();
         // 获取5位随机数
         int rannum = (int) (random.nextDouble() * (99999 - 10000 + 1)) + 10000;
@@ -39,7 +33,8 @@ public class RandomUtil {
 
     public static void main(String[] args) {
         String fileName = RandomUtil.getRandomFileName();
-        System.out.println(fileName);//2014030788359
+        //2014030788359
+        System.out.println(fileName);
     }
 
 }

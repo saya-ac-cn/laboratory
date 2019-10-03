@@ -5,31 +5,20 @@ import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.persistent.service.BackupLogService;
 import ac.cn.saya.laboratory.persistent.service.PlanService;
 import ac.cn.saya.laboratory.service.SystemService;
-import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
-import ac.cn.saya.laboratory.tools.RandomUtil;
-import ac.cn.saya.laboratory.tools.UploadUtils;
+import ac.cn.saya.laboratory.tools.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -96,9 +85,7 @@ public class SystemServiceImpl implements SystemService {
     //@Scheduled(cron = "0 0/1 * * * ?")
     public Boolean backupDatabase() {
         try {
-            Date currentTime = new Date();
-            SimpleDateFormat mailformat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            String executeTime = mailformat.format(currentTime);
+            String executeTime =  DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat);
             //url路径 files/database
             String urlPath = File.separator + "files" + File.separator + "database";
             //上传文件路径-/database/目录下当天的文件夹
@@ -262,7 +249,7 @@ public class SystemServiceImpl implements SystemService {
         context.setVariable("executeTime", executeTime);
         context.setVariable("executeResult", executeResult);
         context.setVariable("saveUrl", saveUrl);
-        context.setVariable("sendTime", (new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).format(new Date()));
+        context.setVariable("sendTime", DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat));
         try {
             String emailContent = templateEngine.process("mail/backUpDB", context);
             mailService.sendHtmlMail(mail, "数据库备份结果报告", emailContent);
@@ -286,7 +273,7 @@ public class SystemServiceImpl implements SystemService {
         context.setVariable("userName", userName);
         context.setVariable("createTime", createTime);
         context.setVariable("planContent", planContent);
-        context.setVariable("sendTime", (new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).format(new Date()));
+        context.setVariable("sendTime", DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat));
         try {
             String emailContent = templateEngine.process("mail/remindPlan", context);
             mailService.sendHtmlMail(userEmail, "今日计划安排提醒", emailContent);
