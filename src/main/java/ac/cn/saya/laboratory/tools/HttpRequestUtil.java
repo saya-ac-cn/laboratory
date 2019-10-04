@@ -1,5 +1,6 @@
 package ac.cn.saya.laboratory.tools;
 
+import ac.cn.saya.laboratory.entity.UserMemory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -167,6 +169,12 @@ public class HttpRequestUtil {
         }
     }
 
+    /**
+     * 发送get请求
+     * @param httpUrl
+     * @param params
+     * @return
+     */
     public static JSONObject httpUrlConnetionGet(String httpUrl, String... params) {
         StringBuffer stringBuffer = null;
         try {
@@ -272,5 +280,24 @@ public class HttpRequestUtil {
         }
     }
 
+    /**
+     * 获取用户session信息
+     * @param request
+     * @return
+     */
+    public static UserMemory getUserMemory(HttpServletRequest request){
+        //传递参数true，那么当session过期时，新的session被创建，接下来可通过session.isNew()的返回值来判断是不是同一个session
+        //返回值为：true，新的session被创建，action提交执行时的那个用户session已经无效
+        //返回值为：false，同一个session，仍然有效
+        HttpSession session = request.getSession(true);
+        UserMemory userMemory = null;
+        if (session.isNew()) {
+            session.invalidate();
+        } else {
+            //在session中取出管理员的信息
+            userMemory = (UserMemory) request.getSession().getAttribute("user");
+        }
+        return userMemory;
+    }
 
 }

@@ -102,9 +102,8 @@ public class CoreServiceImpl implements ICoreService {
             // 缺少参数
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
-        HttpSession session = request.getSession();
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        UserMemory userSession = (UserMemory) session.getAttribute("user");
+        UserMemory userSession = HttpRequestUtil.getUserMemory(request);
         UserEntity entity = userService.getUser(user.getUser());
         if (entity == null) {
             // 没有该用户的信息 直接中断返回
@@ -140,6 +139,7 @@ public class CoreServiceImpl implements ICoreService {
             //加密后用户的密码
             user.setPassword(DesUtil.encrypt(user.getPassword()));
             if (entity.getPassword().equals(user.getPassword())) {
+                HttpSession session = request.getSession();
                 //设置session
                 // 设置封装到session中的实体信息
                 UserMemory memory = new UserMemory();

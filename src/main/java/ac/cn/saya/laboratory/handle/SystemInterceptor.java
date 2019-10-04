@@ -2,6 +2,7 @@ package ac.cn.saya.laboratory.handle;
 
 
 import ac.cn.saya.laboratory.entity.UserMemory;
+import ac.cn.saya.laboratory.tools.HttpRequestUtil;
 import ac.cn.saya.laboratory.tools.ResultUtil;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 
 /**
@@ -19,8 +21,7 @@ import java.io.PrintWriter;
  * @Description: TODO
  * @Author Saya
  * @Date: 2018/9/24 23:24
- * @Description:
- * 系统拦截器
+ * @Description: 系统拦截器
  */
 
 public class SystemInterceptor implements HandlerInterceptor {
@@ -29,14 +30,11 @@ public class SystemInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //在session中取出管理员的信息
-        UserMemory sessionUdmin= (UserMemory) request.getSession().getAttribute("user");
-        if (sessionUdmin!= null) {
+        UserMemory userMemory = HttpRequestUtil.getUserMemory(request);
+        if (null != userMemory) {
             ///logger.warn("you can go to controller");
             return true;
-        }
-        else
-        {
+        } else {
             //logger.warn("controller tell you Please login");
             ///request.getRequestDispatcher("/login.html").forward(request, response);
             // 设置将字符以"UTF-8"编码输出到客户端浏览器
@@ -44,7 +42,7 @@ public class SystemInterceptor implements HandlerInterceptor {
             response.setContentType("application/json; charset=utf-8");
             //获取PrintWriter输出流
             PrintWriter out = response.getWriter();
-            out.write(JSON.toJSONString(ResultUtil.error(-7,"请登录")));
+            out.write(JSON.toJSONString(ResultUtil.error(-7, "请登录")));
             out.close();
             ///response.sendRedirect("/login.html");
             return false;
