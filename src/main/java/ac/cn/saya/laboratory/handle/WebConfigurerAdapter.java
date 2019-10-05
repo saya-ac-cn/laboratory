@@ -7,6 +7,8 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import java.io.File;
+
 /**
  * @Title: WebConfigurerAdapter
  * @ProjectName DataCenter
@@ -42,7 +44,14 @@ public class WebConfigurerAdapter extends WebMvcConfigurationSupport {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //将所有/files/** 访问都映射到classpath:/static/ 目录下
-        registry.addResourceHandler("/files/**").addResourceLocations("classpath:/files/");
+        ///registry.addResourceHandler("/files/**").addResourceLocations("classpath:/files/");
+        /**
+         * 资源映射路径
+         * addResourceHandler：访问映射路径
+         * addResourceLocations：资源绝对路径
+         */
+        registry.addResourceHandler("/warehouse/**").addResourceLocations("file:" + System.getProperty("user.home","/home/saya") + File.separator + "warehouse" + File.separator);
+        super.addResourceHandlers(registry);
     }
 
 

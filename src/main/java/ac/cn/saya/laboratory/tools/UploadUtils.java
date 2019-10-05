@@ -1,6 +1,7 @@
 package ac.cn.saya.laboratory.tools;
 
 
+import ac.cn.saya.laboratory.entity.UserMemory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -43,15 +44,17 @@ public class UploadUtils {
                 image = imageArr[1];
                 // 写入磁盘标志
                 String success = "fail";
+                //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+                UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
                 //将字符串格式的image转为二进制流（biye[])的decodedBytes
                 BASE64Decoder decoder = new BASE64Decoder();
                 byte[] decodedBytes = decoder.decodeBuffer(image);
                 /********生成今天的日期**********/
                 String datetime = DateUtils.getCurrentDateTime(DateUtils.fileFormat);
                 //url路径 files/picture/logo/用户名/yyyyMMdd
-                String urlPath =  File.separator + "files"+ File.separator + "picture"+ File.separator +"logo"+File.separator+String.valueOf(request.getSession().getAttribute("user"))+File.separator+datetime;
+                String urlPath = File.separator + "warehouse" + File.separator + "picture"+ File.separator +"logo"+File.separator+userSession.getUser()+File.separator+datetime;
                 //上传文件路径-/picture/目录下该用户当天的文件夹
-                String path = ClassUtils.getDefaultClassLoader().getResource("").getPath() + urlPath;
+                String path = System.getProperty("user.home","/home/saya") + urlPath;
                 File filepath = new File(path);
                 //判断路径是否存在，如果不存在就创建一个
                 //这里不能判断父目录getParentFile()是否存在
@@ -104,10 +107,12 @@ public class UploadUtils {
                 byte[] decodedBytes = decoder.decodeBuffer(image);
                 /********生成今天的日期**********/
                 String datetime = DateUtils.getCurrentDateTime(DateUtils.fileFormat);
+                //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+                UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
                 //url路径 files/picture/{wallpaper,news}/用户名/yyyyMMdd
-                String urlPath =  File.separator + "files"+ File.separator + "picture"+ File.separator + imgeUrl +File.separator+String.valueOf(request.getSession().getAttribute("user"))+File.separator+datetime;
+                String urlPath =  File.separator + "warehouse" + File.separator + "picture"+ File.separator + imgeUrl +File.separator+userSession.getUser()+File.separator+datetime;
                 //上传文件路径-/picture/目录下该用户当天的文件夹
-                String path = ClassUtils.getDefaultClassLoader().getResource("").getPath() + urlPath;
+                String path = System.getProperty("user.home","/home/saya") + urlPath;
                 File filepath = new File(path);
                 //判断路径是否存在，如果不存在就创建一个
                 //这里不能判断父目录getParentFile()是否存在
@@ -125,7 +130,7 @@ public class UploadUtils {
                 //关闭文件输出器
                 out.close();
                 //上传成功
-                return ResultUtil.success(urlPath+ File.separator +imgName);
+                return ResultUtil.success(urlPath + File.separator +imgName);
             } else {
                 return ResultUtil.error(-2,"请选择有效的图片");
             }
@@ -148,6 +153,8 @@ public class UploadUtils {
             if(file == null) {
                 return ResultUtil.error(-3,"文件不能为空");
             }
+            //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
             //文件类型
             String fileType = null;
             // 原文件名称
@@ -164,9 +171,9 @@ public class UploadUtils {
                     /********生成今天的日期**********/
                     String datetime = DateUtils.getCurrentDateTime(DateUtils.fileFormat);
                     //url路径 files/picture/document/用户名/yyyyMMdd
-                    String urlPath =  File.separator + "files"+ File.separator + "document"+ File.separator + "file" +File.separator+String.valueOf(request.getSession().getAttribute("user"))+File.separator+datetime;
+                    String urlPath = File.separator + "warehouse" + File.separator + "document"+ File.separator + "file" +File.separator+userSession.getUser()+File.separator+datetime;
                     //上传文件路径-/picture/目录下该用户当天的文件夹
-                    String path = ClassUtils.getDefaultClassLoader().getResource("").getPath() + urlPath;
+                    String path = System.getProperty("user.home","/home/saya") + urlPath;
                     File filepath = new File(path);
                     //判断路径是否存在，如果不存在就创建一个
                     //这里不能判断父目录getParentFile()是否存在
@@ -220,10 +227,12 @@ public class UploadUtils {
                     String success = "fail";
                     /********生成今天的日期**********/
                     String datetime = DateUtils.getCurrentDateTime(DateUtils.fileFormat);
+                    //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+                    UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
                     //url路径 files/picture/{wallpaper,news}/用户名/yyyyMMdd
-                    String urlPath =  File.separator + "files"+ File.separator + "picture"+ File.separator + "wallpaper" +File.separator+String.valueOf(request.getSession().getAttribute("user"))+File.separator+datetime;
+                    String urlPath = File.separator + "warehouse" + File.separator + "picture"+ File.separator + "wallpaper" +File.separator+userSession.getUser()+File.separator+datetime;
                     //上传文件路径-/picture/目录下该用户当天的文件夹
-                    String path = ClassUtils.getDefaultClassLoader().getResource("").getPath() + urlPath;
+                    String path = System.getProperty("user.home","/home/saya") + urlPath;
                     File filepath = new File(path);
                     //判断路径是否存在，如果不存在就创建一个
                     //这里不能判断父目录getParentFile()是否存在
@@ -257,7 +266,7 @@ public class UploadUtils {
      * @修改人和其它信息
      */
     public static void deleteFile(String url){
-        String tempurl = ClassUtils.getDefaultClassLoader().getResource("").getPath() + url;
+        String tempurl = System.getProperty("user.home","/home/saya") + url;
         File file = new File(tempurl);
         //判断要删除的目录是否存在
         if(file.exists() && file.isFile())
@@ -275,7 +284,7 @@ public class UploadUtils {
      * @修改人和其它信息
      */
     public static File getFilePath(String url){
-        String tempurl = ClassUtils.getDefaultClassLoader().getResource("").getPath() + url;
+        String tempurl = System.getProperty("user.home","/home/saya") + url;
         File file = new File(tempurl);
         //判断要删除的目录是否存在
         if(file.exists() && file.isFile())

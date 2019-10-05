@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ClassUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -87,9 +86,9 @@ public class SystemServiceImpl implements SystemService {
         try {
             String executeTime =  DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat);
             //url路径 files/database
-            String urlPath = File.separator + "files" + File.separator + "database";
+            String urlPath = File.separator + "warehouse" + File.separator + "database";
             //上传文件路径-/database/目录下当天的文件夹
-            String backUppath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + urlPath;
+            String backUppath = System.getProperty("user.home","/home/saya") + urlPath;
             //保存的文件名
             String backUpName = RandomUtil.getRandomFileName() + ".sql";
             // 保存本次执行任务，必须要在备份前保存本次任务，否则将出现异常
@@ -223,11 +222,11 @@ public class SystemServiceImpl implements SystemService {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
-                if (printWriter != null) {
-                    printWriter.close();
-                }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            if (printWriter != null) {
+                printWriter.close();
             }
         }
         return false;
