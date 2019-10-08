@@ -46,7 +46,7 @@ public class RecordService {
             //在session中取出管理员的名字
             UserMemory user = (UserMemory) httpRequest.getSession().getAttribute("user");
             String datetime = DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat);
-            LogEntity entity = new LogEntity(user.getUser(), type, user.getIp(), user.getIp(), datetime);
+            LogEntity entity = new LogEntity(user.getUser(), type, user.getIp(), user.getCity(), datetime);
             logService.insert(entity);
         } catch (Exception e) {
             e.printStackTrace();

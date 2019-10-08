@@ -346,7 +346,7 @@ public class FrontendServiceImpl implements IFrontendService {
     public Result<Object> getNoteBook(NoteBookEntity entity) throws Exception {
         entity.setStatus(1);
         List<NoteBookEntity> list = noteBookService.getNoteBook(entity);
-        if (list.size() > 0) {
+        if (null != list && list.size() > 0) {
             return ResultUtil.success(list);
         } else {
             //未找到有效记录

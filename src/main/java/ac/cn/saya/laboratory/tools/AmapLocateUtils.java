@@ -60,7 +60,7 @@ public class AmapLocateUtils {
                  * 	"info": "OK"
                  * }
                  */
-                return String.valueOf(jsonObject.get("province")) + String.valueOf(jsonObject.get("自贡市"));
+                return String.valueOf(jsonObject.get("province")) + String.valueOf(jsonObject.get("city"));
             }
         }else {
             return "获取失败";
