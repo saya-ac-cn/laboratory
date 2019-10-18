@@ -203,8 +203,10 @@ public class FrontendServiceImpl implements IFrontendService {
         FilesEntity queryEntity = new FilesEntity();
         queryEntity.setId(id);
         queryEntity.setSource(user);
+        queryEntity.setStatus("1");
         FilesEntity resultEntity = filesService.getOneFile(queryEntity);
         if (resultEntity == null || StringUtils.isEmpty(resultEntity.getFileurl())) {
+            response.setStatus(404);
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
             File thisFile = UploadUtils.getFilePath(resultEntity.getFileurl());

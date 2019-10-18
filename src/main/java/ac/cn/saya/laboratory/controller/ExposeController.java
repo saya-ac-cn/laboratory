@@ -122,6 +122,7 @@ public class ExposeController {
     @GetMapping(value = "/frontend/{user}/file")
     public Result<Object> getFileList(@PathVariable("user") String user, FilesEntity entity) throws Exception{
         entity.setSource(user);
+        entity.setStatus("1");
         return frontendServiceImpl.getFileList(entity);
     }
 
