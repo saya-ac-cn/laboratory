@@ -1,7 +1,10 @@
 package ac.cn.saya.laboratory.tools;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Optional;
+
 /**
  * @Title: Log4jUtils
  * @ProjectName DataCenter
@@ -18,12 +21,28 @@ public class Log4jUtils {
      * @param t
      * @return
      */
-    public static String getTrace(Throwable t) {
-        StringWriter stringWriter= new StringWriter();
-        PrintWriter writer= new PrintWriter(stringWriter);
-        t.printStackTrace(writer);
-        StringBuffer buffer= stringWriter.getBuffer();
-        return buffer.toString();
+    public static Optional<String> getTrace(Throwable t) {
+        StringBuffer buffer = null;
+        StringWriter stringWriter = null;
+        PrintWriter writer = null;
+        try {
+            stringWriter = new StringWriter();
+            writer = new PrintWriter(stringWriter);
+            t.printStackTrace(writer);
+            buffer = stringWriter.getBuffer();
+        } finally {
+            if (null != writer){
+                writer.close();
+            }
+            try {
+                if (null != stringWriter){
+                    stringWriter.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return Optional.ofNullable(buffer.toString());
     }
 
 }
