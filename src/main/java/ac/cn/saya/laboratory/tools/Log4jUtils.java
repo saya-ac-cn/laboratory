@@ -22,7 +22,7 @@ public class Log4jUtils {
      * @return
      */
     public static Optional<String> getTrace(Throwable t) {
-        StringBuffer buffer = null;
+        StringBuffer buffer;
         StringWriter stringWriter = null;
         PrintWriter writer = null;
         try {
@@ -42,6 +42,7 @@ public class Log4jUtils {
                 e.printStackTrace();
             }
         }
+        // 非空返回
         return Optional.ofNullable(buffer.toString());
     }
 

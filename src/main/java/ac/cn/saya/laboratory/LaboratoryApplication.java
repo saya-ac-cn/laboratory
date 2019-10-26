@@ -3,7 +3,10 @@ package ac.cn.saya.laboratory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -17,7 +20,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @修改人和其它信息 项目启动入口
  */
 
-@SpringBootApplication
+//// 移除 @SpringBootApplication and @ComponentScan, 用 @EnableAutoConfiguration 来替代
+//@SpringBootApplication
+@Configuration
+@EnableAutoConfiguration
+@ComponentScan(basePackages = {"ac.cn.saya.laboratory"})
 @ImportResource("classpath:transaction.xml")
 // 开启定时任务
 @EnableScheduling

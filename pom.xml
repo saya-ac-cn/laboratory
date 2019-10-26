@@ -33,10 +33,10 @@
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
                 <!-- 移除嵌入式tomcat插件 -->
-                <!--<exclusion>-->
-                    <!--<groupId>org.springframework.boot</groupId>-->
-                    <!--<artifactId>spring-boot-starter-tomcat</artifactId>-->
-                <!--</exclusion>-->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <!--引入mybatis-->
@@ -77,11 +77,11 @@
             <artifactId>poi-ooxml</artifactId>
             <version>4.0.0</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-tomcat</artifactId>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
             <!--<scope>provided</scope>-->
-        <!--</dependency>-->
+        </dependency>
         <!--加入对事务的支持-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
