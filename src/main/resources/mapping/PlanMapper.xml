@@ -4,6 +4,9 @@
 
 <mapper namespace="ac.cn.saya.laboratory.persistent.dao.PlanDAO">
 
+    <!--动态相关的dao操作加入二级缓存-->
+    <cache></cache>
+
     <!--添加计划-->
     <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->
     <insert id="insertPlan" useGeneratedKeys="true" keyProperty="id" parameterType="plan" >

@@ -4,6 +4,9 @@
     
 <mapper namespace="ac.cn.saya.laboratory.persistent.dao.UserDAO">
 
+    <!--动态相关的dao操作加入二级缓存-->
+    <cache></cache>
+
     <!--查询用户-->
     <select id="queryUser"  parameterType="String"  resultType="user">
         select `user`,`password`,`sex`,`qq`,`email`,`phone`,`birthday`,`hometown`,`autograph`,`logo`,`background` as backgroundId,b.weburl as background,`updateTime` from user a left join (select id, weburl from pictures where type = 1) b on a.background = b.id where a.user = #{user} or a.email = #{user}

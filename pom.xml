@@ -39,6 +39,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- 引入小辣椒 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
+            <scope>provided</scope>
+        </dependency>
         <!--引入mybatis-->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
