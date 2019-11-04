@@ -1,5 +1,9 @@
 package ac.cn.saya.laboratory.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * @Title: NotesEntity
  * @ProjectName DataCenter
@@ -9,9 +13,12 @@ package ac.cn.saya.laboratory.entity;
  * @Description:
  * 笔记
  */
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class NotesEntity extends BaseEntity{
 
+    private static final long serialVersionUID = -7973110959944488014L;
     /**
      * 笔记编号
      */
@@ -51,72 +58,4 @@ public class NotesEntity extends BaseEntity{
      * 所属的笔记簿
      */
     private NoteBookEntity notebook;
-
-
-    public NotesEntity() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getNotebookId() {
-        return notebookId;
-    }
-
-    public void setNotebookId(Integer notebookId) {
-        this.notebookId = notebookId;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getCreatetime() {
-        return createtime;
-    }
-
-    public void setCreatetime(String createtime) {
-        this.createtime = createtime;
-    }
-
-    public String getUpdatetime() {
-        return updatetime;
-    }
-
-    public void setUpdatetime(String updatetime) {
-        this.updatetime = updatetime;
-    }
-
-    public NoteBookEntity getNotebook() {
-        return notebook;
-    }
-
-    public void setNotebook(NoteBookEntity notebook) {
-        this.notebook = notebook;
-    }
 }

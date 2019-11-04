@@ -1,5 +1,9 @@
 package ac.cn.saya.laboratory.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * @Title: NoteBookEntity
  * @ProjectName DataCenter
@@ -9,9 +13,12 @@ package ac.cn.saya.laboratory.entity;
  * @Description:
  * 笔记簿名
  */
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class NoteBookEntity extends BaseEntity{
 
+    private static final long serialVersionUID = -3627300703508384086L;
     /**
      * 笔记簿编号
      */
@@ -42,60 +49,9 @@ public class NoteBookEntity extends BaseEntity{
      */
     private Integer notesCount;
 
-    public NoteBookEntity() {
-    }
-
     public NoteBookEntity(String name,String source,Integer status) {
         this.name = name;
         this.source = source;
         this.status = status;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getDescript() {
-        return descript;
-    }
-
-    public void setDescript(String descript) {
-        this.descript = descript;
-    }
-
-    public Integer getNotesCount() {
-        return notesCount;
-    }
-
-    public void setNotesCount(Integer notesCount) {
-        this.notesCount = notesCount;
     }
 }

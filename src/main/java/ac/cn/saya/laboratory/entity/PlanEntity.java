@@ -1,5 +1,9 @@
 package ac.cn.saya.laboratory.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * @Title: PlanEntity
  * @ProjectName DataCenter
@@ -9,9 +13,12 @@ package ac.cn.saya.laboratory.entity;
  * @Description:
  * 日程计划实体类
  */
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class PlanEntity extends BaseEntity{
 
+    private static final long serialVersionUID = 6740035219118171437L;
     /**
      * 计划编号
      */
@@ -46,63 +53,4 @@ public class PlanEntity extends BaseEntity{
      * 该条记录在本月的序号
      */
     private Integer number;
-
-    public PlanEntity() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getDescribe() {
-        return describe;
-    }
-
-    public void setDescribe(String describe) {
-        this.describe = describe;
-    }
-
-    public String getPlandate() {
-        return plandate;
-    }
-
-    public void setPlandate(String plandate) {
-        this.plandate = plandate;
-    }
-
-    public String getCreatetime() {
-        return createtime;
-    }
-
-    public void setCreatetime(String createtime) {
-        this.createtime = createtime;
-    }
-
-    public String getUpdatetime() {
-        return updatetime;
-    }
-
-    public void setUpdatetime(String updatetime) {
-        this.updatetime = updatetime;
-    }
-
-    public Integer getNumber() {
-        return number;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
 }

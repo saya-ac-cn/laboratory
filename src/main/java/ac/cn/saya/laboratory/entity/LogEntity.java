@@ -1,5 +1,9 @@
 package ac.cn.saya.laboratory.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * @Title: LogEntity
  * @ProjectName DataCenter
@@ -9,10 +13,13 @@ package ac.cn.saya.laboratory.entity;
  * @Description:
  * 日志实体类
  */
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class LogEntity extends BaseEntity{
 
 
+    private static final long serialVersionUID = 1669256731177965244L;
     /**
      * 编号
      */
@@ -49,64 +56,4 @@ public class LogEntity extends BaseEntity{
         this.city = city;
         this.date = date;
     }
-
-    public LogEntity() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public LogTypeEntity getLogType() {
-        return logType;
-    }
-
-    public void setLogType(LogTypeEntity logType) {
-        this.logType = logType;
-    }
-
 }

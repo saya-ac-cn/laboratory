@@ -1,5 +1,9 @@
 package ac.cn.saya.laboratory.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * @Title: ApiEntity
  * @ProjectName laboratory
@@ -9,9 +13,12 @@ package ac.cn.saya.laboratory.entity;
  * @Description:
  * 对外接口开发权限管理表
  */
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class ApiEntity extends BaseEntity{
 
+    private static final long serialVersionUID = 8929396730382874154L;
     /**
      * 接口编号
      */
@@ -41,55 +48,4 @@ public class ApiEntity extends BaseEntity{
      * 最后一次修改时间
      */
     private String updatetime;
-
-    public ApiEntity() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getDescript() {
-        return descript;
-    }
-
-    public void setDescript(String descript) {
-        this.descript = descript;
-    }
-
-    public String getCreatetime() {
-        return createtime;
-    }
-
-    public void setCreatetime(String createtime) {
-        this.createtime = createtime;
-    }
-
-    public String getUpdatetime() {
-        return updatetime;
-    }
-
-    public void setUpdatetime(String updatetime) {
-        this.updatetime = updatetime;
-    }
 }

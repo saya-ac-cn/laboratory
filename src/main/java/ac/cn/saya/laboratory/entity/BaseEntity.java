@@ -14,8 +14,6 @@ import java.io.Serializable;
 
 public class BaseEntity implements Serializable {
 
-    private static final long serialVersionUID = 7661603815484429824L;
-
     /**
      * 请求页面
      */

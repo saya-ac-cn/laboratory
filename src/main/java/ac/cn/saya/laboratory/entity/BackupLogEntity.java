@@ -1,5 +1,9 @@
 package ac.cn.saya.laboratory.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * @Title: BackupLogEntity
  * @ProjectName laboratory
@@ -9,9 +13,12 @@ package ac.cn.saya.laboratory.entity;
  * @Description:
  * 数据库备份日志记录
  */
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class BackupLogEntity extends BaseEntity{
 
+    private static final long serialVersionUID = 2130871056548519611L;
     /**
      * 备份数据库存放路径
      */
@@ -31,40 +38,4 @@ public class BackupLogEntity extends BaseEntity{
      * 保留备份多少月
      */
     private Integer saveMonth;
-
-
-    public BackupLogEntity() {
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getArchiveDate() {
-        return archiveDate;
-    }
-
-    public void setArchiveDate(String archiveDate) {
-        this.archiveDate = archiveDate;
-    }
-
-    public String getCreatetime() {
-        return createtime;
-    }
-
-    public void setCreatetime(String createtime) {
-        this.createtime = createtime;
-    }
-
-    public Integer getSaveMonth() {
-        return saveMonth;
-    }
-
-    public void setSaveMonth(Integer saveMonth) {
-        this.saveMonth = saveMonth;
-    }
 }

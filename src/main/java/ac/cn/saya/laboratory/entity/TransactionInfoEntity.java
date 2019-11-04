@@ -1,5 +1,9 @@
 package ac.cn.saya.laboratory.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * @Title: TransactionInfoEntity
  * @ProjectName DataCenter
@@ -9,9 +13,12 @@ package ac.cn.saya.laboratory.entity;
  * @Description:
  * 交易明细
  */
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class TransactionInfoEntity extends BaseEntity{
 
+    private static final long serialVersionUID = -4390626752357452125L;
     /**
      * '明细编号',
      */
@@ -38,55 +45,4 @@ public class TransactionInfoEntity extends BaseEntity{
     private String currencyDetails;
 
     private TransactionListEntity transactionListEntity;
-
-    public TransactionInfoEntity() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getTradeId() {
-        return tradeId;
-    }
-
-    public void setTradeId(Integer tradeId) {
-        this.tradeId = tradeId;
-    }
-
-    public Integer getFlog() {
-        return flog;
-    }
-
-    public void setFlog(Integer flog) {
-        this.flog = flog;
-    }
-
-    public Double getCurrencyNumber() {
-        return currencyNumber;
-    }
-
-    public void setCurrencyNumber(Double currencyNumber) {
-        this.currencyNumber = currencyNumber;
-    }
-
-    public String getCurrencyDetails() {
-        return currencyDetails;
-    }
-
-    public void setCurrencyDetails(String currencyDetails) {
-        this.currencyDetails = currencyDetails;
-    }
-
-    public TransactionListEntity getTransactionListEntity() {
-        return transactionListEntity;
-    }
-
-    public void setTransactionListEntity(TransactionListEntity transactionListEntity) {
-        this.transactionListEntity = transactionListEntity;
-    }
 }

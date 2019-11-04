@@ -1,5 +1,9 @@
 package ac.cn.saya.laboratory.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * 用户的内存记录信息
  * @Title: UserMemory
@@ -9,7 +13,9 @@ package ac.cn.saya.laboratory.entity;
  * @Date: 2019-10-02 23:32
  * @Description:
  */
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class UserMemory {
 
     /**
@@ -26,31 +32,4 @@ public class UserMemory {
      * ip所在城市
      */
     private String city;
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public UserMemory() {
-    }
 }

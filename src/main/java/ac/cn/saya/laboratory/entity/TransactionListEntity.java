@@ -1,5 +1,9 @@
 package ac.cn.saya.laboratory.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.List;
 
 /**
@@ -11,9 +15,12 @@ import java.util.List;
  * @Description:
  * 交易表
  */
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class TransactionListEntity extends BaseEntity {
 
+    private static final long serialVersionUID = -2361499569268952309L;
     /**
      * 流水编号
      */
@@ -63,9 +70,6 @@ public class TransactionListEntity extends BaseEntity {
      */
     private List<TransactionInfoEntity> infoList;
 
-    public TransactionListEntity() {
-    }
-
     public TransactionListEntity(String tradeDate, Double deposited, Double expenditure, Double currencyNumber) {
         this.tradeDate = tradeDate;
         this.deposited = deposited;
@@ -73,99 +77,5 @@ public class TransactionListEntity extends BaseEntity {
         this.currencyNumber = currencyNumber;
     }
 
-    public Integer getTradeId() {
-        return tradeId;
-    }
 
-    public void setTradeId(Integer tradeId) {
-        this.tradeId = tradeId;
-    }
-
-    public Double getDeposited() {
-        return deposited;
-    }
-
-    public void setDeposited(Double deposited) {
-        this.deposited = deposited;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public Double getExpenditure() {
-        return expenditure;
-    }
-
-    public void setExpenditure(Double expenditure) {
-        this.expenditure = expenditure;
-    }
-
-    public String getTradeDate() {
-        return tradeDate;
-    }
-
-    public void setTradeDate(String tradeDate) {
-        this.tradeDate = tradeDate;
-    }
-
-    public Integer getTradeType() {
-        return tradeType;
-    }
-
-    public void setTradeType(Integer tradeType) {
-        this.tradeType = tradeType;
-    }
-
-    public Double getCurrencyNumber() {
-        return currencyNumber;
-    }
-
-    public void setCurrencyNumber(Double currencyNumber) {
-        this.currencyNumber = currencyNumber;
-    }
-
-    public String getTransactionAmount() {
-        return transactionAmount;
-    }
-
-    public void setTransactionAmount(String transactionAmount) {
-        this.transactionAmount = transactionAmount;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public TransactionTypeEntity getTradeTypeEntity() {
-        return tradeTypeEntity;
-    }
-
-    public void setTradeTypeEntity(TransactionTypeEntity tradeTypeEntity) {
-        this.tradeTypeEntity = tradeTypeEntity;
-    }
-
-    public List<TransactionInfoEntity> getInfoList() {
-        return infoList;
-    }
-
-    public void setInfoList(List<TransactionInfoEntity> infoList) {
-        this.infoList = infoList;
-    }
 }
