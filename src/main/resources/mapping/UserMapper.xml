@@ -5,7 +5,7 @@
 <mapper namespace="ac.cn.saya.laboratory.persistent.dao.UserDAO">
 
     <!--动态相关的dao操作加入二级缓存-->
-    <cache></cache>
+    <!--<cache></cache>-->
 
     <!--查询用户-->
     <select id="queryUser"  parameterType="String"  resultType="user">
