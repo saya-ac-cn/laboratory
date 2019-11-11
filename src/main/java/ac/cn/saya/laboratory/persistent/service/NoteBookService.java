@@ -33,7 +33,6 @@ public class NoteBookService {
     private NoteBookDAO noteBookDAO;
 
     /**
-     * @param entity
      * @描述 添加笔记簿
      * @参数
      * @返回值
@@ -52,7 +51,6 @@ public class NoteBookService {
     }
 
     /**
-     * @param entity
      * @描述 编辑修改笔记簿
      * @参数
      * @返回值
@@ -71,7 +69,6 @@ public class NoteBookService {
     }
 
     /**
-     * @param entity
      * @描述 删除笔记簿
      * @参数
      * @返回值
@@ -90,7 +87,6 @@ public class NoteBookService {
     }
 
     /**
-     * @param entity
      * @描述 查询一条笔记簿
      * @参数 [entity]
      * @返回值 ac.cn.saya.datacenter.entity.NoteBookEntity
@@ -109,7 +105,6 @@ public class NoteBookService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页后的笔记簿
      * @参数
      * @返回值
@@ -133,7 +128,6 @@ public class NoteBookService {
     }
 
     /**
-     * @param entity
      * @描述 获取笔记簿总数
      * @参数
      * @返回值
@@ -152,7 +146,6 @@ public class NoteBookService {
     }
 
     /**
-     * @param entity
      * @描述 获取笔记簿
      * @参数
      * @返回值

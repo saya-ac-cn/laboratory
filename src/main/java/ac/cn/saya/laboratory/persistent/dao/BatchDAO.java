@@ -34,7 +34,6 @@ public class BatchDAO extends JDBCBaseConnection {
         SqlSession sqlSession = null;
         //连接对象
         Connection sqlCon = null;
-        String flog = "";
         try {
             //获取sqlSession
             sqlSession = getSqlSession();
@@ -77,7 +76,6 @@ public class BatchDAO extends JDBCBaseConnection {
         SqlSession sqlSession = null;
         //连接对象
         Connection sqlCon = null;
-        String flog = "";
         try {
             //获取sqlSession
             sqlSession = getSqlSession();
@@ -119,7 +117,6 @@ public class BatchDAO extends JDBCBaseConnection {
         SqlSession sqlSession = null;
         //连接对象
         Connection sqlCon = null;
-        String flog = "";
         try {
             //获取sqlSession
             sqlSession = getSqlSession();
@@ -161,7 +158,6 @@ public class BatchDAO extends JDBCBaseConnection {
         SqlSession sqlSession = null;
         //连接对象
         Connection sqlCon = null;
-        String flog = "";
         try {
             //获取sqlSession
             sqlSession = getSqlSession();
@@ -201,7 +197,6 @@ public class BatchDAO extends JDBCBaseConnection {
         SqlSession sqlSession = null;
         //连接对象
         Connection sqlCon = null;
-        String flog = "";
         try {
             //获取sqlSession
             sqlSession = getSqlSession();
@@ -244,7 +239,6 @@ public class BatchDAO extends JDBCBaseConnection {
         SqlSession sqlSession = null;
         //连接对象
         Connection sqlCon = null;
-        String flog = "";
         try {
             //获取sqlSession
             sqlSession = getSqlSession();

@@ -34,7 +34,6 @@ public class ApiService {
     private ApiDAO apiDAO;
 
     /**
-     * @param entity
      * @描述 添加接口
      * @参数
      * @返回值
@@ -53,7 +52,6 @@ public class ApiService {
     }
 
     /**
-     * @param entity
      * @描述 编辑接口
      * @参数
      * @返回值
@@ -72,7 +70,6 @@ public class ApiService {
     }
 
     /**
-     * @param entity
      * @描述 删除接口
      * @参数
      * @返回值
@@ -91,7 +88,6 @@ public class ApiService {
     }
 
     /**
-     * @param entity
      * @描述 查询一条接口信息
      * @参数 [entity]
      * @返回值 ac.cn.saya.datacenter.entity.ApiEntity
@@ -99,7 +95,6 @@ public class ApiService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
-    @Transactional(readOnly = true)
     public ApiEntity getOneApi(ApiEntity entity) {
         try {
             return apiDAO.getOneApi(entity);
@@ -111,7 +106,6 @@ public class ApiService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页后的接口
      * @参数
      * @返回值
@@ -119,7 +113,6 @@ public class ApiService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
-    @Transactional(readOnly = true)
     public List<ApiEntity> getApiPage(ApiEntity entity) {
         List<ApiEntity> list = new ArrayList<>();
         try {
@@ -136,7 +129,6 @@ public class ApiService {
     }
 
     /**
-     * @param entity
      * @描述 获取接口总数
      * @参数
      * @返回值
@@ -144,7 +136,6 @@ public class ApiService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
-    @Transactional(readOnly = true)
     public Long getApiCount(ApiEntity entity) {
         try {
             return apiDAO.getApiCount(entity);

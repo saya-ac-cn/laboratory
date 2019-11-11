@@ -39,7 +39,6 @@ public class NotesService {
     private BatchDAO batchDAO;
 
     /**
-     * @param entity
      * @描述 添加笔记
      * @参数
      * @返回值
@@ -58,7 +57,6 @@ public class NotesService {
     }
 
     /**
-     * @param entity
      * @描述 编辑修改笔记
      * @参数
      * @返回值
@@ -77,7 +75,6 @@ public class NotesService {
     }
 
     /**
-     * @param entity
      * @描述 删除笔记
      * @参数
      * @返回值
@@ -96,7 +93,6 @@ public class NotesService {
     }
 
     /**
-     * @param entity
      * @描述 查询一条笔记
      * @参数 [entity]
      * @返回值 ac.cn.saya.datacenter.entity.NotesEntity
@@ -115,7 +111,6 @@ public class NotesService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页后的笔记
      * @参数
      * @返回值
@@ -139,7 +134,6 @@ public class NotesService {
     }
 
     /**
-     * @param entity
      * @描述 获取笔记总数
      * @参数
      * @返回值

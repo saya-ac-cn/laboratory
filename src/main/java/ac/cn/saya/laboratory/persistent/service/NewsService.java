@@ -42,7 +42,6 @@ public class NewsService {
     private BatchDAO batchDAO;
 
     /**
-     * @param entity
      * @描述 发布动态
      * @参数
      * @返回值
@@ -61,7 +60,6 @@ public class NewsService {
     }
 
     /**
-     * @param entity
      * @描述 编辑修改动态
      * @参数
      * @返回值
@@ -80,7 +78,6 @@ public class NewsService {
     }
 
     /**
-     * @param entity
      * @描述 删除动态
      * @参数
      * @返回值

@@ -34,7 +34,6 @@ public class TransactionWriteService {
     private TransactionWriteDAO transactionWriteDAO;
 
     /**
-     * @param entity
      * @描述 写入到财政明细表
      * @参数 [entity]
      * @返回值 java.lang.Integer 返回写入状态标志位
@@ -53,7 +52,6 @@ public class TransactionWriteService {
     }
 
     /**
-     * @param entity
      * @描述 写入到财政父表
      * @参数 [entity]
      * @返回值 java.lang.Integer 返回主键回填的值
@@ -78,7 +76,6 @@ public class TransactionWriteService {
     }
 
     /**
-     * @param entity
      * @描述 修改财政明细表
      * @参数 [entity]
      * @返回值 java.lang.Integer
@@ -97,7 +94,6 @@ public class TransactionWriteService {
     }
 
     /**
-     * @param entity
      * @描述 修改财政父表
      * @参数 [entity]
      * @返回值 java.lang.Integer
@@ -116,8 +112,6 @@ public class TransactionWriteService {
     }
 
     /**
-     * @param id
-     * @param source
      * @描述 删除财政明细表
      * @参数 [entity]
      * @返回值 java.lang.Integer
@@ -136,8 +130,6 @@ public class TransactionWriteService {
     }
 
     /**
-     * @param tradeId
-     * @param source
      * @描述 删除财政父表
      * @参数 [entity]
      * @返回值 java.lang.Integer

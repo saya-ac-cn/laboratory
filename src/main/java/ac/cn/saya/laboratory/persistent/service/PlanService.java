@@ -60,7 +60,6 @@ public class PlanService {
     }
 
     /**
-     * @param entity
      * @描述 编辑修改计划安排
      * @参数
      * @返回值
@@ -105,7 +104,6 @@ public class PlanService {
     }
 
     /**
-     * @param entity
      * @描述 删除计划安排
      * @参数
      * @返回值
@@ -124,7 +122,6 @@ public class PlanService {
     }
 
     /**
-     * @param entity
      * @描述 查询一条计划安排
      * @参数 [entity]
      * @返回值 ac.cn.saya.datacenter.entity.PlanEntity
@@ -143,7 +140,6 @@ public class PlanService {
     }
 
     /**
-     * @param entity
      * @描述 获取计划安排列表
      * @参数
      * @返回值

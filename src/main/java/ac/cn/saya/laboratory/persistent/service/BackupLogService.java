@@ -33,7 +33,6 @@ public class BackupLogService {
     private BackupLogDAO backupLogDAO;
 
     /**
-     * @param backupUrl
      * @描述 新增备份记录
      * @参数
      * @返回值
@@ -53,7 +52,6 @@ public class BackupLogService {
 
 
     /**
-     * @param entity
      * @描述 删除备份数据
      * @参数
      * @返回值
@@ -72,7 +70,6 @@ public class BackupLogService {
     }
 
     /**
-     * @param entity
      * @描述 查询单条备份记录
      * @参数 [entity]
      * @返回值 ac.cn.saya.datacenter.entity.ApiEntity
@@ -91,7 +88,6 @@ public class BackupLogService {
     }
 
     /**
-     * @param entity
      * @描述 分页查看备份记录
      * @参数
      * @返回值
@@ -115,7 +111,6 @@ public class BackupLogService {
     }
 
     /**
-     * @param entity
      * @描述 查看备份记录总数
      * @参数
      * @返回值
