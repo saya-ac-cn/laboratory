@@ -179,7 +179,7 @@ stop() {
 
    if [ $pids -ne 0 ]; then
       echo -n "Stopping $APP_NAME ...(pid = $pids) "
-      rm -rf $APP_HOME/report-busi.pid
+      rm -rf $APP_HOME/laboratory.pid
 	  su - $RUNNING_USER -c "kill $pids"
 
       if [ $? -eq 0 ]; then
