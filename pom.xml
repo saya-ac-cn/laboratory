@@ -39,6 +39,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>
         <!-- 引入小辣椒 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
