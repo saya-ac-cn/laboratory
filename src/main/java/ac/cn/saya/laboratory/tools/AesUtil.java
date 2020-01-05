@@ -15,6 +15,7 @@ import org.apache.commons.codec.binary.Base64;
  * @Author liunengkai
  * @Date: 2019-09-21 17:55
  * @Description:
+ * 密钥禁止提交
  */
 
 public class AesUtil {
@@ -28,7 +29,7 @@ public class AesUtil {
     /**
      * 密钥，必须为16位，不要随意更改
      */
-    private final static String DEFAULTKEY = "3xs51T6cRiu0oCk4";
+    private final static String DEFAULTKEY = "***********";
 
     /**
      * @描述 加密

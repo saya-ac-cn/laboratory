@@ -16,13 +16,14 @@ import sun.misc.BASE64Encoder;
  *
  * @author saya
  * @date 2017-3-01 上午10:52:37
+ * 密钥禁止提交
  */
 public class DesUtil {
 
     private final static String DES = "DES";
     private final static String ENCODE = "UTF-8";
     //密钥，必须为8位，不要随意更改
-    private final static String defaultKey = "testsaya";
+    private final static String defaultKey = "********";
 
     /**
      * 使用 默认key 加密
