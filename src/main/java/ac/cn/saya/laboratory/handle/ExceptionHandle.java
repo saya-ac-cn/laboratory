@@ -25,8 +25,7 @@ public class ExceptionHandle {
         if (e instanceof MyException) {
             MyException myException = (MyException) e;
             return ResultUtil.error(myException.getCode(), myException.getMessage());
-        }else
-        {
+        } else {
             //不在定义范围内的异常错误
             logger.error("处理未能捕获的异常" + Log4jUtils.getTrace(e));
             return ResultUtil.error(-1, "未知错误");

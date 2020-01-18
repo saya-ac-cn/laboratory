@@ -24,7 +24,7 @@ RUNNING_USER=liunengkai
 JAVA_HOME="/Library/java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home"
 
 #java虚拟机启动参数
-JAVA_OPTS="-Xbootclasspath/a:./ -Xms128m -Xmx128m -Xss256K -XX:PermSize=32m -XX:MaxPermSize=32m -Djava.awt.headless=true"
+JAVA_OPTS="-Xbootclasspath/a:./ -Xms128m -Xmx128m -Xss256K -XX:MetaspaceSize=32m -XX:MaxMetaspaceSize=32m -XX:+UseConcMarkSweepGC -XX:+PrintGCDetails -Djava.awt.headless=true"
 #启动项目的名称
 APP_NAME=laboratory
 

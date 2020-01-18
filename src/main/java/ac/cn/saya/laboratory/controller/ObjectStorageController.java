@@ -28,7 +28,7 @@ import javax.websocket.server.PathParam;
 @RequestMapping(value = "/backend/api/oss")
 public class ObjectStorageController {
 
-    @Autowired()
+    @Autowired
     @Qualifier("objectStorageServiceImpl")
     private ObjectStorageServiceImpl objectStorageServiceImpl;
 
