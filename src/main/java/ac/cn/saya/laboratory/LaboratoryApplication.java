@@ -1,5 +1,7 @@
 package ac.cn.saya.laboratory;
 
+import ac.cn.saya.laboratory.tools.CurrentLineInfo;
+import ac.cn.saya.laboratory.tools.Log4jUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -34,13 +36,18 @@ public class LaboratoryApplication {
 
 
     public static void main(String[] args) {
-        ///SpringApplication.run(LaboratoryApplication.class, args);
-        SpringApplication springApplication = new SpringApplication(LaboratoryApplication.class);
-        // 禁止命令行设置参数
-        springApplication.setAddCommandLineProperties(false);
-        springApplication.run(args);
-        //项目启动完成打印项目名
-        logger.warn("实验室中心已经启动 ... ");
+        try {
+            ///SpringApplication.run(LaboratoryApplication.class, args);
+            SpringApplication springApplication = new SpringApplication(LaboratoryApplication.class);
+            // 禁止命令行设置参数
+            springApplication.setAddCommandLineProperties(false);
+            springApplication.run(args);
+            //项目启动完成打印项目名
+            logger.warn("实验室中心已经启动 ... ");
+        } catch (Exception e) {
+            logger.error("实验室中心已经启动失败:", Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
     }
 
 }
