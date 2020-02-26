@@ -2,6 +2,7 @@ package ac.cn.saya.laboratory.tools;
 
 
 import ac.cn.saya.laboratory.entity.UserMemory;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -182,8 +183,12 @@ public class UploadUtils {
                     }
                     //保存的文件名
                     String newFileName = RandomUtil.getRandomFileName()+ '.' + fileName;
-                    // 转存文件到指定路径,转存而不是写出
-                    file.transferTo(new File(path + File.separator + newFileName));
+                    File saveFile = new File(filepath.getAbsolutePath() + File.separator + newFileName);
+                    // 将上传文件复制存盘
+                    FileUtils.copyInputStreamToFile(file.getInputStream(),saveFile);
+                    // 转存文件到指定路径,转存而不是写出,file.transferTo()有毒，谨慎使用，建议用FileUtils
+                    //file.transferTo(saveFile);
+
                     //上传成功
                     return ResultUtil.success(urlPath+ File.separator + newFileName);
                 }else{
@@ -241,8 +246,13 @@ public class UploadUtils {
                     }
                     //保存的文件名
                     String imgName = RandomUtil.getRandomFileName()+ '.' + imgType;
-                    // 转存文件到指定路径,转存而不是写出
-                    file.transferTo(new File(path + File.separator +imgName));
+
+                    File saveFile = new File(filepath.getAbsolutePath() + File.separator + imgName);
+                    // 将上传文件复制存盘
+                    FileUtils.copyInputStreamToFile(file.getInputStream(),saveFile);
+                    // 转存文件到指定路径,转存而不是写出,file.transferTo()有毒，谨慎使用，建议用FileUtils
+                    //file.transferTo(saveFile);
+
                     //上传成功
                     return ResultUtil.success(urlPath+ File.separator +imgName);
                 }else{
