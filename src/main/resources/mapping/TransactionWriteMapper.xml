@@ -11,7 +11,7 @@
 
     <!--写入到财政父表-->
     <insert id="insertTransactionList" useGeneratedKeys="true" keyProperty="tradeId" parameterType="transactionList">
-        insert into transaction_list(deposited,source,expenditure,tradeDate,tradeType,currencyNumber,transactionAmount,createTime) values(#{deposited},#{source},#{expenditure},date_format(now(),'%Y-%m-%d'),#{tradeType},#{currencyNumber},#{transactionAmount},now())
+        insert into transaction_list(deposited,source,expenditure,tradeDate,tradeType,currencyNumber,transactionAmount,createTime) values(#{deposited},#{source},#{expenditure},#{tradeDate},#{tradeType},#{currencyNumber},#{transactionAmount},now())
     </insert>
 
     <!--修改财政明细表-->
