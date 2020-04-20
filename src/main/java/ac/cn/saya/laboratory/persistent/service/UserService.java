@@ -153,18 +153,18 @@ public class UserService {
     }
 
     /**
-     * @描述 查询近半年留言情况
+     * @描述 查询近半年便笺发布情况
      * @参数
      * @返回值
      * @创建人 saya.ac.cn-刘能凯
      * @创建时间 2019-03-03
      * @修改人和其它信息
      */
-    public Map<String, Object> countPre6Board() {
+    public Map<String, Object> countPre6Memo() {
         try {
-            return batchDAO.countPre6Board();
+            return batchDAO.countPre6Memo();
         } catch (Exception e) {
-            logger.error("查询近半年留言情况失败" + Log4jUtils.getTrace(e));
+            logger.error("查询近半年便笺发布情况失败" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
             throw new MyException(ResultEnum.DB_ERROR);
         }
