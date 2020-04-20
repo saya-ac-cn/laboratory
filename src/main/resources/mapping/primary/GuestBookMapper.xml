@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.cn.saya.laboratory.persistent.primary.dao.GuestBookDAO">
+
+    <!--用户留言-->
+    <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->
+    <insert id="insertGuestBook" useGeneratedKeys="true" keyProperty="id" parameterType="guestbook" >
+        insert into guestbook(`name`,`phone`,`email`,`content`,`status`,`createtime`) values(#{name},#{phone},#{email},#{content},#{status},now())
+    </insert>
+
+    <!--回复留言-->
+    <update id="updateGuestBook" parameterType="guestbook">
+        update guestbook
+        <set>
+            <if test="source != null and source != ''">
+                source = #{source},
+            </if>
+            <if test="reply != null and reply != ''">
+                reply = #{reply},
+            </if>
+            <if test="status != null and status != 0">
+                status = #{status},
+            </if>
+            updatetime = now()
+        </set>
+        where `id` = #{id}
+    </update>
+
+    <!-- 查询一条留言-->
+    <select id="getOneGuestBook" parameterType="guestbook" resultType="guestbook">
+        select
+          *
+        from
+        guestbook a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="phone != null and phone != ''">
+                and a.phone = #{phone}
+            </if>
+            <if test="name != null and name != ''">
+                and a.name = #{name}
+            </if>
+            <if test="email != null and email != ''">
+                and a.email = #{email}
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 获取分页后的留言-->
+    <select id="getGuestBookPage" parameterType="guestbook" resultType="guestbook">
+        select
+          *
+        from
+          guestbook a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="phone != null and phone != ''">
+                and a.phone = #{phone}
+            </if>
+            <if test="name != null and name != ''">
+                and a.name = #{name}
+            </if>
+            <if test="status != null and status != 0">
+                and a.status = #{status}
+            </if>
+            <if test="email != null and email != ''">
+                and a.email = #{email}
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.id desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!-- 获取留言总数-->
+    <select id="getGuestBookCount" parameterType="guestbook" resultType="java.lang.Long">
+        select
+          count(*)
+        from
+          guestbook a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="phone != null and phone != ''">
+                and a.phone = #{phone}
+            </if>
+            <if test="name != null and name != ''">
+                and a.name = #{name}
+            </if>
+            <if test="status != null and status != 0">
+                and a.status = #{status}
+            </if>
+            <if test="email != null and email != ''">
+                and a.email = #{email}
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
+
+
+
+
+
+

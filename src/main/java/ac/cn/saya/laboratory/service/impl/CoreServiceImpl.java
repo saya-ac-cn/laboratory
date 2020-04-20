@@ -3,7 +3,7 @@ package ac.cn.saya.laboratory.service.impl;
 import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.handle.RepeatLogin;
-import ac.cn.saya.laboratory.persistent.service.*;
+import ac.cn.saya.laboratory.persistent.primary.service.*;
 import ac.cn.saya.laboratory.service.ICoreService;
 import ac.cn.saya.laboratory.tools.*;
 import com.alibaba.fastjson.JSONObject;
@@ -870,7 +870,7 @@ public class CoreServiceImpl implements ICoreService {
         result.put("news6", userService.countPre6MonthNews(userSession.getUser()));
         result.put("log6", userService.countPre6Logs(userSession.getUser()));
         result.put("files6", userService.countPre6Files(userSession.getUser()));
-        result.put("board", userService.countPre6Board());
+        result.put("memo6", userService.countPre6Memo());
         result.put("financial6", userService.countPre6Financial(userSession.getUser()));
         return ResultUtil.success(result);
     }

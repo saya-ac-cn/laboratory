@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.cn.saya.laboratory.persistent.primary.dao.FilesDAO">
+
+    <!--动态相关的dao操作加入二级缓存-->
+    <cache></cache>
+
+    <!--添加文件上传记录-->
+    <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->
+    <insert id="insertFile" useGeneratedKeys="true" keyProperty="id" parameterType="files" >
+        INSERT INTO `files` (
+            `uid`,
+            `filename`,
+            `fileurl`,
+            `source`,
+            `status`,
+            `date`
+        )
+        VALUES
+            (
+                #{uid},
+                #{filename},
+                #{fileurl},
+                #{source},
+                #{status},
+                NOW()
+            )
+    </insert>
+
+    <!--保存修改文件记录-->
+    <update id="updateFile" parameterType="files">
+        UPDATE `files`
+        SET
+         `status` = #{status},
+          `date` =  NOW()
+        WHERE
+            `id` = #{id} and source = #{source}
+    </update>
+
+    <!--删除文件记录-->
+    <delete id="deleteFile" parameterType="files">
+        delete from `files` where source = #{source} and (`id` = #{id} or `uid` = #{uid})
+    </delete>
+
+    <!-- 获取一条文件信息-->
+    <select id="getOneFile" parameterType="files" resultType="files">
+        select
+          *
+        from
+        files a
+        <where>
+            <if test = "id != null">
+                and a.id  = #{id}
+            </if>
+            <if test = "uid != null and uid != ''">
+                and a.uid  = #{uid}
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+            <if test="filename != null and filename != ''">
+                and a.filename  like concat('%',#{filename},'%')
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.date,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 查询分页后的文件列表-->
+    <select id="getFilePage" parameterType="files" resultType="files">
+        select
+           *
+        from
+            files a
+        <where>
+            <if test = "id != null">
+                and a.id  = #{id}
+            </if>
+            <if test = "uid != null and uid != ''">
+                and a.uid  = #{uid}
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+            <if test="filename != null and filename != ''">
+                and a.filename  like concat('%',#{filename},'%')
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.date,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.id desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!-- 查询文件总数-->
+    <select id="getFileCount" parameterType="files" resultType="java.lang.Long">
+        select
+          count(*)
+        from
+          files a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+            <if test="filename != null and filename != ''">
+                and a.filename  like concat('%',#{filename},'%')
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.date,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+    
+</mapper>

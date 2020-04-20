@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.cn.saya.laboratory.persistent.primary.dao.NoteBookDAO">
+
+    <!--新增笔记簿-->
+    <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->
+    <insert id="insertNoteBook" useGeneratedKeys="true" keyProperty="id" parameterType="notebook" >
+        INSERT INTO `notebook` (
+            `name`,
+            `source`,
+            `status`,
+            `descript`
+        )
+        VALUES
+            (
+                #{name},
+                #{source},
+                #{status},
+                #{descript}
+            );
+	</insert>
+
+    <!--编辑笔记簿-->
+    <update id="updateNoteBook" parameterType="notebook">
+        update `notebook`
+        <set>
+            <if test="name != null and name != ''">
+                `name` = #{name},
+            </if>
+            <if test="source != null and source != ''">
+                `source` = #{source},
+            </if>
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+            <if test="descript != null and descript != ''">
+                descript = #{descript},
+            </if>
+        </set>
+        where `id` = #{id} and `source` = #{source}
+    </update>
+
+    <!--删除笔记簿-->
+    <delete id="deleteNoteBook" parameterType="notebook">
+        delete from `notebook` where `id` = #{id} and `source` = #{source}
+    </delete>
+
+    <!-- 查询一条笔记簿-->
+    <select id="getOneNoteBook" parameterType="notebook" resultType="notebook">
+        SELECT
+        a.*, COUNT(b.id) as notesCount
+        FROM
+        notebook a
+        LEFT JOIN notes b ON a.id = b.notebookId
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and a.`name` like concat('%',#{name},'%')
+            </if>
+            <if test="source != null and source != ''">
+                and a.`source` = #{source}
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 获取分页后的笔记簿-->
+    <select id="getNoteBookPage" parameterType="notebook" resultType="notebook">
+        SELECT
+          a.*, COUNT(b.id) as notesCount
+        FROM
+          notebook a
+        LEFT JOIN notes b ON a.id = b.notebookId
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and a.`name`  like concat('%',#{name},'%')
+            </if>
+            <if test="source != null and source != ''">
+                and a.`source` = #{source}
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+        </where>
+        GROUP BY
+          a.id
+        order by a.id desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!-- 获取笔记簿总数-->
+    <select id="getNoteBookCount" parameterType="notebook" resultType="java.lang.Long">
+        SELECT
+          COUNT(*)
+        FROM
+        notebook a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and a.`name` like concat('%',#{name},'%')
+            </if>
+            <if test="source != null and source != ''">
+                and a.`source` = #{source}
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!-- 获取笔记簿-->
+    <select id="getNoteBook" parameterType="notebook" resultType="notebook">
+        SELECT
+        a.*, COUNT(b.id) as notesCount
+        FROM
+        notebook a
+        LEFT JOIN notes b ON a.id = b.notebookId
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and a.`name`  like concat('%',#{name},'%')
+            </if>
+            <if test="source != null and source != ''">
+                and a.`source` = #{source}
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+        </where>
+        GROUP BY
+        a.id
+        order by a.id desc
+    </select>
+
+</mapper>
+
+
+
+
+
+
