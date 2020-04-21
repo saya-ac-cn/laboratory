@@ -49,10 +49,10 @@ public class SystemServiceImpl implements SystemService {
     @Value("${backup.savemonth}")
     private Integer savemonth;
 
-    @Value("${spring.datasource.username}")
+    @Value("${spring.datasource.primary.username}")
     private String username;
 
-    @Value("${spring.datasource.password}")
+    @Value("${spring.datasource.primary.password}")
     private String password;
 
     @Resource

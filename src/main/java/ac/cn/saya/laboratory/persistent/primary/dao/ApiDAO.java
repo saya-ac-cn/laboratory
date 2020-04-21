@@ -18,7 +18,6 @@ import java.util.List;
  */
 
 @Mapper
-@Repository("apiDAO")
 public interface ApiDAO {
 
     /**

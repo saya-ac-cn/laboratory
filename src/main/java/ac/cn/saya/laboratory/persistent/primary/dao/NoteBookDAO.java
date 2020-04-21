@@ -17,7 +17,6 @@ import java.util.List;
  */
 
 @Mapper
-@Repository("noteBookDAO")
 public interface NoteBookDAO {
 
     /**

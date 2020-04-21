@@ -17,7 +17,6 @@ import java.util.List;
  */
 
 @Mapper
-@Repository("pictureDAO")
 public interface PictureDAO {
 
     /**

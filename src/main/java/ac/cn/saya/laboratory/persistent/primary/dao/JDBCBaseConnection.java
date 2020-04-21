@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 public class JDBCBaseConnection {
 
     @Resource
-    @Qualifier("sqlSessionFactory")
+    @Qualifier("primarySqlSessionFactory")
     private SqlSessionFactory sqlSessionFactory;
 
     public SqlSessionFactory getSqlSessionFactory() {

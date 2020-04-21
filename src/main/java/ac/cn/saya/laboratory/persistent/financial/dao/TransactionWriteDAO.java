@@ -17,7 +17,6 @@ import org.springframework.stereotype.Repository;
  */
 
 @Mapper
-@Repository("transactionWriteDAO")
 public interface TransactionWriteDAO {
 
     /**

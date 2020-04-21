@@ -9,58 +9,50 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 
 /**
- * @Title: PrimaryDataSourceConfig
+ * @Title: FinancialDataSourceConfig
  * @ProjectName laboratory
  * @Description: TODO
  * @Author liunengkai
- * @Date: 2020-04-20 21:36
- * @Description: 主数据源配置
+ * @Date: 2020-04-20 21:38
+ * @Description: 财政金融数据源配置
  */
-//https://www.cnblogs.com/ziyue7575/p/549bc1f2e0996ed979bd09c25a6a26c0.html
 @Configuration
-@MapperScan(basePackages = "ac.cn.saya.laboratory.persistent.primary.dao", sqlSessionTemplateRef = "primarySqlSessionTemplate")
-public class PrimaryDataSourceConfig {
+@MapperScan(basePackages = "ac.cn.saya.laboratory.persistent.financial.dao", sqlSessionTemplateRef = "financialSqlSessionTemplate")
+public class FinancialDataSourceConfig {
 
-    // 表示这个数据源是默认数据源,这个一定要加，如果两个数据源都没有@Primary会报错
-    @Primary
-    @Bean(name = "primaryDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.primary")
-    public DataSource primaryDateSource() {
+    @Bean(name = "financialDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.financial")
+    public DataSource financialDateSource() {
         return DataSourceBuilder.create().build();
     }
 
-
-    @Bean(name = "primarySqlSessionFactory")
-    @Primary
-    public SqlSessionFactory primarySqlSessionFactory(@Qualifier("primaryDataSource") DataSource datasource)
+    @Bean(name = "financialSqlSessionFactory")
+    public SqlSessionFactory financialSqlSessionFactory(@Qualifier("financialDataSource") DataSource datasource)
             throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(datasource);
         //设置mybatis配置文件路径
         bean.setConfigLocation(new PathMatchingResourcePatternResolver().getResource("classpath:mybatis-config.xml"));
-        //设置对应的mapper.xml文件位置
-        bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:mapping/primary/*.xml"));
+        //设置对应的xml文件位置
+        bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:mapping/financial/*.xml"));
         return bean.getObject();
     }
 
     @Bean
-    @Primary
-    public DataSourceTransactionManager primaryTransactionManager(@Qualifier("primaryDataSource") DataSource dataSource) {
+    public DataSourceTransactionManager financialTransactionManager(@Qualifier("financialDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
 
-    @Primary
-    @Bean("primarySqlSessionTemplate")
-    public SqlSessionTemplate primarySqlSessionTemplate(
-            @Qualifier("primarySqlSessionFactory") SqlSessionFactory sessionfactory) {
+    @Bean("financialSqlSessionTemplate")
+    public SqlSessionTemplate financialSqlSessionTemplate(
+            @Qualifier("financialSqlSessionFactory") SqlSessionFactory sessionfactory) {
         return new SqlSessionTemplate(sessionfactory);
     }
 

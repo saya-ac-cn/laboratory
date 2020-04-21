@@ -16,7 +16,6 @@ import java.util.List;
  * 文件操作dao
  */
 @Mapper
-@Repository("filesDAO")
 public interface FilesDAO {
 
     /***

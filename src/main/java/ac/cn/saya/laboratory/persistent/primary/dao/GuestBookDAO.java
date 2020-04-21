@@ -17,7 +17,6 @@ import java.util.List;
  */
 
 @Mapper
-@Repository("guestBookDAO")
 public interface GuestBookDAO {
 
     /**

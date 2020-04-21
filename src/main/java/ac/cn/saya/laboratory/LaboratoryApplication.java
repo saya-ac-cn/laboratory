@@ -27,7 +27,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"ac.cn.saya.laboratory"})
-@ImportResource("classpath:transaction.xml")
+//@ImportResource("classpath:transaction.xml")
 // 开启定时任务
 @EnableScheduling
 public class LaboratoryApplication {

@@ -19,7 +19,6 @@ import java.util.List;
  */
 
 @Mapper
-@Repository("planDAO")
 public interface PlanDAO {
 
     /**

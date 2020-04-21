@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
  * 用户Dao层
  */
 @Mapper
-@Repository("userDAO")
 public interface UserDAO {
 
     /**
