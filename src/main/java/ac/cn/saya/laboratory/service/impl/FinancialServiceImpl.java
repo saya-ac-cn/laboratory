@@ -5,8 +5,7 @@ import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.entity.TransactionTypeEntity;
 import ac.cn.saya.laboratory.entity.UserMemory;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.financial.service.TransactionReadService;
-import ac.cn.saya.laboratory.persistent.financial.service.TransactionWriteService;
+import ac.cn.saya.laboratory.persistent.financial.service.FinancialDeclareService;
 import ac.cn.saya.laboratory.service.IFinancialService;
 import ac.cn.saya.laboratory.tools.*;
 import com.alibaba.fastjson.JSONObject;
@@ -44,12 +43,8 @@ public class FinancialServiceImpl implements IFinancialService {
     private RecordService recordService;
 
     @Resource
-    @Qualifier("transactionReadService")
-    private TransactionReadService transactionReadService;
-
-    @Resource
-    @Qualifier("transactionWriteService")
-    private TransactionWriteService transactionWriteService;
+    @Qualifier("financialDeclareService")
+    private FinancialDeclareService financialDeclareService;
 
     /**
      * 获取所有的交易类别
@@ -60,8 +55,8 @@ public class FinancialServiceImpl implements IFinancialService {
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
     public Result<Object> getTransactionType() throws Exception {
-        List<TransactionTypeEntity> list = transactionReadService.selectTransactionType();
-        if (list.size() < 0) {
+        List<TransactionTypeEntity> list = financialDeclareService.selectTransactionType();
+        if (list == null || list.size() < 0) {
             // 没有找到交易类别
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
@@ -93,7 +88,7 @@ public class FinancialServiceImpl implements IFinancialService {
         //每页显示记录的数量
         paging.setPageSize(entity.getPageSize());
         //获取满足条件的总记录（不分页）
-        Long pageSize = transactionReadService.selectTransactionCount(entity);
+        Long pageSize = financialDeclareService.selectTransactionCount(entity);
         if (pageSize > 0) {
             //总记录数
             paging.setDateSum(pageSize);
@@ -104,7 +99,7 @@ public class FinancialServiceImpl implements IFinancialService {
             //设置行索引
             entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
             //获取满足条件的记录集合
-            List<TransactionListEntity> list = transactionReadService.selectTransactionPage(entity);
+            List<TransactionListEntity> list = financialDeclareService.selectTransactionPage(entity);
             paging.setGrid(list);
             return ResultUtil.success(paging);
         } else {
@@ -134,7 +129,7 @@ public class FinancialServiceImpl implements IFinancialService {
         //每页显示记录的数量
         paging.setPageSize(entity.getPageSize());
         //获取满足条件的总记录（不分页）
-        Long pageSize = transactionReadService.selectTransactionInfoCount(entity);
+        Long pageSize = financialDeclareService.selectTransactionInfoCount(entity);
         if (pageSize > 0) {
             //总记录数
             paging.setDateSum(pageSize);
@@ -145,7 +140,7 @@ public class FinancialServiceImpl implements IFinancialService {
             //设置行索引
             entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
             //获取满足条件的记录集合
-            List<TransactionInfoEntity> list = transactionReadService.selectTransactionInfoPage(entity);
+            List<TransactionInfoEntity> list = financialDeclareService.selectTransactionInfoPage(entity);
             paging.setGrid(list);
             return ResultUtil.success(paging);
         } else {
@@ -178,7 +173,7 @@ public class FinancialServiceImpl implements IFinancialService {
         //每页显示记录的数量
         paging.setPageSize(entity.getPageSize());
         //获取满足条件的总记录（不分页）
-        Long pageSize = transactionReadService.selectTransactionFinalCount(entity);
+        Long pageSize = financialDeclareService.selectTransactionFinalCount(entity);
         if (pageSize > 0) {
             //总记录数
             paging.setDateSum(pageSize);
@@ -189,7 +184,7 @@ public class FinancialServiceImpl implements IFinancialService {
             //设置行索引
             entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
             //获取满足条件的记录集合
-            List<TransactionInfoEntity> list = transactionReadService.selectTransactionFinalPage(entity);
+            List<TransactionInfoEntity> list = financialDeclareService.selectTransactionFinalPage(entity);
             paging.setGrid(list);
             return ResultUtil.success(paging);
         } else {
@@ -209,55 +204,14 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     public Result<Object> insertTransaction(TransactionListEntity entity, HttpServletRequest request) throws Exception {
-        //第一步遍历所有的财政字表，求得总和
-        List<TransactionInfoEntity> requestInfoList = entity.getInfoList();
-        // 存入总金额
-        Double saveMoney = 0.0;
-        // 支取总金额
-        Double takeMoney = 0.0;
-        // 当日发生总金额（存入+支取）
-        Double happenMoney = 0.0;
-        for (TransactionInfoEntity item : requestInfoList) {
-            if (item.getFlog() == 1) {
-                // 存入
-                saveMoney += item.getCurrencyNumber();
-                continue;
-            }
-            if (item.getFlog() == 2) {
-                // 支取
-                takeMoney += item.getCurrencyNumber();
-                continue;
-            }
-        }
-        happenMoney = saveMoney + takeMoney;
-        // 设置存入总金额
-        entity.setDeposited(saveMoney);
-        // 设置支取总金额
-        entity.setExpenditure(takeMoney);
-        // 设置交易总金额
-        entity.setCurrencyNumber(happenMoney);
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         entity.setSource(userSession.getUser());
-        // 开始写入父表的数据
-        Integer backfillValue = transactionWriteService.insertTransactionList(entity);
-        if (backfillValue > 0) {
-            // 父表操作成功
-            // 开始写入子表的数据
-            for (TransactionInfoEntity item : requestInfoList) {
-                // 设置流水号，也就是在父表写入成功后，主键回填的值
-                item.setTradeId(backfillValue);
-                transactionWriteService.insertTransactionInfo(item);
-            }
-            /**
-             * 申报流水
-             */
+        Result<Object> result = financialDeclareService.insertTransaction(entity);
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
             recordService.record("OX025", request);
-            return ResultUtil.success();
-        } else {
-            logger.warn("在写入到财政父表异常");
-            throw new MyException(ResultEnum.ERROP);
         }
+        return result;
     }
 
     /**
@@ -277,15 +231,11 @@ public class FinancialServiceImpl implements IFinancialService {
             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
             UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
             entity.setSource(userSession.getUser());
-            if (transactionWriteService.updateTransactionList(entity) > 0) {
-                /**
-                 * 修改流水
-                 */
+            Result<Object> result = financialDeclareService.updateTransaction(entity);
+            if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
                 recordService.record("OX026", request);
-                return ResultUtil.success();
-            } else {
-                return ResultUtil.error(-1, "修改失败");
             }
+            return result;
         }
     }
 
@@ -305,15 +255,14 @@ public class FinancialServiceImpl implements IFinancialService {
         } else {
             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
             UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-            if (transactionWriteService.deleteTransactionList(entity.getTradeId(), userSession.getUser()) > 0) {
+            Result<Object> result = financialDeclareService.deleteTransaction(entity, userSession.getUser());
+            if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
                 /**
                  * 删除流水
                  */
                 recordService.record("OX027", request);
-                return ResultUtil.success();
-            } else {
-                return ResultUtil.error(-1, "删除失败");
             }
+            return result;
         }
     }
 
@@ -328,74 +277,16 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     public Result<Object> insertTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws Exception {
-        // 先把子记录进行写入
-        if (transactionWriteService.insertTransactionInfo(entity) > 0) {
-            // 查询本流水号下的所有子记录
-            TransactionInfoEntity queryEntity = new TransactionInfoEntity();
-            queryEntity.setTradeId(entity.getTradeId());
-            // 财政子表记录总行数
-            Long itemConut = transactionReadService.selectTransactionInfoCount(queryEntity);
-            if (itemConut > 0) {
-                queryEntity.setStartLine(0);
-                queryEntity.setEndLine(itemConut.intValue());
-                List<TransactionInfoEntity> itemList = transactionReadService.selectTransactionInfoPage(queryEntity);
-                // 存入总金额
-                Double saveMoney = 0.0;
-                // 支取总金额
-                Double takeMoney = 0.0;
-                // 当日发生总金额（存入+支取）
-                Double happenMoney = 0.0;
-                TransactionListEntity queryParentEntity = new TransactionListEntity();
-                // 根据主键进行查询，最多只能有一条
-                queryParentEntity.setTradeId(entity.getTradeId());
-                queryParentEntity.setStartLine(0);
-                queryParentEntity.setEndLine(1);
-                List<TransactionListEntity> transactionPage = transactionReadService.selectTransactionPage(queryParentEntity);
-                if (transactionPage.size() > 0) {
-                    TransactionListEntity writeEntity = transactionPage.get(0);
-                    for (TransactionInfoEntity item : itemList) {
-                        if (item.getFlog() == 1) {
-                            // 存入
-                            saveMoney += item.getCurrencyNumber();
-                            continue;
-                        }
-                        if (item.getFlog() == 2) {
-                            // 支取
-                            takeMoney += item.getCurrencyNumber();
-                            continue;
-                        }
-                    }
-                    happenMoney = saveMoney + takeMoney;
-                    // 设置存入总金额
-                    writeEntity.setDeposited(saveMoney);
-                    // 设置支取总金额
-                    writeEntity.setExpenditure(takeMoney);
-                    // 设置交易总金额
-                    writeEntity.setCurrencyNumber(happenMoney);
-                    //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-                    UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-                    writeEntity.setSource(userSession.getUser());
-                    // 开始写入父表的数据
-                    if (transactionWriteService.updateTransactionList(writeEntity) > 0) {
-                        /**
-                         * 补充流水明细
-                         */
-                        recordService.record("OX028", request);
-                        return ResultUtil.success();
-                    } else {
-                        throw new MyException(ResultEnum.RollBACK);
-                    }
-                } else {
-                    return ResultUtil.error(-1, "财政父表数据丢失");
-                }
-            } else {
-                logger.warn("写入财政字表失败");
-                throw new MyException(ResultEnum.ERROP);
-            }
-        } else {
-            logger.warn("写入财政字表失败");
-            throw new MyException(ResultEnum.ERROP);
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        Result<Object> result = financialDeclareService.insertTransactioninfo(entity, userSession.getUser());
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
+            /**
+             * 删除流水
+             */
+            recordService.record("OX028", request);
         }
+        return result;
     }
 
     /**
@@ -409,74 +300,13 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     public Result<Object> updateTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws Exception {
-        // 先把子记录进行写入
-        if (transactionWriteService.updateTransactionInfo(entity) > 0) {
-            // 查询本流水号下的所有子记录
-            TransactionInfoEntity queryEntity = new TransactionInfoEntity();
-            queryEntity.setTradeId(entity.getTradeId());
-            // 财政子表记录总行数
-            Long itemConut = transactionReadService.selectTransactionInfoCount(queryEntity);
-            if (itemConut > 0) {
-                queryEntity.setStartLine(0);
-                queryEntity.setEndLine(itemConut.intValue());
-                List<TransactionInfoEntity> itemList = transactionReadService.selectTransactionInfoPage(queryEntity);
-                // 存入总金额
-                Double saveMoney = 0.0;
-                // 支取总金额
-                Double takeMoney = 0.0;
-                // 当日发生总金额（存入+支取）
-                Double happenMoney = 0.0;
-                TransactionListEntity queryParentEntity = new TransactionListEntity();
-                // 根据主键进行查询，最多只能有一条
-                queryParentEntity.setTradeId(entity.getTradeId());
-                queryParentEntity.setStartLine(0);
-                queryParentEntity.setEndLine(1);
-                List<TransactionListEntity> transactionPage = transactionReadService.selectTransactionPage(queryParentEntity);
-                if (transactionPage.size() > 0) {
-                    TransactionListEntity writeEntity = transactionPage.get(0);
-                    for (TransactionInfoEntity item : itemList) {
-                        if (item.getFlog() == 1) {
-                            // 存入
-                            saveMoney += item.getCurrencyNumber();
-                            continue;
-                        }
-                        if (item.getFlog() == 2) {
-                            // 支取
-                            takeMoney += item.getCurrencyNumber();
-                            continue;
-                        }
-                    }
-                    happenMoney = saveMoney + takeMoney;
-                    // 设置存入总金额
-                    writeEntity.setDeposited(saveMoney);
-                    // 设置支取总金额
-                    writeEntity.setExpenditure(takeMoney);
-                    // 设置交易总金额
-                    writeEntity.setCurrencyNumber(happenMoney);
-                    //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-                    UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-                    writeEntity.setSource(userSession.getUser());
-                    // 开始写入父表的数据
-                    if (transactionWriteService.updateTransactionList(writeEntity) > 0) {
-                        /**
-                         * 修改流水明细
-                         */
-                        recordService.record("OX029", request);
-                        return ResultUtil.success();
-                    } else {
-                        throw new MyException(ResultEnum.RollBACK);
-                    }
-                } else {
-                    return ResultUtil.error(-1, "财政父表数据丢失");
-                }
-            } else {
-                logger.warn("修改财政子表失败");
-                throw new MyException(ResultEnum.ERROP);
-            }
-        } else {
-            logger.warn("修改财政子表失败");
-            throw new MyException(ResultEnum.ERROP);
+        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        Result<Object> result = financialDeclareService.updateTransactioninfo(entity, userSession.getUser());
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
+            recordService.record("OX029", request);
         }
+        return result;
     }
 
     /**
@@ -489,95 +319,12 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     public Result<Object> deleteTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws Exception {
-        // 查询本流水号下的所有子记录
-        TransactionInfoEntity queryEntity = new TransactionInfoEntity();
-        queryEntity.setTradeId(entity.getTradeId());
-        // 财政子表记录总行数
-        Long itemConut = transactionReadService.selectTransactionInfoCount(queryEntity);
-        if (itemConut > 0) {
-            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-            if (itemConut == 1 || itemConut.equals(1)) {
-                // 只有一条记录时，直接调用父表的方法级联删除即可
-                if (transactionWriteService.deleteTransactionList(entity.getTradeId(), userSession.getUser()) > 0) {
-                    /**
-                     * 删除流水明细
-                     */
-                    recordService.record("OX030", request);
-                    // 此时父表及子表已经级联删除，返回End，通知前端关闭弹框页
-                    return ResultUtil.success("End");
-                } else {
-                    return ResultUtil.error(-1, "删除失败");
-                }
-            } else {
-                // 先删除子表，然后修改父表的值
-                if (transactionWriteService.deleteTransactionInfo(entity.getId(), userSession.getUser()) > 0) {
-                    // 查询本流水号下的所有子记录
-                    // 财政子表记录总行数
-                    itemConut = transactionReadService.selectTransactionInfoCount(queryEntity);
-                    if (itemConut > 0) {
-                        queryEntity.setStartLine(0);
-                        queryEntity.setEndLine(itemConut.intValue());
-                        List<TransactionInfoEntity> itemList = transactionReadService.selectTransactionInfoPage(queryEntity);
-                        // 存入总金额
-                        Double saveMoney = 0.0;
-                        // 支取总金额
-                        Double takeMoney = 0.0;
-                        // 当日发生总金额（存入+支取）
-                        Double happenMoney = 0.0;
-                        TransactionListEntity queryParentEntity = new TransactionListEntity();
-                        // 根据主键进行查询，最多只能有一条
-                        queryParentEntity.setTradeId(entity.getTradeId());
-                        queryParentEntity.setStartLine(0);
-                        queryParentEntity.setEndLine(1);
-                        List<TransactionListEntity> transactionPage = transactionReadService.selectTransactionPage(queryParentEntity);
-                        if (transactionPage.size() > 0) {
-                            TransactionListEntity writeEntity = transactionPage.get(0);
-                            for (TransactionInfoEntity item : itemList) {
-                                if (item.getFlog() == 1) {
-                                    // 存入
-                                    saveMoney += item.getCurrencyNumber();
-                                    continue;
-                                }
-                                if (item.getFlog() == 2) {
-                                    // 支取
-                                    takeMoney += item.getCurrencyNumber();
-                                    continue;
-                                }
-                            }
-                            happenMoney = saveMoney + takeMoney;
-                            // 设置存入总金额
-                            writeEntity.setDeposited(saveMoney);
-                            // 设置支取总金额
-                            writeEntity.setExpenditure(takeMoney);
-                            // 设置交易总金额
-                            writeEntity.setCurrencyNumber(happenMoney);
-                            //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-                            writeEntity.setSource(userSession.getUser());
-                            // 开始写入父表的数据
-                            if (transactionWriteService.updateTransactionList(writeEntity) > 0) {
-                                /**
-                                 * 删除流水明细
-                                 */
-                                recordService.record("OX030", request);
-                                // 删除后父表及子表还有相关数据，返回前端Exist，不关闭弹框
-                                return ResultUtil.success("Exist");
-                            } else {
-                                throw new MyException(ResultEnum.RollBACK);
-                            }
-                        } else {
-                            return ResultUtil.error(-1, "财政父表数据丢失");
-                        }
-                    } else {
-                        logger.warn("修改财政子表失败");
-                        throw new MyException(ResultEnum.ERROP);
-                    }
-                } else {
-                    return ResultUtil.error(-1, "删除失败");
-                }
-            }
-        } else {
-            return ResultUtil.error(-1, "记录已经不存在");
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        Result<Object> result = financialDeclareService.deleteTransactioninfo(entity, userSession.getUser());
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
+            recordService.record("OX030", request);
         }
+        return result;
     }
 
     /**
@@ -598,7 +345,7 @@ public class FinancialServiceImpl implements IFinancialService {
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         try {
             //获取满足条件的总记录（不分页）
-            Long pageSize = transactionReadService.selectTransactionCount(entity);
+            Long pageSize = financialDeclareService.selectTransactionCount(entity);
             if (pageSize <= 0) {
                 return ResultUtil.error(-1, "没有可导出的数据");
             }
@@ -606,7 +353,7 @@ public class FinancialServiceImpl implements IFinancialService {
             entity.setPage(0, pageSize.intValue());
             entity.setSource(userSession.getUser());
             //获取满足条件的记录集合
-            List<TransactionListEntity> entityList = transactionReadService.selectTransactionPage(entity);
+            List<TransactionListEntity> entityList = financialDeclareService.selectTransactionPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
             for (TransactionListEntity item : entityList) {
                 JSONObject json = new JSONObject();
@@ -653,7 +400,7 @@ public class FinancialServiceImpl implements IFinancialService {
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         try {
             //获取满足条件的总记录（不分页）
-            Long pageSize = transactionReadService.selectTransactionFinalCount(entity);
+            Long pageSize = financialDeclareService.selectTransactionFinalCount(entity);
             if (pageSize <= 0) {
                 return ResultUtil.error(-1, "没有可导出的数据");
             }
@@ -661,7 +408,7 @@ public class FinancialServiceImpl implements IFinancialService {
             entity.setPage(0, pageSize.intValue());
             entity.setSource(userSession.getUser());
             //获取满足条件的记录集合
-            List<TransactionInfoEntity> entityList = transactionReadService.selectTransactionFinalPage(entity);
+            List<TransactionInfoEntity> entityList = financialDeclareService.selectTransactionFinalPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
             for (TransactionInfoEntity item : entityList) {
                 JSONObject json = new JSONObject();
@@ -720,7 +467,7 @@ public class FinancialServiceImpl implements IFinancialService {
         //每页显示记录的数量
         paging.setPageSize(entity.getPageSize());
         //获取满足条件的总记录（不分页）
-        Long pageSize = transactionReadService.selectTransactionForDayCount(entity);
+        Long pageSize = financialDeclareService.selectTransactionForDayCount(entity);
         if (pageSize > 0) {
             //总记录数
             paging.setDateSum(pageSize);
@@ -731,7 +478,7 @@ public class FinancialServiceImpl implements IFinancialService {
             //设置行索引
             entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
             //获取满足条件的记录集合
-            List<TransactionListEntity> list = transactionReadService.selectTransactionForDayPage(entity);
+            List<TransactionListEntity> list = financialDeclareService.selectTransactionForDayPage(entity);
             paging.setGrid(list);
             return ResultUtil.success(paging);
         } else {
@@ -763,7 +510,7 @@ public class FinancialServiceImpl implements IFinancialService {
         //每页显示记录的数量
         paging.setPageSize(entity.getPageSize());
         //获取满足条件的总记录（不分页）
-        Long pageSize = transactionReadService.selectTransactionForMonthCount(entity);
+        Long pageSize = financialDeclareService.selectTransactionForMonthCount(entity);
         if (pageSize > 0) {
             //总记录数
             paging.setDateSum(pageSize);
@@ -774,7 +521,7 @@ public class FinancialServiceImpl implements IFinancialService {
             //设置行索引
             entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
             //获取满足条件的记录集合
-            List<TransactionListEntity> list = transactionReadService.selectTransactionForMonthPage(entity);
+            List<TransactionListEntity> list = financialDeclareService.selectTransactionForMonthPage(entity);
             paging.setGrid(list);
             return ResultUtil.success(paging);
         } else {
@@ -806,7 +553,7 @@ public class FinancialServiceImpl implements IFinancialService {
         //每页显示记录的数量
         paging.setPageSize(entity.getPageSize());
         //获取满足条件的总记录（不分页）
-        Long pageSize = transactionReadService.selectTransactionForYearCount(entity);
+        Long pageSize = financialDeclareService.selectTransactionForYearCount(entity);
         if (pageSize > 0) {
             //总记录数
             paging.setDateSum(pageSize);
@@ -817,7 +564,7 @@ public class FinancialServiceImpl implements IFinancialService {
             //设置行索引
             entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
             //获取满足条件的记录集合
-            List<TransactionListEntity> list = transactionReadService.selectTransactionForYearPage(entity);
+            List<TransactionListEntity> list = financialDeclareService.selectTransactionForYearPage(entity);
             paging.setGrid(list);
             return ResultUtil.success(paging);
         } else {
@@ -845,14 +592,14 @@ public class FinancialServiceImpl implements IFinancialService {
         entity.setSource(userSession.getUser());
         try {
             //获取满足条件的总记录（不分页）
-            Long pageSize = transactionReadService.selectTransactionForDayCount(entity);
+            Long pageSize = financialDeclareService.selectTransactionForDayCount(entity);
             if (pageSize <= 0) {
                 return ResultUtil.error(-1, "没有可导出的数据");
             }
             //设置行索引
             entity.setPage(0, pageSize.intValue());
             //获取满足条件的记录集合
-            List<TransactionListEntity> entityList = transactionReadService.selectTransactionForDayPage(entity);
+            List<TransactionListEntity> entityList = financialDeclareService.selectTransactionForDayPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
             for (TransactionListEntity item : entityList) {
                 JSONObject json = new JSONObject();
@@ -895,14 +642,14 @@ public class FinancialServiceImpl implements IFinancialService {
         entity.setSource(userSession.getUser());
         try {
             //获取满足条件的总记录（不分页）
-            Long pageSize = transactionReadService.selectTransactionForMonthCount(entity);
+            Long pageSize = financialDeclareService.selectTransactionForMonthCount(entity);
             if (pageSize <= 0) {
                 return ResultUtil.error(-1, "没有可导出的数据");
             }
             //设置行索引
             entity.setPage(0, pageSize.intValue());
             //获取满足条件的记录集合
-            List<TransactionListEntity> entityList = transactionReadService.selectTransactionForMonthPage(entity);
+            List<TransactionListEntity> entityList = financialDeclareService.selectTransactionForMonthPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
             for (TransactionListEntity item : entityList) {
                 JSONObject json = new JSONObject();
@@ -945,14 +692,14 @@ public class FinancialServiceImpl implements IFinancialService {
         entity.setSource(userSession.getUser());
         try {
             //获取满足条件的总记录（不分页）
-            Long pageSize = transactionReadService.selectTransactionForYearCount(entity);
+            Long pageSize = financialDeclareService.selectTransactionForYearCount(entity);
             if (pageSize <= 0) {
                 return ResultUtil.error(-1, "没有可导出的数据");
             }
             //设置行索引
             entity.setPage(0, pageSize.intValue());
             //获取满足条件的记录集合
-            List<TransactionListEntity> entityList = transactionReadService.selectTransactionForYearPage(entity);
+            List<TransactionListEntity> entityList = financialDeclareService.selectTransactionForYearPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
             for (TransactionListEntity item : entityList) {
                 JSONObject json = new JSONObject();
