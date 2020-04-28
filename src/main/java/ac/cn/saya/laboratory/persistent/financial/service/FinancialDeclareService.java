@@ -272,12 +272,12 @@ public class FinancialDeclareService {
             for (TransactionInfoEntity item : requestInfoList) {
                 if (item.getFlog() == 1) {
                     // 存入
-                    saveMoney.add(item.getCurrencyNumber());
+                    saveMoney = saveMoney.add(item.getCurrencyNumber());
                     continue;
                 }
                 if (item.getFlog() == 2) {
                     // 支取
-                    takeMoney.add(item.getCurrencyNumber());
+                    takeMoney = takeMoney.add(item.getCurrencyNumber());
                     continue;
                 }
             }
@@ -403,12 +403,12 @@ public class FinancialDeclareService {
                     for (TransactionInfoEntity item : itemList) {
                         if (item.getFlog() == 1) {
                             // 存入
-                            saveMoney.add(item.getCurrencyNumber());
+                            saveMoney = saveMoney.add(item.getCurrencyNumber());
                             continue;
                         }
                         if (item.getFlog() == 2) {
                             // 支取
-                            takeMoney.add(item.getCurrencyNumber());
+                            takeMoney = takeMoney.add(item.getCurrencyNumber());
                             continue;
                         }
                     }
@@ -476,12 +476,12 @@ public class FinancialDeclareService {
                     for (TransactionInfoEntity item : itemList) {
                         if (item.getFlog() == 1) {
                             // 存入
-                            saveMoney.add(item.getCurrencyNumber());
+                            saveMoney = saveMoney.add(item.getCurrencyNumber());
                             continue;
                         }
                         if (item.getFlog() == 2) {
                             // 支取
-                            takeMoney.add(item.getCurrencyNumber());
+                            takeMoney = takeMoney.add(item.getCurrencyNumber());
                             continue;
                         }
                     }
@@ -560,12 +560,12 @@ public class FinancialDeclareService {
                             for (TransactionInfoEntity item : itemList) {
                                 if (item.getFlog() == 1) {
                                     // 存入
-                                    saveMoney.add(item.getCurrencyNumber());
+                                    saveMoney = saveMoney.add(item.getCurrencyNumber());
                                     continue;
                                 }
                                 if (item.getFlog() == 2) {
                                     // 支取
-                                    takeMoney.add(item.getCurrencyNumber());
+                                    takeMoney = takeMoney.add(item.getCurrencyNumber());
                                     continue;
                                 }
                             }
