@@ -3,7 +3,6 @@ package ac.cn.saya.laboratory.persistent.financial.service;
 import ac.cn.saya.laboratory.entity.TransactionInfoEntity;
 import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.entity.TransactionTypeEntity;
-import ac.cn.saya.laboratory.entity.UserMemory;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.financial.dao.TransactionReadDAO;
 import ac.cn.saya.laboratory.persistent.financial.dao.TransactionWriteDAO;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -267,24 +266,23 @@ public class FinancialDeclareService {
             //第一步遍历所有的财政字表，求得总和
             List<TransactionInfoEntity> requestInfoList = entity.getInfoList();
             // 存入总金额
-            Double saveMoney = 0.0;
+            BigDecimal saveMoney = new BigDecimal("0.0");
             // 支取总金额
-            Double takeMoney = 0.0;
-            // 当日发生总金额（存入+支取）
-            Double happenMoney = 0.0;
+            BigDecimal takeMoney = new BigDecimal("0.0");
             for (TransactionInfoEntity item : requestInfoList) {
                 if (item.getFlog() == 1) {
                     // 存入
-                    saveMoney += item.getCurrencyNumber();
+                    saveMoney.add(item.getCurrencyNumber());
                     continue;
                 }
                 if (item.getFlog() == 2) {
                     // 支取
-                    takeMoney += item.getCurrencyNumber();
+                    takeMoney.add(item.getCurrencyNumber());
                     continue;
                 }
             }
-            happenMoney = saveMoney + takeMoney;
+            // 当日发生总金额（存入+支取）
+            BigDecimal happenMoney = new BigDecimal(saveMoney.toString()).add(takeMoney);
             // 设置存入总金额
             entity.setDeposited(saveMoney);
             // 设置支取总金额
@@ -391,11 +389,9 @@ public class FinancialDeclareService {
                 queryEntity.setEndLine(itemConut.intValue());
                 List<TransactionInfoEntity> itemList = transactionReadDAO.selectTransactionInfoPage(queryEntity);
                 // 存入总金额
-                Double saveMoney = 0.0;
+                BigDecimal saveMoney = new BigDecimal("0.0");
                 // 支取总金额
-                Double takeMoney = 0.0;
-                // 当日发生总金额（存入+支取）
-                Double happenMoney = 0.0;
+                BigDecimal takeMoney = new BigDecimal("0.0");
                 TransactionListEntity queryParentEntity = new TransactionListEntity();
                 // 根据主键进行查询，最多只能有一条
                 queryParentEntity.setTradeId(entity.getTradeId());
@@ -407,16 +403,17 @@ public class FinancialDeclareService {
                     for (TransactionInfoEntity item : itemList) {
                         if (item.getFlog() == 1) {
                             // 存入
-                            saveMoney += item.getCurrencyNumber();
+                            saveMoney.add(item.getCurrencyNumber());
                             continue;
                         }
                         if (item.getFlog() == 2) {
                             // 支取
-                            takeMoney += item.getCurrencyNumber();
+                            takeMoney.add(item.getCurrencyNumber());
                             continue;
                         }
                     }
-                    happenMoney = saveMoney + takeMoney;
+                    // 当日发生总金额（存入+支取）
+                    BigDecimal happenMoney = new BigDecimal(saveMoney.toString()).add(takeMoney);
                     // 设置存入总金额
                     writeEntity.setDeposited(saveMoney);
                     // 设置支取总金额
@@ -465,11 +462,9 @@ public class FinancialDeclareService {
                 queryEntity.setEndLine(itemConut.intValue());
                 List<TransactionInfoEntity> itemList = transactionReadDAO.selectTransactionInfoPage(queryEntity);
                 // 存入总金额
-                Double saveMoney = 0.0;
+                BigDecimal saveMoney = new BigDecimal("0.0");
                 // 支取总金额
-                Double takeMoney = 0.0;
-                // 当日发生总金额（存入+支取）
-                Double happenMoney = 0.0;
+                BigDecimal takeMoney = new BigDecimal("0.0");
                 TransactionListEntity queryParentEntity = new TransactionListEntity();
                 // 根据主键进行查询，最多只能有一条
                 queryParentEntity.setTradeId(entity.getTradeId());
@@ -481,16 +476,17 @@ public class FinancialDeclareService {
                     for (TransactionInfoEntity item : itemList) {
                         if (item.getFlog() == 1) {
                             // 存入
-                            saveMoney += item.getCurrencyNumber();
+                            saveMoney.add(item.getCurrencyNumber());
                             continue;
                         }
                         if (item.getFlog() == 2) {
                             // 支取
-                            takeMoney += item.getCurrencyNumber();
+                            takeMoney.add(item.getCurrencyNumber());
                             continue;
                         }
                     }
-                    happenMoney = saveMoney + takeMoney;
+                    // 当日发生总金额（存入+支取）
+                    BigDecimal happenMoney = new BigDecimal(saveMoney.toString()).add(takeMoney);
                     // 设置存入总金额
                     writeEntity.setDeposited(saveMoney);
                     // 设置支取总金额
@@ -550,11 +546,9 @@ public class FinancialDeclareService {
                         queryEntity.setEndLine(itemConut.intValue());
                         List<TransactionInfoEntity> itemList = transactionReadDAO.selectTransactionInfoPage(queryEntity);
                         // 存入总金额
-                        Double saveMoney = 0.0;
+                        BigDecimal saveMoney = new BigDecimal("0.0");
                         // 支取总金额
-                        Double takeMoney = 0.0;
-                        // 当日发生总金额（存入+支取）
-                        Double happenMoney = 0.0;
+                        BigDecimal takeMoney = new BigDecimal("0.0");
                         TransactionListEntity queryParentEntity = new TransactionListEntity();
                         // 根据主键进行查询，最多只能有一条
                         queryParentEntity.setTradeId(entity.getTradeId());
@@ -566,16 +560,17 @@ public class FinancialDeclareService {
                             for (TransactionInfoEntity item : itemList) {
                                 if (item.getFlog() == 1) {
                                     // 存入
-                                    saveMoney += item.getCurrencyNumber();
+                                    saveMoney.add(item.getCurrencyNumber());
                                     continue;
                                 }
                                 if (item.getFlog() == 2) {
                                     // 支取
-                                    takeMoney += item.getCurrencyNumber();
+                                    takeMoney.add(item.getCurrencyNumber());
                                     continue;
                                 }
                             }
-                            happenMoney = saveMoney + takeMoney;
+                            // 当日发生总金额（存入+支取）
+                            BigDecimal happenMoney = new BigDecimal(saveMoney.toString()).add(takeMoney);
                             // 设置存入总金额
                             writeEntity.setDeposited(saveMoney);
                             // 设置支取总金额
