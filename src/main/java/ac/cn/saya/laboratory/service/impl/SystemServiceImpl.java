@@ -1,5 +1,6 @@
 package ac.cn.saya.laboratory.service.impl;
 
+import ac.cn.saya.laboratory.thread.MysqlDumpThread;
 import ac.cn.saya.laboratory.entity.BackupLogEntity;
 import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.persistent.primary.service.BackupLogService;
@@ -19,6 +20,8 @@ import org.thymeleaf.context.Context;
 import javax.annotation.Resource;
 import java.io.*;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * @Title: SystemServiceImpl
@@ -79,7 +82,7 @@ public class SystemServiceImpl implements SystemService {
      */
     @Override
     // 每天3点执行
-    @Scheduled(cron = "0 0 3 * * ?")
+    @Scheduled(cron = "${backup.scheduled}")
     // 每隔5分钟执行一次
     //@Scheduled(cron = "0 0/1 * * * ?")
     public Boolean backupDatabase() {
@@ -91,16 +94,23 @@ public class SystemServiceImpl implements SystemService {
             String backUppath = System.getProperty("user.home","/home/saya") + urlPath;
             //保存的文件名
             String backUpName = RandomUtil.getRandomFileName() + ".sql";
+            MysqlDumpThread task = new MysqlDumpThread(this.dburl, this.username, this.password, backUppath, backUpName, this.dbname, this.mysqlbin);
+            FutureTask<Boolean> futureTask = new FutureTask(task);
+            futureTask.run();
             // 保存本次执行任务，必须要在备份前保存本次任务，否则将出现异常
             backupLogService.insertBackup(urlPath + File.separator + backUpName);
-            Boolean flog = exportDatabaseTool(this.dburl, this.username, this.password, backUppath, backUpName, this.dbname, this.mysqlbin);
-            if (flog) {
+            boolean result = futureTask.get();
+            if (result) {
                 // 记录此次的备份情况
                 sendBackUpMail(executeTime, "成功", (urlPath + File.separator + backUpName));
             } else {
+                System.out.println("error");
                 sendBackUpMail(executeTime, "失败", "-");
             }
-        } catch (InterruptedException e) {
+        } catch (ExecutionException e){
+            logger.error("备份数据库计划异常：" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }catch (InterruptedException e) {
             logger.error("备份数据库计划异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
         }
@@ -170,64 +180,6 @@ public class SystemServiceImpl implements SystemService {
         } catch (Exception e) {
             logger.error("日程安排邮件发送定时任务异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
-        }
-        return false;
-    }
-
-    /**
-     * Java代码实现MySQL数据库导出
-     *
-     * @param hostIP       MySQL数据库所在服务器地址IP
-     * @param userName     进入数据库所需要的用户名
-     * @param password     进入数据库所需要的密码
-     * @param savePath     数据库导出文件保存路径
-     * @param fileName     数据库导出文件文件名
-     * @param databaseName 要导出的数据库名
-     * @param mysqlBin     Mysql的bin目录
-     * @return 返回true表示导出成功，否则返回false。
-     * @author Saya
-     */
-    public static boolean exportDatabaseTool(String hostIP, String userName, String password, String savePath, String fileName, String databaseName, String mysqlBin) throws InterruptedException {
-        File saveFile = new File(savePath);
-        // 如果目录不存在
-        if (!saveFile.exists()) {
-            // 创建文件夹
-            saveFile.mkdirs();
-        }
-        if (!savePath.endsWith(File.separator)) {
-            savePath = savePath + File.separator;
-        }
-
-        PrintWriter printWriter = null;
-        BufferedReader bufferedReader = null;
-        try {
-            printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(savePath + fileName), "utf8"));
-            Process process = Runtime.getRuntime().exec(mysqlBin + "mysqldump -h" + hostIP + " -u" + userName + " -p" + password + " --set-charset=UTF8 " + databaseName);
-            InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream(), "utf8");
-            bufferedReader = new BufferedReader(inputStreamReader);
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                printWriter.println(line);
-            }
-            printWriter.flush();
-            //0 表示线程正常终止。
-            if (process.waitFor() == 0) {
-                return true;
-            }
-        } catch (IOException e) {
-            logger.error("备份数据库异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
-        } finally {
-            try {
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (printWriter != null) {
-                printWriter.close();
-            }
         }
         return false;
     }

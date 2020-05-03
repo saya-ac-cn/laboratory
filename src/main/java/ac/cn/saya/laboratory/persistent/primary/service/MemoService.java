@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -25,6 +28,7 @@ import java.util.List;
  * @Description: 便笺对外接口
  */
 @Service("memoService")
+@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class MemoService {
 
     private static Logger logger = LoggerFactory.getLogger(MemoService.class);
@@ -61,6 +65,7 @@ public class MemoService {
      * @创建时间 2019-09-21
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public MemoEntity getOne(MemoEntity entity) {
         try {
             MemoEntity result = memoDAO.query(entity);
@@ -120,6 +125,7 @@ public class MemoService {
      * @创建时间 2019-09-21
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<MemoEntity> getPage(MemoEntity entity) {
         try {
             List<MemoEntity> list = memoDAO.queryPage(entity);
@@ -142,6 +148,7 @@ public class MemoService {
      * @创建时间 2019-09-21
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Long getCount(MemoEntity entity) {
         try {
             return memoDAO.queryCount(entity);

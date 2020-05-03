@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import java.util.List;
  * @Description: 笔记簿接口实现类
  */
 @Service("noteBookService")
+@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class NoteBookService {
 
     private static Logger logger = LoggerFactory.getLogger(NoteBookService.class);
@@ -94,6 +98,7 @@ public class NoteBookService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public NoteBookEntity getOneNoteBook(NoteBookEntity entity) {
         try {
             return noteBookDAO.getOneNoteBook(entity);
@@ -112,6 +117,7 @@ public class NoteBookService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<NoteBookEntity> getNoteBookPage(NoteBookEntity entity) {
         List<NoteBookEntity> list = new ArrayList<>();
         try {
@@ -135,6 +141,7 @@ public class NoteBookService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Long getNoteBookCount(NoteBookEntity entity) {
         try {
             return noteBookDAO.getNoteBookCount(entity);
@@ -153,6 +160,7 @@ public class NoteBookService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<NoteBookEntity> getNoteBook(NoteBookEntity entity) {
         List<NoteBookEntity> list = new ArrayList<>();
         try {

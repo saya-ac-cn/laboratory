@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import java.util.List;
  */
 
 @Service("planService")
+@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class PlanService {
 
     private static Logger logger = LoggerFactory.getLogger(PlanService.class);
@@ -129,6 +133,7 @@ public class PlanService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public PlanEntity getOnePlan(PlanEntity entity) {
         try {
             return planDAO.getOnePlan(entity);
@@ -147,6 +152,7 @@ public class PlanService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<PlanEntity> getPlanList(PlanEntity entity) {
         try {
             List<PlanEntity> list = planDAO.getPlanList(entity);
@@ -169,6 +175,7 @@ public class PlanService {
      * @创建时间 2019-03-03
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Long getPlanCount(PlanEntity entity) {
         try {
             return planDAO.getPlanCount(entity);
@@ -187,6 +194,7 @@ public class PlanService {
      * @创建时间 2019-06-03
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<PlanEntity> getTodayPlanList() {
         List<PlanEntity> list = new ArrayList<>();
         try {

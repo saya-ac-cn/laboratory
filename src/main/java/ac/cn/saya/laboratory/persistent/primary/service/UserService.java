@@ -2,10 +2,9 @@ package ac.cn.saya.laboratory.persistent.primary.service;
 
 import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.PlanEntity;
-import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.primary.dao.BatchDAO;
+import ac.cn.saya.laboratory.persistent.primary.dao.PrimaryBatchDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.LogDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.PlanDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.UserDAO;
@@ -16,6 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -32,6 +34,7 @@ import java.util.Map;
  * @修改人和其它信息
  */
 @Service("userService")
+@Transactional(value = "primaryTransactionManager",readOnly = true,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class UserService {
 
     private static Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -41,8 +44,8 @@ public class UserService {
     private UserDAO userDAO;
 
     @Resource
-    @Qualifier("batchDAO")
-    private BatchDAO batchDAO;
+    @Qualifier("primaryBatchDAO")
+    private PrimaryBatchDAO batchDAO;
 
     @Resource
     @Qualifier("logDAO")
@@ -78,6 +81,7 @@ public class UserService {
      * @创建时间 2018/11/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = false)
     public Integer setUser(UserEntity user) {
         Integer result = 0;
         if (user == null || StringUtils.isEmpty(user.getUser())) {
@@ -106,6 +110,7 @@ public class UserService {
      * @创建时间 2019-03-03
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Map<String, Object> countPre6MonthNews(String user) {
         try {
             return batchDAO.countPre6MonthNews(user);
@@ -165,24 +170,6 @@ public class UserService {
             return batchDAO.countPre6Memo();
         } catch (Exception e) {
             logger.error("查询近半年便笺发布情况失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
-            throw new MyException(ResultEnum.DB_ERROR);
-        }
-    }
-
-    /**
-     * @描述 查询近半年财政收支情况
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019-03-03
-     * @修改人和其它信息
-     */
-    public List<TransactionListEntity> countPre6Financial(String user) {
-        try {
-            return batchDAO.countPre6Financial(user);
-        } catch (Exception e) {
-            logger.error("查询近半年财政收支情况失败" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
             throw new MyException(ResultEnum.DB_ERROR);
         }

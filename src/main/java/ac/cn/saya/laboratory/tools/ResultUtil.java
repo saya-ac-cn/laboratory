@@ -63,4 +63,16 @@ public class ResultUtil {
         return result;
     }
 
+    /**
+     * 用于错误，异常等方法返回值
+     * @param value
+     * @return
+     */
+    public static Result error(ResultEnum value) {
+        Result result = new Result();
+        result.setCode(value.getCode());
+        result.setMsg(value.getMsg());
+        return result;
+    }
+
 }

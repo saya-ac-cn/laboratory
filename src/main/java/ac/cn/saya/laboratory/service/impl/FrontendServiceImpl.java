@@ -62,7 +62,6 @@ public class FrontendServiceImpl implements IFrontendService {
     private NotesService notesService;
 
     /**
-     * @param entity
      * @描述 查询一条动态
      * @参数
      * @返回值
@@ -100,7 +99,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页的动态
      * @参数
      * @返回值
@@ -141,7 +139,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页文件列表
      * @参数
      * @返回值
@@ -182,9 +179,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param id
-     * @param request
-     * @param response
      * @描述 下载文件
      * @参数
      * @返回值
@@ -238,7 +232,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param entity
      * @描述 留言
      * @参数
      * @返回值
@@ -335,7 +328,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param entity
      * @描述 获取笔记簿【公开】
      * @参数
      * @返回值
@@ -356,7 +348,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页的笔记
      * @参数
      * @返回值

@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -30,6 +33,7 @@ import java.util.List;
  */
 
 @Service("logService")
+@Transactional(value = "primaryTransactionManager",readOnly = true,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class LogService {
 
     private static Logger logger = LoggerFactory.getLogger(LogService.class);
@@ -46,6 +50,7 @@ public class LogService {
      * @创建时间 2018/11/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = false)
     public Integer insert(LogEntity entity) {
         Integer flog = null;
         try {

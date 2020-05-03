@@ -3,6 +3,7 @@ package ac.cn.saya.laboratory.service.impl;
 import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.handle.RepeatLogin;
+import ac.cn.saya.laboratory.persistent.financial.service.FinancialDeclareService;
 import ac.cn.saya.laboratory.persistent.primary.service.*;
 import ac.cn.saya.laboratory.service.ICoreService;
 import ac.cn.saya.laboratory.tools.*;
@@ -86,6 +87,10 @@ public class CoreServiceImpl implements ICoreService {
     @Resource
     @Qualifier("amapLocateUtils")
     private AmapLocateUtils amapLocateUtils;
+
+    @Resource
+    @Qualifier("financialDeclareService")
+    private FinancialDeclareService financialDeclareService;
 
 
     /**
@@ -391,7 +396,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param imgBase64
      * @描述 上传logo
      * @参数
      * @返回值
@@ -557,8 +561,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数
      * @返回值
@@ -584,8 +586,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -653,8 +653,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -684,8 +682,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -726,8 +722,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -737,25 +731,17 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> createApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        // 校验用户输入的参数
-        if (entity == null) {
-            // 缺少参数
-            throw new MyException(ResultEnum.NOT_PARAMETER);
-        }
-        if (apiService.insertApi(entity) > 0) {
+        Result<Object> result = apiService.insertApi(entity);
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
             /**
              * 记录日志
              */
             recordService.record("OX031", request);
-            return ResultUtil.success();
-        } else {
-            throw new MyException(ResultEnum.ERROP);
         }
+        return result;
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -765,25 +751,17 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> editApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        // 校验用户输入的参数
-        if (entity == null) {
-            // 缺少参数
-            throw new MyException(ResultEnum.NOT_PARAMETER);
-        }
-        if (apiService.editApi(entity) > 0) {
+        Result<Object> result = apiService.editApi(entity);
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()){
             /**
              * 记录日志
              */
             recordService.record("OX032", request);
-            return ResultUtil.success();
-        } else {
-            throw new MyException(ResultEnum.ERROP);
         }
+        return result;
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -793,24 +771,17 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> deleteApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        // 校验用户输入的参数
-        if (entity == null) {
-            // 缺少参数
-            throw new MyException(ResultEnum.NOT_PARAMETER);
-        }
-        if (apiService.deleteApi(entity) > 0) {
+        Result<Object> result = apiService.deleteApi(entity);
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()){
             /**
              * 记录日志
              */
             recordService.record("OX033", request);
-            return ResultUtil.success();
-        } else {
-            throw new MyException(ResultEnum.ERROP);
         }
+        return result;
     }
 
     /**
-     * @param request
      * @描述 获取统计报表数据
      * @参数
      * @返回值
@@ -871,7 +842,7 @@ public class CoreServiceImpl implements ICoreService {
         result.put("log6", userService.countPre6Logs(userSession.getUser()));
         result.put("files6", userService.countPre6Files(userSession.getUser()));
         result.put("memo6", userService.countPre6Memo());
-        result.put("financial6", userService.countPre6Financial(userSession.getUser()));
+        result.put("financial6", financialDeclareService.countPre6Financial(userSession.getUser()));
         return ResultUtil.success(result);
     }
 }

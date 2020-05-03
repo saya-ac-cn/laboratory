@@ -1,5 +1,6 @@
 package ac.cn.saya.laboratory.config;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 /**
@@ -28,12 +30,24 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = "ac.cn.saya.laboratory.persistent.primary.dao", sqlSessionTemplateRef = "primarySqlSessionTemplate")
 public class PrimaryDataSourceConfig {
 
+    public static PrimaryDataSourceConfig create() {
+        return new PrimaryDataSourceConfig();
+    }
+
+    /**
+     * 创建财政数据库数据源
+     * @return
+     */
+    public DruidDataSource build() {
+        return new PrimaryDataSourceWrapper();
+    }
+
+
     // 表示这个数据源是默认数据源,这个一定要加，如果两个数据源都没有@Primary会报错
     @Primary
     @Bean(name = "primaryDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.primary")
     public DataSource primaryDateSource() {
-        return DataSourceBuilder.create().build();
+        return PrimaryDataSourceConfig.create().build();
     }
 
 

@@ -4,6 +4,7 @@ import ac.cn.saya.laboratory.entity.TransactionInfoEntity;
 import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.entity.TransactionTypeEntity;
 import ac.cn.saya.laboratory.exception.MyException;
+import ac.cn.saya.laboratory.persistent.financial.dao.FinancialBatchDAO;
 import ac.cn.saya.laboratory.persistent.financial.dao.TransactionReadDAO;
 import ac.cn.saya.laboratory.persistent.financial.dao.TransactionWriteDAO;
 import ac.cn.saya.laboratory.tools.*;
@@ -11,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -26,6 +30,7 @@ import java.util.List;
  * @Description: 财政申报中间件
  */
 @Service("financialDeclareService")
+@Transactional(value = "financialTransactionManager",readOnly = true,propagation= Propagation.REQUIRED, isolation= Isolation.SERIALIZABLE, rollbackFor=MyException.class)
 public class FinancialDeclareService {
 
     private static Logger logger = LoggerFactory.getLogger(FinancialDeclareService.class);
@@ -37,6 +42,28 @@ public class FinancialDeclareService {
     @Resource
     @Qualifier("transactionReadDAO")
     private TransactionReadDAO transactionReadDAO;
+
+    @Resource
+    @Qualifier("financialBatchDAO")
+    private FinancialBatchDAO batchDAO;
+
+    /**
+     * @描述 查询近半年财政收支情况
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019-03-03
+     * @修改人和其它信息
+     */
+    public List<TransactionListEntity> countPre6Financial(String user) {
+        try {
+            return batchDAO.countPre6Financial(user);
+        } catch (Exception e) {
+            logger.error("查询近半年财政收支情况失败" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
 
     /**
      * 获取所有交易类别数据
@@ -261,6 +288,7 @@ public class FinancialDeclareService {
      * @param entity
      * @return
      */
+    @Transactional(readOnly = false)
     public Result<Object> insertTransaction(TransactionListEntity entity) {
         try {
             //第一步遍历所有的财政字表，求得总和
@@ -320,12 +348,18 @@ public class FinancialDeclareService {
      * @return
      * @throws Exception
      */
-    public Result<Object> updateTransaction(TransactionListEntity entity){
+    @Transactional(readOnly = false)
+    public Result<Object> updateTransaction(TransactionListEntity entity) {
         // 只允许修改交易类别以及交易摘要
         if (entity == null || entity.getTradeId() == null || entity.getTradeType() == null || StringUtils.isEmpty(entity.getTransactionAmount())) {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         } else {
             try {
+                // 读取交易总览
+                TransactionListEntity preview = transactionReadDAO.selectTransactionList(entity);
+                if (null == preview && !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
+                    return ResultUtil.error(ResultEnum.FORBID_POWER);
+                }
                 if (transactionWriteDAO.updateTransactionList(entity) > 0) {
                     return ResultUtil.success();
                 } else {
@@ -349,11 +383,16 @@ public class FinancialDeclareService {
      * @return
      * @throws Exception
      */
-    public Result<Object> deleteTransaction(TransactionListEntity entity, String user){
+    @Transactional(readOnly = false)
+    public Result<Object> deleteTransaction(TransactionListEntity entity, String user) {
         if (entity == null || entity.getTradeId() == null) {
             throw new MyException(ResultEnum.NOT_PARAMETER);
         } else {
             try {
+                TransactionListEntity preview = transactionReadDAO.selectTransactionList(entity);
+                if (null == preview && !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
+                    return ResultUtil.error(ResultEnum.FORBID_POWER);
+                }
                 if (transactionWriteDAO.deleteTransactionList(entity.getTradeId(), user) > 0) {
                     return ResultUtil.success();
                 } else {
@@ -376,7 +415,12 @@ public class FinancialDeclareService {
      * @return
      * @throws Exception
      */
+    @Transactional(readOnly = false)
     public Result<Object> insertTransactioninfo(TransactionInfoEntity entity, String user) {
+        TransactionListEntity preview = transactionReadDAO.selectTransactionList(new TransactionListEntity(entity.getTradeId(),user));
+        if (null == preview && !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
+            return ResultUtil.error(ResultEnum.FORBID_POWER);
+        }
         // 先把子记录进行写入
         if (transactionWriteDAO.insertTransactionInfo(entity) > 0) {
             // 查询本流水号下的所有子记录
@@ -449,7 +493,12 @@ public class FinancialDeclareService {
      * @return
      * @throws Exception
      */
+    @Transactional(readOnly = false)
     public Result<Object> updateTransactioninfo(TransactionInfoEntity entity, String user) {
+        TransactionListEntity preview = transactionReadDAO.selectTransactionList(new TransactionListEntity(entity.getTradeId(),user));
+        if (null == preview && !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
+            return ResultUtil.error(ResultEnum.FORBID_POWER);
+        }
         // 先把子记录进行写入
         if (transactionWriteDAO.updateTransactionInfo(entity) > 0) {
             // 查询本流水号下的所有子记录
@@ -521,7 +570,12 @@ public class FinancialDeclareService {
      * @return
      * @throws Exception
      */
+    @Transactional(readOnly = false)
     public Result<Object> deleteTransactioninfo(TransactionInfoEntity entity, String user) {
+        TransactionListEntity preview = transactionReadDAO.selectTransactionList(new TransactionListEntity(entity.getTradeId(),user));
+        if (null == preview && !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
+            return ResultUtil.error(ResultEnum.FORBID_POWER);
+        }
         // 查询本流水号下的所有子记录
         TransactionInfoEntity queryEntity = new TransactionInfoEntity();
         queryEntity.setTradeId(entity.getTradeId());

@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import java.util.List;
  */
 
 @Service("pictureStorageService")
+@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class PictureStorageService {
 
 
@@ -78,6 +82,7 @@ public class PictureStorageService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<PictureEntity> getPictuBase64Page(PictureEntity entity) {
         List<PictureEntity> list = new ArrayList<>();
         try {
@@ -101,6 +106,7 @@ public class PictureStorageService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Long getPictuBase64Count(PictureEntity entity) {
         try {
             return pictureDAO.getPictuBase64Count(entity);
@@ -119,6 +125,7 @@ public class PictureStorageService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public PictureEntity getOnePictuBase64(PictureEntity entity) {
         try {
             return pictureDAO.getOnePictuBase64(entity);

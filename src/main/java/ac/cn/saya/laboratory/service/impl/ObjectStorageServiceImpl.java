@@ -28,9 +28,8 @@ import java.util.List;
 
 /**
  * 对象存储服务实现类
- *
  * @Title: ObjectStorageServiceImpl
- * @ProjectName DataCenter
+ * @ProjectName laboratory
  * @Description: TODO
  * @Author Saya
  * @Date: 2019/1/9 22:19
@@ -250,8 +249,6 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     }
 
     /**
-     * @param file
-     * @param request
      * @描述 上传文件
      * @参数
      * @返回值
@@ -301,8 +298,6 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 修改文件信息
      * @参数
      * @返回值
@@ -332,8 +327,6 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 删除文件
      * @参数
      * @返回值
@@ -371,8 +364,6 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 获取分页文件列表
      * @参数
      * @返回值
@@ -416,7 +407,6 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     }
 
     /**
-     * @param id
      * @描述 管理员专用下载文件方法
      * @参数
      * @返回值
@@ -470,8 +460,6 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     }
 
     /**
-     * @param archiveDate
-     * @param response
      * @描述 下载备份文件
      * @参数
      * @返回值
@@ -522,7 +510,6 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页的备份数据库列表
      * @参数
      * @返回值

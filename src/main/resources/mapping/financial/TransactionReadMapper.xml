@@ -26,6 +26,30 @@
         select * from transaction_type
     </select>
 
+    <!-- 获取交易总览 -->
+    <select id="selectTransactionList" parameterType="transactionList" resultType="transactionList">
+          select
+            a.tradeId,
+            a.deposited,
+            a.source,
+            a.expenditure,
+            a.tradeDate,
+            a.tradeType,
+            a.currencyNumber,
+            a.transactionAmount,
+        from
+            transaction_list a
+        <where>
+            <if test="tradeId != null and tradeId != ''">
+                a.tradeId = #{tradeId}
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+        </where>
+        limit 1
+    </select>
+
     <!--查看流水-->
     <select id="selectTransactionPage" parameterType="transactionList" resultMap="returnTransactionList">
         select

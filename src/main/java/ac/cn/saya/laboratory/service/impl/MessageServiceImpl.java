@@ -24,7 +24,7 @@ import java.util.List;
  * @Description: TODO
  * @Author Saya
  * @Date: 2019/1/11 23:00
- * @Description: 消息存储服务
+ * @Description: 图文消息服务
  */
 @Service("messageServiceImpl")
 public class MessageServiceImpl implements IMessageService {
@@ -56,8 +56,6 @@ public class MessageServiceImpl implements IMessageService {
     private MemoService memoService;
 
     /**
-     * @param entity
-     * @param request
      * @描述 发布动态
      * @参数
      * @返回值
@@ -87,8 +85,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 编辑动态
      * @参数
      * @返回值
@@ -118,8 +114,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 删除动态
      * @参数
      * @返回值
@@ -175,8 +169,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 获取分页的动态
      * @参数
      * @返回值
@@ -220,8 +212,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 审核修改
      * @参数
      * @返回值
@@ -251,7 +241,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
      * @描述 查询一条留言
      * @参数
      * @返回值
@@ -275,7 +264,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页的留言
      * @参数
      * @返回值
@@ -316,8 +304,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 创建笔记簿
      * @参数
      * @返回值
@@ -347,8 +333,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 修改笔记簿
      * @参数
      * @返回值
@@ -378,8 +362,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 删除笔记簿
      * @参数
      * @返回值
@@ -409,8 +391,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 查询一条笔记簿
      * @参数
      * @返回值
@@ -434,8 +414,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 获取分页的笔记簿
      * @参数
      * @返回值
@@ -479,8 +457,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 获取笔记簿
      * @参数
      * @返回值
@@ -503,8 +479,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 创建笔记
      * @参数
      * @返回值
@@ -531,8 +505,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 修改笔记
      * @参数
      * @返回值
@@ -564,7 +536,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
      * @描述 删除笔记
      * @参数
      * @返回值
@@ -591,8 +562,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 查询一条笔记
      * @参数
      * @返回值
@@ -624,8 +593,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 获取分页的笔记
      * @参数
      * @返回值
@@ -784,8 +751,6 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述 获取分页的便笺
      * @参数
      * @返回值

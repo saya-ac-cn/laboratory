@@ -4,13 +4,14 @@ import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import org.springframework.stereotype.Repository;
 import org.apache.ibatis.session.SqlSession;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.*;
 
 /**
- * @Title: BatchDAO
+ * @Title: PrimaryBatchDAO
  * @ProjectName laboratory
  * @Description: TODO
  * @Author liunengkai
@@ -18,8 +19,8 @@ import java.util.*;
  * @Description:
  */
 
-@Repository("batchDAO")
-public class BatchDAO extends JDBCBaseConnection {
+@Repository("primaryBatchDAO")
+public class PrimaryBatchDAO extends PrimaryJDBCConnection {
 
     /**
      * @描述 调用存储过程查询近半年发表的动态
@@ -210,7 +211,7 @@ public class BatchDAO extends JDBCBaseConnection {
             ResultSet rs = cs.getResultSet();
             result = new ArrayList<>();
             while (rs.next()) {
-                result.add(new TransactionListEntity(rs.getString("totalCount"), rs.getDouble("deposited"), rs.getDouble("expenditure"), rs.getDouble("currencyNumber")));
+                result.add(new TransactionListEntity(rs.getString("totalCount"), new BigDecimal(rs.getString("deposited")), new BigDecimal(rs.getString("expenditure")), new BigDecimal(rs.getString("currencyNumber"))));
             }
             cs.close();
             sqlCon.close();

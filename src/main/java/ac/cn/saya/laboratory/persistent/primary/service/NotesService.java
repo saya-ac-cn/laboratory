@@ -2,7 +2,7 @@ package ac.cn.saya.laboratory.persistent.primary.service;
 
 import ac.cn.saya.laboratory.entity.NotesEntity;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.primary.dao.BatchDAO;
+import ac.cn.saya.laboratory.persistent.primary.dao.PrimaryBatchDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.NotesDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -26,6 +29,7 @@ import java.util.Map;
  * @Description: 笔记接口实现类
  */
 @Service("notesService")
+@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class NotesService {
 
     private static Logger logger = LoggerFactory.getLogger(NotesService.class);
@@ -35,8 +39,8 @@ public class NotesService {
     private NotesDAO notesDAO;
 
     @Resource
-    @Qualifier("batchDAO")
-    private BatchDAO batchDAO;
+    @Qualifier("primaryBatchDAO")
+    private PrimaryBatchDAO batchDAO;
 
     /**
      * @描述 添加笔记
@@ -100,6 +104,7 @@ public class NotesService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public NotesEntity getOneNotes(NotesEntity entity) {
         try {
             return notesDAO.getOneNotes(entity);
@@ -118,6 +123,7 @@ public class NotesService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<NotesEntity> getNotesPage(NotesEntity entity) {
         List<NotesEntity> list = new ArrayList<>();
         try {
@@ -141,6 +147,7 @@ public class NotesService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Long getNotesCount(NotesEntity entity) {
         try {
             return notesDAO.getNotesCount(entity);
@@ -159,6 +166,7 @@ public class NotesService {
      * @创建时间 2019-04-02
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Map<String, String> getNotesPreAndNext(Integer notesId) {
         try {
             return batchDAO.getNewsNotesPreAndNext(2, notesId);

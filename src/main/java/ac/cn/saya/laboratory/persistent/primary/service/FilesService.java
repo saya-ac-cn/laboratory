@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import java.util.List;
  */
 
 @Service("filesService")
+@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class FilesService {
 
 
@@ -41,7 +45,6 @@ public class FilesService {
      * @创建人 saya.ac.cn-刘能凯
      * @创建时间 2019/1/15
      * @修改人和其它信息
-     * @param entity
      */
     public Integer insertFile(FilesEntity entity) {
         try {
@@ -54,7 +57,6 @@ public class FilesService {
     }
 
     /**
-     * @param entity
      * @描述 保存修改文件记录
      * @参数
      * @返回值
@@ -73,7 +75,6 @@ public class FilesService {
     }
 
     /**
-     * @param entity
      * @描述 删除文件记录
      * @参数
      * @返回值
@@ -92,7 +93,6 @@ public class FilesService {
     }
 
     /**
-     * @param entity
      * @描述 查询分页后的文件列表
      * @参数
      * @返回值
@@ -100,6 +100,7 @@ public class FilesService {
      * @创建时间 2019/1/15
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<FilesEntity> getFilePage(FilesEntity entity) {
         List<FilesEntity> list = new ArrayList<>();
         try {
@@ -116,7 +117,6 @@ public class FilesService {
     }
 
     /**
-     * @param entity
      * @描述 查询文件总数
      * @参数 [entity]
      * @返回值 java.lang.Integer
@@ -124,6 +124,7 @@ public class FilesService {
      * @创建时间 2019/1/15
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Long getFileCount(FilesEntity entity) {
         try {
             return filesDAO.getFileCount(entity);
@@ -135,7 +136,6 @@ public class FilesService {
     }
 
     /**
-     * @param entity
      * @描述 获取一条文件信息
      * @参数
      * @返回值
@@ -143,6 +143,7 @@ public class FilesService {
      * @创建时间 2019/1/15
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public FilesEntity getOneFile(FilesEntity entity) {
         try {
             return filesDAO.getOneFile(entity);

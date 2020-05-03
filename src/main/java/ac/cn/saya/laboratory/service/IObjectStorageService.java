@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 对象存储服务
  * @Title: IObjectStorageService
- * @ProjectName DataCenter
+ * @ProjectName laboratory
  * @Description: TODO
  * @Author Saya
  * @Date: 2019/1/9 22:14

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import javax.annotation.Resource;
 
 /**
- * @Title: JDBCBaseConnection
+ * @Title: PrimaryJDBCConnection
  * @ProjectName laboratory
  * @Description: TODO
  * @Author liunengkai
@@ -18,7 +18,7 @@ import javax.annotation.Resource;
  * 把配置文件中的been注入到此
  */
 
-public class JDBCBaseConnection {
+public class PrimaryJDBCConnection {
 
     @Resource
     @Qualifier("primarySqlSessionFactory")

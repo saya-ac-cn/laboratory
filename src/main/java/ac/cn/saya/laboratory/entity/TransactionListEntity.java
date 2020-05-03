@@ -78,5 +78,8 @@ public class TransactionListEntity extends BaseEntity {
         this.currencyNumber = currencyNumber;
     }
 
-
+    public TransactionListEntity(Integer tradeId, String source) {
+        this.tradeId = tradeId;
+        this.source = source;
+    }
 }

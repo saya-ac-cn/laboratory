@@ -3,7 +3,7 @@ package ac.cn.saya.laboratory.persistent.primary.service;
 
 import ac.cn.saya.laboratory.entity.NewsEntity;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.primary.dao.BatchDAO;
+import ac.cn.saya.laboratory.persistent.primary.dao.PrimaryBatchDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.NewsDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ import java.util.Map;
  */
 
 @Service("newsService")
+@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class NewsService {
 
 
@@ -38,8 +42,8 @@ public class NewsService {
     private NewsDAO newsDAO;
 
     @Resource
-    @Qualifier("batchDAO")
-    private BatchDAO batchDAO;
+    @Qualifier("primaryBatchDAO")
+    private PrimaryBatchDAO batchDAO;
 
     /**
      * @描述 发布动态
@@ -103,6 +107,7 @@ public class NewsService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public NewsEntity getOneNews(NewsEntity entity) {
         try {
             return newsDAO.getOneNews(entity);
@@ -114,7 +119,6 @@ public class NewsService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页后的动态
      * @参数
      * @返回值
@@ -122,6 +126,7 @@ public class NewsService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<NewsEntity> getNewsPage(NewsEntity entity) {
         List<NewsEntity> list = new ArrayList<>();
         try {
@@ -138,7 +143,6 @@ public class NewsService {
     }
 
     /**
-     * @param entity
      * @描述 获取动态总数
      * @参数
      * @返回值
@@ -146,6 +150,7 @@ public class NewsService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Long getNewsCount(NewsEntity entity) {
         try {
             return newsDAO.getNewsCount(entity);
@@ -164,6 +169,7 @@ public class NewsService {
      * @创建时间 2019-03-18
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Map<String, String> getNewsPreAndNext(Integer newsId) {
         try {
             return batchDAO.getNewsNotesPreAndNext(1, newsId);

@@ -28,6 +28,13 @@ public interface TransactionReadDAO {
     public List<TransactionTypeEntity> selectTransactionType();
 
     /**
+     * 获取交易总览
+     * @param entity
+     * @return
+     */
+    public TransactionListEntity selectTransactionList(TransactionListEntity entity);
+
+    /**
      * 查看流水
      * @param entity
      * @return

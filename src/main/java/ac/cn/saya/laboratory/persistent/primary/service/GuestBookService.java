@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import java.util.List;
  */
 
 @Service("guestBookService")
+@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class GuestBookService {
 
 
@@ -78,6 +82,7 @@ public class GuestBookService {
      * @创建时间 2019/1/12
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public GuestBookEntity queryOneGuestBook(GuestBookEntity entity) {
         try {
             return guestBookDAO.getOneGuestBook(entity);
@@ -96,6 +101,7 @@ public class GuestBookService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public List<GuestBookEntity> getGuestBookPage(GuestBookEntity entity) {
         List<GuestBookEntity> list = new ArrayList<>();
         try {
@@ -119,6 +125,7 @@ public class GuestBookService {
      * @创建时间 2019/1/11
      * @修改人和其它信息
      */
+    @Transactional(readOnly = true)
     public Long getGuestBookCount(GuestBookEntity entity) {
         try {
             return guestBookDAO.getGuestBookCount(entity);
