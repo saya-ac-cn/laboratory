@@ -165,9 +165,9 @@ public class UserService {
      * @创建时间 2019-03-03
      * @修改人和其它信息
      */
-    public Map<String, Object> countPre6Memo() {
+    public Map<String, Object> countPre6Memo(String user) {
         try {
-            return batchDAO.countPre6Memo();
+            return batchDAO.countPre6Memo(user);
         } catch (Exception e) {
             logger.error("查询近半年便笺发布情况失败" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());

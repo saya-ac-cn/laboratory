@@ -75,6 +75,7 @@ public class MysqlDumpThread implements Callable<Boolean> {
      */
     @Override
     public Boolean call() throws Exception {
+        boolean result = false;
         File saveFile = new File(savePath);
         // 如果目录不存在
         if (!saveFile.exists()) {
@@ -109,7 +110,7 @@ public class MysqlDumpThread implements Callable<Boolean> {
             printWriter.flush();
             //0 表示线程正常终止。
             if (process.waitFor() == 0) {
-                return true;
+                result = true;
             }
         } catch (IOException e) {
             logger.error("备份数据库异常：" + Log4jUtils.getTrace(e));
@@ -125,7 +126,7 @@ public class MysqlDumpThread implements Callable<Boolean> {
             if (printWriter != null) {
                 printWriter.close();
             }
+            return result;
         }
-        return false;
     }
 }

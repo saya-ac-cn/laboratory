@@ -154,7 +154,7 @@ public class PrimaryBatchDAO extends PrimaryJDBCConnection {
      * @创建时间 2019-03-03
      * @修改人和其它信息
      */
-    public Map<String, Object> countPre6Memo() {
+    public Map<String, Object> countPre6Memo(String user) {
         Map<String, Object> result = null;
         SqlSession sqlSession = null;
         //连接对象
@@ -164,7 +164,9 @@ public class PrimaryBatchDAO extends PrimaryJDBCConnection {
             sqlSession = getSqlSession();
             //建立jdbc连接
             sqlCon = sqlSession.getConfiguration().getEnvironment().getDataSource().getConnection();
-            CallableStatement cs = sqlCon.prepareCall("{Call countPre6Memo()}");
+            CallableStatement cs = sqlCon.prepareCall("{Call countPre6Memo(?)}");
+            //设置参数
+            cs.setString(1, user);
             //执行
             cs.executeQuery();
             ResultSet rs = cs.getResultSet();

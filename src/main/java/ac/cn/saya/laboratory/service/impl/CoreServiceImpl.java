@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @Title: CoreServiceImpl
@@ -125,7 +126,7 @@ public class CoreServiceImpl implements ICoreService {
             entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
             entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
             // 注入用户个人信息
-            result.put("user",entity);
+            result.put("user", entity);
             return ResultUtil.success(result);
         } else {
             // 未登录（当前设备）
@@ -165,7 +166,7 @@ public class CoreServiceImpl implements ICoreService {
                 entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
                 // 返回用户的个人信息
                 Map<String, Object> result = userService.queryUserRecentlyInfo(user.getUser());
-                result.put("user",entity);
+                result.put("user", entity);
                 // 记录本次登录
                 recordService.record("OX001", request);
                 //返回登录成功
@@ -752,7 +753,7 @@ public class CoreServiceImpl implements ICoreService {
     @Override
     public Result<Object> editApi(ApiEntity entity, HttpServletRequest request) throws Exception {
         Result<Object> result = apiService.editApi(entity);
-        if (result.getCode() == ResultEnum.SUCCESS.getCode()){
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
             /**
              * 记录日志
              */
@@ -772,7 +773,7 @@ public class CoreServiceImpl implements ICoreService {
     @Override
     public Result<Object> deleteApi(ApiEntity entity, HttpServletRequest request) throws Exception {
         Result<Object> result = apiService.deleteApi(entity);
-        if (result.getCode() == ResultEnum.SUCCESS.getCode()){
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
             /**
              * 记录日志
              */
@@ -782,7 +783,7 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @描述 获取统计报表数据
+     * @描述 获取统计报表数据 异步执行
      * @参数
      * @返回值
      * @创建人 saya.ac.cn-刘能凯
@@ -796,53 +797,92 @@ public class CoreServiceImpl implements ICoreService {
         // 统计图片总数
         PictureEntity pictureEntity = new PictureEntity();
         pictureEntity.setSource(userSession.getUser());
-        Long pictureCount = pictureStorageService.getPictuBase64Count(pictureEntity);
-        result.put("pictureCount", pictureCount);
+        CompletableFuture<Long> pictureCountFuture = CompletableFuture.supplyAsync(()->pictureStorageService.getPictuBase64Count(pictureEntity));
+
         // 统计文件总数
         FilesEntity filesEntity = new FilesEntity();
         filesEntity.setSource(userSession.getUser());
-        Long fileCount = filesService.getFileCount(filesEntity);
-        result.put("fileCount", fileCount);
+        CompletableFuture<Long> fileCountFuture = CompletableFuture.supplyAsync(()->filesService.getFileCount(filesEntity));
+
         // 统计笔记簿总数
         NoteBookEntity bookEntity = new NoteBookEntity();
         bookEntity.setSource(userSession.getUser());
-        Long bookCount = noteBookService.getNoteBookCount(bookEntity);
-        result.put("bookCount", bookCount);
+        CompletableFuture<Long> bookCountFuture = CompletableFuture.supplyAsync(()->noteBookService.getNoteBookCount(bookEntity));
+
         // 统计笔记总数
         NotesEntity notesEntity = new NotesEntity();
         notesEntity.setNotebook(bookEntity);
-        Long notesCount = notesService.getNotesCount(notesEntity);
-        result.put("notesCount", notesCount);
+        CompletableFuture<Long> notesCountFuture = CompletableFuture.supplyAsync(()->notesService.getNotesCount(notesEntity));
+
         // 统计计划总数
         PlanEntity planEntity = new PlanEntity();
         planEntity.setSource(userSession.getUser());
-        Long planCount = planService.getPlanCount(planEntity);
-        result.put("planCount", planCount);
+        CompletableFuture<Long> planCountFuture = CompletableFuture.supplyAsync(()->planService.getPlanCount(planEntity));
+
         // 统计公告总数
         NewsEntity newsEntity = new NewsEntity();
         newsEntity.setSource(userSession.getUser());
-        Long newsCount = newsService.getNewsCount(newsEntity);
-        result.put("newsCount", newsCount);
-        // 统计留言总数
-        GuestBookEntity guestBookEntity = new GuestBookEntity();
-        Long guestCount = guestBookService.getGuestBookCount(guestBookEntity);
-        result.put("guestCount", guestCount);
+        CompletableFuture<Long> newsCountFuture = CompletableFuture.supplyAsync(()->newsService.getNewsCount(newsEntity));
+
         // 统计登录总数
         LogEntity logEntity = new LogEntity();
         logEntity.setUser(userSession.getUser());
         logEntity.setType("OX001");
-        Long logCount = logService.selectCount(logEntity);
+        CompletableFuture<Long> logCountFuture = CompletableFuture.supplyAsync(()->logService.selectCount(logEntity));
+
+        CompletableFuture<Map<String, Object>> news6Future = CompletableFuture.supplyAsync(()->userService.countPre6MonthNews(userSession.getUser()));
+
+        CompletableFuture<Map<String, Object>> log6Future = CompletableFuture.supplyAsync(()->userService.countPre6Logs(userSession.getUser()));
+
+        CompletableFuture<Map<String, Object>> files6Future = CompletableFuture.supplyAsync(()->userService.countPre6Files(userSession.getUser()));
+
+        CompletableFuture<Map<String, Object>> memo6Future = CompletableFuture.supplyAsync(()->userService.countPre6Memo(userSession.getUser()));
+
+        CompletableFuture<List<TransactionListEntity>> financial6Future = CompletableFuture.supplyAsync(()->financialDeclareService.countPre6Financial(userSession.getUser()));
+
+        Long pictureCount = pictureCountFuture.exceptionally(f -> 0L).get();
+        result.put("pictureCount", pictureCount);
+
+        Long fileCount = fileCountFuture.exceptionally(f -> 0L).get();
+        result.put("fileCount", fileCount);
+
+        Long bookCount = bookCountFuture.exceptionally(f -> 0L).get();
+        result.put("bookCount", bookCount);
+
+        Long notesCount = notesCountFuture.exceptionally(f -> 0L).get();
+        result.put("notesCount", notesCount);
+
+        Long planCount = planCountFuture.exceptionally(f -> 0L).get();
+        result.put("planCount", planCount);
+
+        Long newsCount = newsCountFuture.exceptionally(f -> 0L).get();
+        result.put("newsCount", newsCount);
+
+        Long logCount = logCountFuture.exceptionally(f -> 0L).get();
         result.put("logCount", logCount);
+
+        Map<String, Object> news6 = news6Future.exceptionally(f -> null).get();
+        result.put("news6", news6);
+
+        Map<String, Object> log6 = log6Future.exceptionally(f -> null).get();
+        result.put("log6", log6);
+
+        Map<String, Object> files6 = files6Future.exceptionally(f -> null).get();
+        result.put("files6", files6);
+
+        Map<String, Object> memo6 = memo6Future.exceptionally(f -> null).get();
+        result.put("memo6", memo6);
+
+        List<TransactionListEntity> financial6 = financial6Future.exceptionally(f -> null).get();
+        result.put("financial6", financial6);
+
         // 统计笔记簿
         bookEntity.setStartLine(0);
         bookEntity.setEndLine(bookCount.intValue());
-        List<NoteBookEntity> bookList = noteBookService.getNoteBook(bookEntity);
+        CompletableFuture<List<NoteBookEntity>> bookListFuture = CompletableFuture.supplyAsync(()->noteBookService.getNoteBook(bookEntity));
+        List<NoteBookEntity> bookList = bookListFuture.exceptionally(f -> null).get();
         result.put("bookList", bookList);
-        result.put("news6", userService.countPre6MonthNews(userSession.getUser()));
-        result.put("log6", userService.countPre6Logs(userSession.getUser()));
-        result.put("files6", userService.countPre6Files(userSession.getUser()));
-        result.put("memo6", userService.countPre6Memo());
-        result.put("financial6", financialDeclareService.countPre6Financial(userSession.getUser()));
+
         return ResultUtil.success(result);
     }
 }
