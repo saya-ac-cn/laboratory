@@ -13,6 +13,7 @@ import sun.misc.BASE64Decoder;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.UUID;
 
 /**
  * @Title: UploadUtils
@@ -284,6 +285,42 @@ public class UploadUtils {
             file.delete();//执行删除
         }
     }
+
+    /**
+     * 创建目录
+     * @param path
+     */
+    public static void createFolders(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+    }
+
+    /**
+     * 删除文件
+     * @param file
+     */
+    public static void deleteFile(File file) {
+        if (!file.isDirectory()) {
+            file.delete();
+        } else {
+            File[] files = file.listFiles();
+            for (File f: files) {
+                deleteFile(f);
+            }
+            file.delete();
+        }
+    }
+
+    public static void deleteFile_(String path) {
+        deleteFile(new File(path));
+    }
+
+    public static String uuid() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
+    }
+
 
     /**
      * @描述 获取文件的真实路径

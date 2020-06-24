@@ -25,12 +25,13 @@ public interface ICoreService {
 
     /**
      * 用户登录
+     * @param platform 登录平台
      * @param user
      * @param request
      * @return
      * @throws Exception
      */
-    public Result<Object> login(UserEntity user, HttpServletRequest request) throws Exception;
+    public Result<Object> login(String platform,UserEntity user, HttpServletRequest request) throws Exception;
 
 
     /**

@@ -1,7 +1,6 @@
 package ac.cn.saya.laboratory.persistent.financial.dao;
 
 import ac.cn.saya.laboratory.entity.TransactionListEntity;
-import ac.cn.saya.laboratory.persistent.primary.dao.PrimaryJDBCConnection;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
@@ -10,9 +9,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Title: FinancialBatchDAO
@@ -24,7 +21,7 @@ import java.util.Map;
  */
 
 @Repository("financialBatchDAO")
-public class FinancialBatchDAO extends PrimaryJDBCConnection {
+public class FinancialBatchDAO extends FinancialJDBCConnection {
 
     /**
      * @描述 调用存储过程查询近半年财政收支情况
@@ -52,7 +49,7 @@ public class FinancialBatchDAO extends PrimaryJDBCConnection {
             ResultSet rs = cs.getResultSet();
             result = new ArrayList<>();
             while (rs.next()) {
-                result.add(new TransactionListEntity(rs.getString("totalCount"), new BigDecimal(rs.getString("deposited")), new BigDecimal(rs.getString("expenditure")), new BigDecimal(rs.getString("currencyNumber"))));
+                result.add(new TransactionListEntity(rs.getString("totalCount"), new BigDecimal(rs.getString("deposited") == null ? "0.0" : rs.getString("deposited")), new BigDecimal(rs.getString("expenditure") == null ? "0.0" : rs.getString("expenditure")), new BigDecimal(rs.getString("currencyNumber") == null ? "0.0" : rs.getString("currencyNumber"))));
             }
             cs.close();
             sqlCon.close();

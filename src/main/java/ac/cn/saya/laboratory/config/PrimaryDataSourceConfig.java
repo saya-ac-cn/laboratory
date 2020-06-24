@@ -11,10 +11,10 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 /**
@@ -27,7 +27,7 @@ import javax.sql.DataSource;
  */
 //https://www.cnblogs.com/ziyue7575/p/549bc1f2e0996ed979bd09c25a6a26c0.html
 @Configuration
-@MapperScan(basePackages = "ac.cn.saya.laboratory.persistent.primary.dao", sqlSessionTemplateRef = "primarySqlSessionTemplate")
+@MapperScan(basePackages = {"ac.cn.saya.laboratory.persistent.primary.dao","ac.cn.saya.laboratory.persistent.pnd.dao"}, sqlSessionTemplateRef = "primarySqlSessionTemplate")
 public class PrimaryDataSourceConfig {
 
     public static PrimaryDataSourceConfig create() {
@@ -59,7 +59,7 @@ public class PrimaryDataSourceConfig {
         bean.setDataSource(datasource);
         //设置mybatis配置文件路径
         bean.setConfigLocation(new PathMatchingResourcePatternResolver().getResource("classpath:mybatis-config.xml"));
-        //设置对应的mapper.xml文件位置
+        //设置对应的xml文件位置
         bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:mapping/primary/*.xml"));
         return bean.getObject();
     }

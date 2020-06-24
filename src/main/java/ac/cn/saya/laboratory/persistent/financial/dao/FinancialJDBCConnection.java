@@ -12,8 +12,7 @@ import javax.annotation.Resource;
  * @Description: TODO
  * @Author liunengkai
  * @Date: 2019-03-03 16:03
- * @Description:
- * 基类Dao
+ * @Description: 基类Dao
  * 自动实现相关的Mybatis变量
  * 把配置文件中的been注入到此
  */
@@ -32,7 +31,7 @@ public class FinancialJDBCConnection {
         this.sqlSessionFactory = sqlSessionFactory;
     }
 
-    public SqlSession getSqlSession(){
+    public SqlSession getSqlSession() {
         //打开SqlSession会话
         SqlSession session = sqlSessionFactory.openSession();
         return session;

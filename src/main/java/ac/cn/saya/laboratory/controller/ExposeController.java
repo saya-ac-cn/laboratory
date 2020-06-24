@@ -39,9 +39,9 @@ public class ExposeController {
      *
      * @return
      */
-    @PostMapping("/backend/login")
-    public Result<Object> login(@RequestBody UserEntity user, HttpServletRequest request) throws Exception {
-        return coreServiceImpl.login(user, request);
+    @PostMapping("/backend/login/{platform}")
+    public Result<Object> login(@PathVariable (value = "platform",required = false) String platform,@RequestBody UserEntity user, HttpServletRequest request) throws Exception {
+        return coreServiceImpl.login(platform,user, request);
     }
 
     /**

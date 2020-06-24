@@ -5,6 +5,8 @@ package ac.cn.saya.laboratory.tools;
  */
 public enum ResultEnum {
 
+    FILE_TOO_BIG(-9, "文件太大"),
+    FILE_TYPE_ERROR(-9, "文件类型错误"),
     DB_ERROR(-8, "数据库读写失败"),
     NOT_CHECKING(-7, "未登录"),
     NOT_PARAMETER(-6, "缺少参数"),

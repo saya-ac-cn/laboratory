@@ -28,6 +28,11 @@ public class MyException extends RuntimeException {
         this.code = resultEnum.getCode();
     }
 
+    public MyException(int code,String message) {
+        super(message);
+        this.code = code;
+    }
+
     public int getCode() {
         return code;
     }

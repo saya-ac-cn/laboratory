@@ -357,7 +357,7 @@ public class FinancialDeclareService {
             try {
                 // 读取交易总览
                 TransactionListEntity preview = transactionReadDAO.selectTransactionList(entity);
-                if (null == preview && !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
+                if (null == preview || !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
                     return ResultUtil.error(ResultEnum.FORBID_POWER);
                 }
                 if (transactionWriteDAO.updateTransactionList(entity) > 0) {
@@ -390,7 +390,7 @@ public class FinancialDeclareService {
         } else {
             try {
                 TransactionListEntity preview = transactionReadDAO.selectTransactionList(entity);
-                if (null == preview && !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
+                if (null == preview || !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
                     return ResultUtil.error(ResultEnum.FORBID_POWER);
                 }
                 if (transactionWriteDAO.deleteTransactionList(entity.getTradeId(), user) > 0) {
@@ -418,7 +418,7 @@ public class FinancialDeclareService {
     @Transactional(readOnly = false)
     public Result<Object> insertTransactioninfo(TransactionInfoEntity entity, String user) {
         TransactionListEntity preview = transactionReadDAO.selectTransactionList(new TransactionListEntity(entity.getTradeId(),user));
-        if (null == preview && !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
+        if (null == preview || !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
             return ResultUtil.error(ResultEnum.FORBID_POWER);
         }
         // 先把子记录进行写入
@@ -496,7 +496,7 @@ public class FinancialDeclareService {
     @Transactional(readOnly = false)
     public Result<Object> updateTransactioninfo(TransactionInfoEntity entity, String user) {
         TransactionListEntity preview = transactionReadDAO.selectTransactionList(new TransactionListEntity(entity.getTradeId(),user));
-        if (null == preview && !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
+        if (null == preview || !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
             return ResultUtil.error(ResultEnum.FORBID_POWER);
         }
         // 先把子记录进行写入
@@ -573,7 +573,7 @@ public class FinancialDeclareService {
     @Transactional(readOnly = false)
     public Result<Object> deleteTransactioninfo(TransactionInfoEntity entity, String user) {
         TransactionListEntity preview = transactionReadDAO.selectTransactionList(new TransactionListEntity(entity.getTradeId(),user));
-        if (null == preview && !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
+        if (null == preview || !DateUtils.checkIsCurrentMonth(preview.getTradeDate())){
             return ResultUtil.error(ResultEnum.FORBID_POWER);
         }
         // 查询本流水号下的所有子记录

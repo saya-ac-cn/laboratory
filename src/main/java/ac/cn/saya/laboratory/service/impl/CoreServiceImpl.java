@@ -70,8 +70,8 @@ public class CoreServiceImpl implements ICoreService {
     private NewsService newsService;
 
     @Resource
-    @Qualifier("guestBookService")
-    private GuestBookService guestBookService;
+    @Qualifier("systemServiceImpl")
+    private SystemServiceImpl systemServiceImpl;
 
     @Resource
     @Qualifier("noteBookService")
@@ -97,12 +97,13 @@ public class CoreServiceImpl implements ICoreService {
     /**
      * 用户登录
      *
+     * @param platform 登录平台
      * @param user
      * @param request
      * @return
      */
     @Override
-    public Result<Object> login(UserEntity user, HttpServletRequest request) throws Exception {
+    public Result<Object> login(String platform,UserEntity user, HttpServletRequest request) throws Exception {
         // 校验用户输入的参数
         if (StringUtils.isEmpty(user.getUser()) || StringUtils.isEmpty(user.getPassword())) {
             // 缺少参数
@@ -169,6 +170,8 @@ public class CoreServiceImpl implements ICoreService {
                 result.put("user", entity);
                 // 记录本次登录
                 recordService.record("OX001", request);
+                // 发送登录邮件
+                systemServiceImpl.sendLoginNotice(entity.getEmail(),entity.getUser(),entity.getUser(),memory.getIp(),memory.getCity(),platform,DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat));
                 //返回登录成功
                 return ResultUtil.success(result);
             } else {

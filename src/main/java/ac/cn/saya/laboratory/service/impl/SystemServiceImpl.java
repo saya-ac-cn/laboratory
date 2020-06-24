@@ -234,4 +234,32 @@ public class SystemServiceImpl implements SystemService {
         }
     }
 
+    /**
+     * @Title
+     * @Params  [userEmail, userName, account, ip, city, platform, loginTime]
+     * @Return  void
+     * @Author  saya.ac.cn-刘能凯
+     * @Date  2020-06-06
+     * @Description
+     */
+    public void sendLoginNotice(String userEmail,String userName,String account,String ip,String city,String platform,String loginTime){
+        //创建邮件正文
+        Context context = new Context();
+        context.setVariable("userName", userName);
+        context.setVariable("account", account);
+        context.setVariable("platform", (platform.equals("lab")?"实验室中心后台":"财政申报系统"));
+        context.setVariable("ip", ip);
+        context.setVariable("city", city);
+        context.setVariable("ip", ip);
+        context.setVariable("loginTime", loginTime);
+        context.setVariable("sendTime", DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat));
+        try {
+            String emailContent = templateEngine.process("mail/loginNotice", context);
+            mailService.sendHtmlMail(userEmail, "登录提醒", emailContent);
+        } catch (Exception e) {
+            logger.error("邮件发送异常：" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+    }
+
 }

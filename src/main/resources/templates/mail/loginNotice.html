@@ -35,7 +35,7 @@
                     <td class="content_margin" style="width: 40px;"></td>
                     <td class="email_font" style="font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; line-height: 18px;text-align: left;
                                  font-size: 14px; color: #333; padding: 17px 0 0 1em; font-smooth: always; -webkit-font-smoothing: antialiased;">
-                        以下是您今天的计划安排，请根据您的情况，合理安排。
+                        您正在使用<span th:text="${account}"></span>账号登录<span th:text="${platform}"></span>，请确认是否本人操作，若非本人的操作，请尽快登录https://saya.ac.cn/login,修改密码。
                     </td>
                     <td class="content_margin" style="width: 40px;"></td>
                 </tr>
@@ -44,12 +44,16 @@
                     <td class="email_font" style="font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; line-height: 18px;text-align: left;
                                    font-size: 14px; color: #333; padding: 18px 0 0 1em; font-smooth: always; -webkit-font-smoothing: antialiased;">
                         <div>
-                            <span>创建时间：</span>
-                            <span th:text="${createTime}">12</span>
+                            <span>登录时间：</span>
+                            <span th:text="${loginTime}">12</span>
                         </div>
                         <div>
-                            <span>计划内容：</span>
-                            <span th:text="${planContent}">12</span>
+                            <span>登录地点：</span>
+                            <span th:text="${city}">12</span>
+                        </div>
+                        <div>
+                            <span>登录ip：</span>
+                            <span th:text="${ip}">12</span>
                         </div>
                     </td>
                     <td class="content_margin" style="width: 40px;"></td>
