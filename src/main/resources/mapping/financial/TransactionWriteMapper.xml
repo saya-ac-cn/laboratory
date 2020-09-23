@@ -45,13 +45,13 @@
             <if test="tradeDate != null and tradeDate != ''">
                 tradeDate = #{tradeDate},
             </if>
-            <if test="tradeType != null and tradeType != ''">
+            <if test="tradeType != null and tradeType != 0">
                 tradeType = #{tradeType},
             </if>
             <if test="currencyNumber != null and currencyNumber != ''">
                 currencyNumber = #{currencyNumber},
             </if>
-            <if test="transactionAmount != null and transactionAmount != ''">
+            <if test="transactionAmount != null and transactionAmount != 0">
                 transactionAmount = #{transactionAmount},
             </if>
                 updateTime = now()

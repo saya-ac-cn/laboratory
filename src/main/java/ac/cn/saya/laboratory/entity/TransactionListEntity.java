@@ -53,7 +53,7 @@ public class TransactionListEntity extends BaseEntity {
     /**
      * 摘要
      */
-    private String transactionAmount;
+    private Integer transactionAmount;
     /**
      * 创建时间
      */
@@ -70,6 +70,11 @@ public class TransactionListEntity extends BaseEntity {
      * 明细表
      */
     private List<TransactionInfoEntity> infoList;
+
+    /**
+     * 摘要
+     */
+    private TransactionAmountEntity tradeAmountEntity;
 
     public TransactionListEntity(String tradeDate, BigDecimal deposited, BigDecimal expenditure, BigDecimal currencyNumber) {
         this.tradeDate = tradeDate;

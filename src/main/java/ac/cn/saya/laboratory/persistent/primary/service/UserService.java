@@ -4,9 +4,8 @@ import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.primary.dao.PrimaryBatchDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.LogDAO;
-import ac.cn.saya.laboratory.persistent.primary.dao.PlanDAO;
+import ac.cn.saya.laboratory.persistent.business.dao.PlanDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.UserDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
@@ -40,15 +39,9 @@ public class UserService {
     private static Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Resource
-    @Qualifier("userDAO")
     private UserDAO userDAO;
 
     @Resource
-    @Qualifier("primaryBatchDAO")
-    private PrimaryBatchDAO batchDAO;
-
-    @Resource
-    @Qualifier("logDAO")
     private LogDAO logDAO;
 
     @Resource

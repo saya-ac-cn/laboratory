@@ -53,6 +53,17 @@ public class FinancialController {
     }
 
     /**
+     * 获取所有的交易摘要
+     *
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "transactionAmount")
+    public Result<Object> getTransactionAmount() throws Exception {
+        return financialService.getTransactionAmount();
+    }
+
+    /**
      * 获取支付子明细
      *
      * @param entity

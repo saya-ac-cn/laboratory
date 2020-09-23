@@ -1,5 +1,6 @@
 package ac.cn.saya.laboratory.persistent.financial.service;
 
+import ac.cn.saya.laboratory.entity.TransactionAmountEntity;
 import ac.cn.saya.laboratory.entity.TransactionInfoEntity;
 import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.entity.TransactionTypeEntity;
@@ -79,6 +80,25 @@ public class FinancialDeclareService {
             return list;
         } catch (Exception e) {
             logger.error("查询交易类别时发生异常：" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
+
+    /**
+     * 获取所有交易摘要数据
+     *
+     * @return
+     */
+    public List<TransactionAmountEntity> selectTransactionAmount() {
+        try {
+            List<TransactionAmountEntity> list = transactionReadDAO.selectTransactionAmount();
+            if (list.size() <= 0) {
+                return null;
+            }
+            return list;
+        } catch (Exception e) {
+            logger.error("查询交易摘要时发生异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
             throw new MyException(ResultEnum.DB_ERROR);
         }

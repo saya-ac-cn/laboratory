@@ -2,7 +2,7 @@ package ac.cn.saya.laboratory.service.impl;
 
 import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.primary.service.*;
+import ac.cn.saya.laboratory.persistent.business.service.*;
 import ac.cn.saya.laboratory.service.IMessageService;
 import ac.cn.saya.laboratory.tools.Paging;
 import ac.cn.saya.laboratory.tools.Result;

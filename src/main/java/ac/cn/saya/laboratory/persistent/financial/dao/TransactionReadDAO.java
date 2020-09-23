@@ -1,5 +1,6 @@
 package ac.cn.saya.laboratory.persistent.financial.dao;
 
+import ac.cn.saya.laboratory.entity.TransactionAmountEntity;
 import ac.cn.saya.laboratory.entity.TransactionInfoEntity;
 import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.entity.TransactionTypeEntity;
@@ -25,6 +26,13 @@ public interface TransactionReadDAO {
      * @return
      */
     public List<TransactionTypeEntity> selectTransactionType();
+
+    /**
+     * 获取交易摘要表
+     *
+     * @return
+     */
+    public List<TransactionAmountEntity> selectTransactionAmount();
 
     /**
      * 获取交易总览

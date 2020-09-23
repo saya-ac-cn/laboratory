@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.cn.saya.laboratory.persistent.business.dao.NewsDAO">
+
+    <!--动态相关的dao操作加入二级缓存-->
+    <cache></cache>
+
+    <!--添加动态-->
+    <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->
+    <insert id="insertNews" useGeneratedKeys="true" keyProperty="id" parameterType="news" >
+        insert into news(`topic`,`label`,`content`,`source`,`createtime`) values(#{topic},#{label},#{content},#{source},now())
+    </insert>
+
+    <!--修改动态-->
+    <update id="updateNews" parameterType="news">
+        update news
+        <set>
+            <if test="topic != null and topic != ''">
+                topic = #{topic},
+            </if>
+            <if test="label != null and label != ''">
+                label = #{label},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            updatetime = now()
+        </set>
+        where `id` = #{id} and `source` = #{source}
+    </update>
+
+    <!--删除动态-->
+    <delete id="deleteNews" parameterType="news">
+        delete from news where `id` = #{id} and `source` = #{source}
+    </delete>
+
+    <!-- 查询一条动态-->
+    <select id="getOneNews" parameterType="news" resultType="news">
+        select
+        id,topic,label,content,source,createtime,updatetime
+        from
+        news a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="topic != null and topic != ''">
+                and a.topic like concat('%',#{topic},'%')
+            </if>
+            <if test="label != null and label != ''">
+                and a.label = like concat('%',#{label},'%')
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 获取分页后的动态-->
+    <select id="getNewsPage" parameterType="news" resultType="news">
+        select
+          id,topic,label,source,content,createtime,updatetime
+        from
+          news a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="topic != null and topic != ''">
+                and a.topic like concat('%',#{topic},'%')
+            </if>
+            <if test="label != null and label != ''">
+                and a.label = like concat('%',#{label},'%')
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+        order by a.id desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!-- 获取动态总数-->
+    <select id="getNewsCount" parameterType="news" resultType="java.lang.Long">
+        select
+          count(*)
+        from
+          news a
+        <where>
+            <if test = "id != null and id != ''">
+                and a.id  = #{id}
+            </if>
+            <if test="topic != null and topic != ''">
+                and a.topic like concat('%',#{topic},'%')
+            </if>
+            <if test="label != null and label != ''">
+                and a.label = like concat('%',#{label},'%')
+            </if>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
+
+
+
+
+
+

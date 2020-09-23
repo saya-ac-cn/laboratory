@@ -16,14 +16,23 @@
         <result column="createTime" property="createTime"/>
         <result column="updateTime" property="updateTime"/>
         <association property="tradeTypeEntity" javaType="transactionType">
-            <id column="id" property="id"/>
+            <id column="tradeType" property="id"/>
             <result column="transactionType" property="transactionType"/>
+        </association>
+        <association property="tradeAmountEntity" javaType="transactionAmount">
+            <id column="transactionAmount" property="id"/>
+            <result column="tag" property="tag"/>
         </association>
     </resultMap>
 
     <!-- 获取交易类别表数据  -->
     <select id="selectTransactionType" resultType="transactionType">
         select * from transaction_type
+    </select>
+
+    <!-- 获取交易摘要表数据  -->
+    <select id="selectTransactionAmount" resultType="transactionAmount">
+        select * from transaction_amount
     </select>
 
     <!-- 获取交易总览 -->
@@ -63,10 +72,11 @@
             a.transactionAmount,
             a.createTime,
             a.updateTime,
-            b.id,
-            b.transactionType
+            b.transactionType,
+            c.tag
         from
             transaction_list a left join transaction_type b on a.tradeType = b.id
+            left join transaction_amount c on c.id = a.transactionAmount
         <where>
             <if test="tradeId != null and tradeId != ''">
                 and a.tradeId = #{tradeId}
@@ -90,7 +100,7 @@
         select
             count(*)
         from
-        transaction_list a left join transaction_type b on a.tradeType = b.id
+        transaction_list a
         <where>
             <if test="tradeId != null and tradeId != ''">
                 and a.tradeId = #{tradeId}
@@ -172,6 +182,10 @@
                 <id column="tradeType" property="id"/>
                 <result column="transactionType" property="transactionType"/>
             </association>
+            <association property="tradeAmountEntity" javaType="transactionAmount">
+                <id column="transactionAmount" property="id"/>
+                <result column="tag" property="tag"/>
+            </association>
         </association>
     </resultMap>
 
@@ -192,11 +206,13 @@
             b.createTime,
             b.updateTime,
             b.tradeType,
-            c.transactionType
+            c.transactionType,
+            d.tag
         from
             transaction_info a
             left join transaction_list b on a.tradeId = b.tradeId
             left join transaction_type c on b.tradeType = c.id
+            left join transaction_amount d on c.id = b.transactionAmount
         <where>
             <if test = "source != null and source != ''">
                 and b.source  = #{source}

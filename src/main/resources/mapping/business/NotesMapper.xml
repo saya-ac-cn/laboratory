@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.cn.saya.laboratory.persistent.business.dao.NotesDAO">
+
+    <!--动态相关的dao操作加入二级缓存-->
+    <cache></cache>
+
+    <!--新增笔记-->
+    <!-- useGeneratedKeys="true" 表示给主键设置自增长,keyProperty="id"  表示将自增长后的Id赋值给实体类中的userId字段-->
+    <insert id="insertNotes" useGeneratedKeys="true" keyProperty="id" parameterType="notes" >
+        INSERT INTO `notes` (
+            `notebookId`,
+            `label`,
+            `topic`,
+            `content`,
+            `createtime`
+        )
+        VALUES
+            (
+                #{notebookId},
+                #{label},
+                #{topic},
+                #{content},
+                NOW()
+            );
+	</insert>
+
+    <!--编辑笔记-->
+    <update id="updateNotes">
+        UPDATE `notes` a left join `notebook` b on a.`notebookId` = b.`id`
+        <set>
+            <if test="notebookId != null and notebookId != 0">
+                a.`notebookId` = #{notebookId},
+            </if>
+            <if test="label != null and label != ''">
+                a.`label` = #{label},
+            </if>
+            <if test="topic != null and topic != ''">
+                a.`topic` = #{topic},
+            </if>
+            <if test="content != null and content != ''">
+                a.`content` = #{content},
+            </if>
+            a.`updatetime` = NOW()
+        </set>
+        WHERE
+        a.`id` = #{id} and b.`source` = #{notebook.source}
+    </update>
+
+    <!--删除笔记-->
+    <delete id="deleteNotes" parameterType="notes">
+        delete from `notes` where `id` = #{id}
+    </delete>
+
+    <!--返回嵌套的笔记-->
+    <resultMap id="NotesInfo" type="notes">
+        <id column="id" property="id"/>
+        <result column="notebookId" property="notebookId"/>
+        <result column="label" property="label"/>
+        <result column="topic" property="topic"/>
+        <result column="content" property="content"/>
+        <result column="createtime" property="createtime"/>
+        <result column="updatetime" property="updatetime"/>
+        <association property="notebook" javaType="notebook">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+            <result column="source" property="source"/>
+            <result column="status" property="status"/>
+        </association>
+    </resultMap>
+
+    <!-- 查询一条笔记-->
+    <select id="getOneNotes" resultMap="NotesInfo">
+        SELECT
+          b.id,
+          b.notebookId,
+          b.label,
+          b.topic,
+          b.content,
+          b.createtime,
+          b.updatetime,
+          a.id,
+          a.name,
+          a.source,
+          a.status
+        FROM
+          notebook a
+        INNER JOIN notes b ON a.id = b.notebookId
+        <where>
+            <if test="notebook.source != null and notebook.source != ''">
+                and a.`source` = #{notebook.source}
+            </if>
+            <if test="id != null and id != 0">
+                and b.id  = #{id}
+            </if>
+            <if test="topic != null and topic != ''">
+                and b.topic like concat('%',#{topic},'%')
+            </if>
+            <if test="label != null and label != ''">
+                and b.label  like concat('%',#{label},'%')
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(b.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+    <!--返回嵌套的list-->
+    <resultMap id="NotesList" type="notes">
+        <id column="id" property="id"/>
+        <result column="notebookId" property="notebookId"/>
+        <result column="label" property="label"/>
+        <result column="topic" property="topic"/>
+        <result column="content" property="content"/>
+        <result column="createtime" property="createtime"/>
+        <result column="updatetime" property="updatetime"/>
+        <association property="notebook" javaType="notebook">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+            <result column="source" property="source"/>
+            <result column="status" property="status"/>
+        </association>
+    </resultMap>
+
+    <!-- 获取分页后的笔记-->
+    <select id="getNotesPage" resultMap="NotesList">
+        SELECT
+            b.id,
+            b.notebookId,
+            b.label,
+            b.topic,
+            b.content,
+            b.createtime,
+            b.updatetime,
+            a.id,
+            a.name,
+            a.source,
+            a.status
+        FROM
+            notebook a
+            INNER JOIN notes b ON a.id = b.notebookId
+        <where>
+            <if test="notebook.source != null and notebook.source != ''">
+                and a.`source` = #{notebook.source}
+            </if>
+            <if test="id != null and id != 0">
+                and b.id  = #{id}
+            </if>
+            <if test="notebookId != null and notebookId != 0">
+                and b.notebookId  = #{notebookId}
+            </if>
+            <if test="notebook.name != null and notebook.name != ''">
+                and a.name like concat('%',#{notebook.name},'%')
+            </if>
+            <if test="topic != null and topic != ''">
+                and b.topic like concat('%',#{topic},'%')
+            </if>
+            <if test="label != null and label != ''">
+                and b.label  like concat('%',#{label},'%')
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(b.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+            <if test="notebook.status != null and notebook.status != 0">
+                and a.status = #{notebook.status}
+            </if>
+        </where>
+        order by b.id desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!-- 获取笔记总数-->
+    <select id="getNotesCount" resultType="java.lang.Long">
+        SELECT
+        count(*)
+        FROM
+            notebook a
+            INNER JOIN notes b ON a.id = b.notebookId
+        <where>
+            <if test="notebook.source != null and notebook.source != ''">
+                and a.`source` = #{notebook.source}
+            </if>
+            <if test = "id != null and id != 0">
+                and b.id  = #{id}
+            </if>
+            <if test="notebookId != null and notebookId != 0">
+                and b.notebookId  = #{notebookId}
+            </if>
+            <if test="notebook.name != null and notebook.name != ''">
+                and a.name like concat('%',#{notebook.name},'%')
+            </if>
+            <if test="topic != null and topic != ''">
+                and b.topic like concat('%',#{topic},'%')
+            </if>
+            <if test="label != null and label != ''">
+                and b.label  like concat('%',#{label},'%')
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(b.createtime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+            <if test="notebook.status != null and notebook.status != 0">
+                and a.status = #{notebook.status}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
+
+
+
+
+
+

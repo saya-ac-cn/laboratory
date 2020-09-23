@@ -27,6 +27,14 @@ public interface IFinancialService {
     public Result<Object> getTransactionType() throws Exception;
 
     /**
+     * 获取所有的交易摘要
+     *
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> getTransactionAmount() throws Exception;
+
+    /**
      * 查看流水（这里不是明细）
      * 根据用户、类型、日期
      *

@@ -289,14 +289,14 @@ public class HttpRequestUtil {
         //传递参数true，那么当session过期时，新的session被创建，接下来可通过session.isNew()的返回值来判断是不是同一个session
         //返回值为：true，新的session被创建，action提交执行时的那个用户session已经无效
         //返回值为：false，同一个session，仍然有效
-        HttpSession session = request.getSession(true);
+        //HttpSession session = request.getSession(true);
         UserMemory userMemory = null;
-        if (session.isNew()) {
-            session.invalidate();
-        } else {
+        //if (session.isNew()) {
+        //    session.invalidate();
+        //} else {
             //在session中取出管理员的信息
             userMemory = (UserMemory) request.getSession().getAttribute("user");
-        }
+        //}
         return userMemory;
     }
 

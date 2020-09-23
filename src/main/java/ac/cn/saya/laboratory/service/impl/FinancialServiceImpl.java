@@ -1,9 +1,6 @@
 package ac.cn.saya.laboratory.service.impl;
 
-import ac.cn.saya.laboratory.entity.TransactionInfoEntity;
-import ac.cn.saya.laboratory.entity.TransactionListEntity;
-import ac.cn.saya.laboratory.entity.TransactionTypeEntity;
-import ac.cn.saya.laboratory.entity.UserMemory;
+import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.financial.service.FinancialDeclareService;
 import ac.cn.saya.laboratory.service.IFinancialService;
@@ -58,6 +55,24 @@ public class FinancialServiceImpl implements IFinancialService {
         List<TransactionTypeEntity> list = financialDeclareService.selectTransactionType();
         if (list == null || list.size() < 0) {
             // 没有找到交易类别
+            throw new MyException(ResultEnum.NOT_EXIST);
+        } else {
+            return ResultUtil.success(list);
+        }
+    }
+
+    /**
+     * 获取所有的交易摘要
+     *
+     * @return
+     * @throws Exception
+     */
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
+    public Result<Object> getTransactionAmount() throws Exception {
+        List<TransactionAmountEntity> list = financialDeclareService.selectTransactionAmount();
+        if (list == null || list.size() < 0) {
+            // 没有找到交易摘要
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
             return ResultUtil.success(list);
@@ -363,7 +378,7 @@ public class FinancialServiceImpl implements IFinancialService {
                 json.put("transactionType", item.getTradeTypeEntity().getTransactionType());
                 json.put("currencyNumber", item.getCurrencyNumber());
                 json.put("tradeDate", item.getTradeDate());
-                json.put("transactionAmount", item.getTransactionAmount());
+                json.put("transactionAmount", item.getTradeAmountEntity().getTag());
                 json.put("createTime", item.getCreateTime());
                 json.put("updateTime", item.getUpdateTime());
                 jsonObjectList.add(json);
@@ -418,7 +433,7 @@ public class FinancialServiceImpl implements IFinancialService {
                 json.put("transactionType", item.getTransactionListEntity().getTradeTypeEntity().getTransactionType());
                 json.put("currencyNumber", item.getTransactionListEntity().getCurrencyNumber());
                 json.put("tradeDate", item.getTransactionListEntity().getTradeDate());
-                json.put("transactionAmount", item.getTransactionListEntity().getTransactionAmount());
+                json.put("transactionAmount", item.getTransactionListEntity().getTradeAmountEntity().getTag());
                 if (item.getFlog() == 1) {
                     json.put("flog", "存入");
                 } else {
