@@ -6,6 +6,7 @@ import ac.cn.saya.laboratory.entity.UserEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.primary.dao.LogDAO;
 import ac.cn.saya.laboratory.persistent.business.dao.PlanDAO;
+import ac.cn.saya.laboratory.persistent.primary.dao.PrimaryBatchDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.UserDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
@@ -45,7 +46,10 @@ public class UserService {
     private LogDAO logDAO;
 
     @Resource
-    @Qualifier("planDAO")
+    @Qualifier("primaryBatchDAO")
+    private PrimaryBatchDAO batchDAO;
+
+    @Resource
     private PlanDAO planDAO;
 
     /**
@@ -96,25 +100,6 @@ public class UserService {
     }
 
     /**
-     * @描述 查询近半年的动态发布情况
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019-03-03
-     * @修改人和其它信息
-     */
-    @Transactional(readOnly = true)
-    public Map<String, Object> countPre6MonthNews(String user) {
-        try {
-            return batchDAO.countPre6MonthNews(user);
-        } catch (Exception e) {
-            logger.error("查询近半年的动态发布情况失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
-            throw new MyException(ResultEnum.DB_ERROR);
-        }
-    }
-
-    /**
      * @描述 查询近半年活跃情况
      * @参数
      * @返回值
@@ -127,42 +112,6 @@ public class UserService {
             return batchDAO.countPre6Logs(user);
         } catch (Exception e) {
             logger.error("查询近半年活跃情况失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
-            throw new MyException(ResultEnum.DB_ERROR);
-        }
-    }
-
-    /**
-     * @描述 查询近半年文件上传情况
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019-03-03
-     * @修改人和其它信息
-     */
-    public Map<String, Object> countPre6Files(String user) {
-        try {
-            return batchDAO.countPre6Files(user);
-        } catch (Exception e) {
-            logger.error("查询近半年文件上传情况失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
-            throw new MyException(ResultEnum.DB_ERROR);
-        }
-    }
-
-    /**
-     * @描述 查询近半年便笺发布情况
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019-03-03
-     * @修改人和其它信息
-     */
-    public Map<String, Object> countPre6Memo(String user) {
-        try {
-            return batchDAO.countPre6Memo(user);
-        } catch (Exception e) {
-            logger.error("查询近半年便笺发布情况失败" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
             throw new MyException(ResultEnum.DB_ERROR);
         }

@@ -66,7 +66,7 @@ public class SystemServiceImpl implements SystemService {
     @Qualifier("planService")
     private PlanService planService;
 
-    @Autowired
+    //@Autowired
     private MailService mailService;
 
     @Resource

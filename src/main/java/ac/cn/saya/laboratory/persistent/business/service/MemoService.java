@@ -2,6 +2,7 @@ package ac.cn.saya.laboratory.persistent.business.service;
 
 import ac.cn.saya.laboratory.entity.MemoEntity;
 import ac.cn.saya.laboratory.exception.MyException;
+import ac.cn.saya.laboratory.persistent.business.dao.BusinessBatchDAO;
 import ac.cn.saya.laboratory.persistent.business.dao.MemoDAO;
 import ac.cn.saya.laboratory.tools.AesUtil;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
@@ -9,6 +10,7 @@ import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.ResultEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Title: MemoService
@@ -31,6 +34,10 @@ import java.util.List;
 public class MemoService {
 
     private static Logger logger = LoggerFactory.getLogger(MemoService.class);
+
+    @Resource
+    @Qualifier("businessBatchDAO")
+    private BusinessBatchDAO batchDAO;
 
     @Resource
     private MemoDAO memoDAO;
@@ -157,5 +164,22 @@ public class MemoService {
         }
     }
 
+    /**
+     * @描述 查询近半年便笺发布情况
+     * @参数
+     * @返回值
+     * @创建人 saya.ac.cn-刘能凯
+     * @创建时间 2019-03-03
+     * @修改人和其它信息
+     */
+    public Map<String, Object> countPre6Memo(String user) {
+        try {
+            return batchDAO.countPre6Memo(user);
+        } catch (Exception e) {
+            logger.error("查询近半年便笺发布情况失败" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
 
 }

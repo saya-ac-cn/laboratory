@@ -91,6 +91,10 @@ public class CoreServiceImpl implements ICoreService {
     private AmapLocateUtils amapLocateUtils;
 
     @Resource
+    @Qualifier("memoService")
+    private MemoService memoService;
+
+    @Resource
     @Qualifier("financialDeclareService")
     private FinancialDeclareService financialDeclareService;
 
@@ -172,7 +176,7 @@ public class CoreServiceImpl implements ICoreService {
                 // 记录本次登录
                 recordService.record("OX001", request);
                 // 发送登录邮件
-                systemServiceImpl.sendLoginNotice(entity.getEmail(),entity.getUser(),entity.getUser(),memory.getIp(),memory.getCity(),platform,DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat));
+                //systemServiceImpl.sendLoginNotice(entity.getEmail(),entity.getUser(),entity.getUser(),memory.getIp(),memory.getCity(),platform,DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat));
                 //返回登录成功
                 return ResultUtil.success(result);
             } else {
@@ -834,13 +838,13 @@ public class CoreServiceImpl implements ICoreService {
         logEntity.setType("OX001");
         CompletableFuture<Long> logCountFuture = CompletableFuture.supplyAsync(()->logService.selectCount(logEntity));
 
-        CompletableFuture<Map<String, Object>> news6Future = CompletableFuture.supplyAsync(()->userService.countPre6MonthNews(userSession.getUser()));
+        CompletableFuture<Map<String, Object>> news6Future = CompletableFuture.supplyAsync(()->newsService.countPre6MonthNews(userSession.getUser()));
 
         CompletableFuture<Map<String, Object>> log6Future = CompletableFuture.supplyAsync(()->userService.countPre6Logs(userSession.getUser()));
 
-        CompletableFuture<Map<String, Object>> files6Future = CompletableFuture.supplyAsync(()->userService.countPre6Files(userSession.getUser()));
+        CompletableFuture<Map<String, Object>> files6Future = CompletableFuture.supplyAsync(()->filesService.countPre6Files(userSession.getUser()));
 
-        CompletableFuture<Map<String, Object>> memo6Future = CompletableFuture.supplyAsync(()->userService.countPre6Memo(userSession.getUser()));
+        CompletableFuture<Map<String, Object>> memo6Future = CompletableFuture.supplyAsync(()->memoService.countPre6Memo(userSession.getUser()));
 
         CompletableFuture<List<TransactionListEntity>> financial6Future = CompletableFuture.supplyAsync(()->financialDeclareService.countPre6Financial(userSession.getUser()));
 
