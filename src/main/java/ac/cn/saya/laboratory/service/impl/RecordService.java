@@ -2,7 +2,7 @@ package ac.cn.saya.laboratory.service.impl;
 
 import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.UserMemory;
-import ac.cn.saya.laboratory.persistent.service.LogService;
+import ac.cn.saya.laboratory.persistent.primary.service.LogService;
 import ac.cn.saya.laboratory.tools.DateUtils;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
 import org.slf4j.Logger;

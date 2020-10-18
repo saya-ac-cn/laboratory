@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public class TransactionListEntity extends BaseEntity {
     /**
      * 存入
      */
-    private Double deposited;
+    private BigDecimal deposited;
     /**
      * 所属用户
      */
@@ -36,7 +37,7 @@ public class TransactionListEntity extends BaseEntity {
     /**
      * 支出
      */
-    private Double expenditure;
+    private BigDecimal expenditure;
     /**
      * 交易日
      */
@@ -48,11 +49,11 @@ public class TransactionListEntity extends BaseEntity {
     /**
      * 交易金额
      */
-    private Double currencyNumber;
+    private BigDecimal currencyNumber;
     /**
      * 摘要
      */
-    private String transactionAmount;
+    private Integer transactionAmount;
     /**
      * 创建时间
      */
@@ -70,12 +71,20 @@ public class TransactionListEntity extends BaseEntity {
      */
     private List<TransactionInfoEntity> infoList;
 
-    public TransactionListEntity(String tradeDate, Double deposited, Double expenditure, Double currencyNumber) {
+    /**
+     * 摘要
+     */
+    private TransactionAmountEntity tradeAmountEntity;
+
+    public TransactionListEntity(String tradeDate, BigDecimal deposited, BigDecimal expenditure, BigDecimal currencyNumber) {
         this.tradeDate = tradeDate;
         this.deposited = deposited;
         this.expenditure = expenditure;
         this.currencyNumber = currencyNumber;
     }
 
-
+    public TransactionListEntity(Integer tradeId, String source) {
+        this.tradeId = tradeId;
+        this.source = source;
+    }
 }

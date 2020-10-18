@@ -1,6 +1,11 @@
 package ac.cn.saya.laboratory;
 
 import ac.cn.saya.laboratory.service.impl.MailService;
+import ac.cn.saya.laboratory.service.impl.SystemServiceImpl;
+import ac.cn.saya.laboratory.tools.CurrentLineInfo;
+import ac.cn.saya.laboratory.tools.DateUtils;
+import ac.cn.saya.laboratory.tools.Log4jUtils;
+import ac.cn.saya.laboratory.tools.RandomUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +15,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.annotation.Resource;
+import java.io.File;
 
 /**
  * @Title: MailTest
@@ -21,7 +27,7 @@ import javax.annotation.Resource;
  */
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = LaboratoryApplication.class)
 public class MailTest {
 
     @Autowired
@@ -29,6 +35,14 @@ public class MailTest {
 
     @Resource
     private TemplateEngine templateEngine;
+
+    @Resource
+    private SystemServiceImpl service;
+
+    @Test
+    public void mysqlDump(){
+        service.backupDatabase();
+    }
 
 
     @Test

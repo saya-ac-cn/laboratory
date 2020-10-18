@@ -2,6 +2,7 @@ package ac.cn.saya.laboratory.tools;
 
 
 import ac.cn.saya.laboratory.entity.UserMemory;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -12,6 +13,7 @@ import sun.misc.BASE64Decoder;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.UUID;
 
 /**
  * @Title: UploadUtils
@@ -182,8 +184,12 @@ public class UploadUtils {
                     }
                     //保存的文件名
                     String newFileName = RandomUtil.getRandomFileName()+ '.' + fileName;
-                    // 转存文件到指定路径,转存而不是写出
-                    file.transferTo(new File(path + File.separator + newFileName));
+                    File saveFile = new File(filepath.getAbsolutePath() + File.separator + newFileName);
+                    // 将上传文件复制存盘
+                    FileUtils.copyInputStreamToFile(file.getInputStream(),saveFile);
+                    // 转存文件到指定路径,转存而不是写出,file.transferTo()有毒，谨慎使用，建议用FileUtils
+                    //file.transferTo(saveFile);
+
                     //上传成功
                     return ResultUtil.success(urlPath+ File.separator + newFileName);
                 }else{
@@ -241,8 +247,13 @@ public class UploadUtils {
                     }
                     //保存的文件名
                     String imgName = RandomUtil.getRandomFileName()+ '.' + imgType;
-                    // 转存文件到指定路径,转存而不是写出
-                    file.transferTo(new File(path + File.separator +imgName));
+
+                    File saveFile = new File(filepath.getAbsolutePath() + File.separator + imgName);
+                    // 将上传文件复制存盘
+                    FileUtils.copyInputStreamToFile(file.getInputStream(),saveFile);
+                    // 转存文件到指定路径,转存而不是写出,file.transferTo()有毒，谨慎使用，建议用FileUtils
+                    //file.transferTo(saveFile);
+
                     //上传成功
                     return ResultUtil.success(urlPath+ File.separator +imgName);
                 }else{
@@ -274,6 +285,42 @@ public class UploadUtils {
             file.delete();//执行删除
         }
     }
+
+    /**
+     * 创建目录
+     * @param path
+     */
+    public static void createFolders(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+    }
+
+    /**
+     * 删除文件
+     * @param file
+     */
+    public static void deleteFile(File file) {
+        if (!file.isDirectory()) {
+            file.delete();
+        } else {
+            File[] files = file.listFiles();
+            for (File f: files) {
+                deleteFile(f);
+            }
+            file.delete();
+        }
+    }
+
+    public static void deleteFile_(String path) {
+        deleteFile(new File(path));
+    }
+
+    public static String uuid() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
+    }
+
 
     /**
      * @描述 获取文件的真实路径

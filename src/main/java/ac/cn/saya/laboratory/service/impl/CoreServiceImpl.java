@@ -3,7 +3,9 @@ package ac.cn.saya.laboratory.service.impl;
 import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.handle.RepeatLogin;
-import ac.cn.saya.laboratory.persistent.service.*;
+import ac.cn.saya.laboratory.persistent.business.service.*;
+import ac.cn.saya.laboratory.persistent.financial.service.FinancialDeclareService;
+import ac.cn.saya.laboratory.persistent.primary.service.*;
 import ac.cn.saya.laboratory.service.ICoreService;
 import ac.cn.saya.laboratory.tools.*;
 import com.alibaba.fastjson.JSONObject;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @Title: CoreServiceImpl
@@ -68,8 +71,8 @@ public class CoreServiceImpl implements ICoreService {
     private NewsService newsService;
 
     @Resource
-    @Qualifier("guestBookService")
-    private GuestBookService guestBookService;
+    @Qualifier("systemServiceImpl")
+    private SystemServiceImpl systemServiceImpl;
 
     @Resource
     @Qualifier("noteBookService")
@@ -87,16 +90,25 @@ public class CoreServiceImpl implements ICoreService {
     @Qualifier("amapLocateUtils")
     private AmapLocateUtils amapLocateUtils;
 
+    @Resource
+    @Qualifier("memoService")
+    private MemoService memoService;
+
+    @Resource
+    @Qualifier("financialDeclareService")
+    private FinancialDeclareService financialDeclareService;
+
 
     /**
      * 用户登录
      *
+     * @param platform 登录平台
      * @param user
      * @param request
      * @return
      */
     @Override
-    public Result<Object> login(UserEntity user, HttpServletRequest request) throws Exception {
+    public Result<Object> login(String platform,UserEntity user, HttpServletRequest request) throws Exception {
         // 校验用户输入的参数
         if (StringUtils.isEmpty(user.getUser()) || StringUtils.isEmpty(user.getPassword())) {
             // 缺少参数
@@ -120,7 +132,7 @@ public class CoreServiceImpl implements ICoreService {
             entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
             entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
             // 注入用户个人信息
-            result.put("user",entity);
+            result.put("user", entity);
             return ResultUtil.success(result);
         } else {
             // 未登录（当前设备）
@@ -160,9 +172,11 @@ public class CoreServiceImpl implements ICoreService {
                 entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
                 // 返回用户的个人信息
                 Map<String, Object> result = userService.queryUserRecentlyInfo(user.getUser());
-                result.put("user",entity);
+                result.put("user", entity);
                 // 记录本次登录
                 recordService.record("OX001", request);
+                // 发送登录邮件
+                //systemServiceImpl.sendLoginNotice(entity.getEmail(),entity.getUser(),entity.getUser(),memory.getIp(),memory.getCity(),platform,DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat));
                 //返回登录成功
                 return ResultUtil.success(result);
             } else {
@@ -391,7 +405,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param imgBase64
      * @描述 上传logo
      * @参数
      * @返回值
@@ -557,8 +570,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数
      * @返回值
@@ -584,8 +595,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -653,8 +662,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -684,8 +691,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -726,8 +731,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -737,25 +740,17 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> createApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        // 校验用户输入的参数
-        if (entity == null) {
-            // 缺少参数
-            throw new MyException(ResultEnum.NOT_PARAMETER);
-        }
-        if (apiService.insertApi(entity) > 0) {
+        Result<Object> result = apiService.insertApi(entity);
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
             /**
              * 记录日志
              */
             recordService.record("OX031", request);
-            return ResultUtil.success();
-        } else {
-            throw new MyException(ResultEnum.ERROP);
         }
+        return result;
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -765,25 +760,17 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> editApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        // 校验用户输入的参数
-        if (entity == null) {
-            // 缺少参数
-            throw new MyException(ResultEnum.NOT_PARAMETER);
-        }
-        if (apiService.editApi(entity) > 0) {
+        Result<Object> result = apiService.editApi(entity);
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
             /**
              * 记录日志
              */
             recordService.record("OX032", request);
-            return ResultUtil.success();
-        } else {
-            throw new MyException(ResultEnum.ERROP);
         }
+        return result;
     }
 
     /**
-     * @param entity
-     * @param request
      * @描述
      * @参数 [entity, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
@@ -793,25 +780,18 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> deleteApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        // 校验用户输入的参数
-        if (entity == null) {
-            // 缺少参数
-            throw new MyException(ResultEnum.NOT_PARAMETER);
-        }
-        if (apiService.deleteApi(entity) > 0) {
+        Result<Object> result = apiService.deleteApi(entity);
+        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
             /**
              * 记录日志
              */
             recordService.record("OX033", request);
-            return ResultUtil.success();
-        } else {
-            throw new MyException(ResultEnum.ERROP);
         }
+        return result;
     }
 
     /**
-     * @param request
-     * @描述 获取统计报表数据
+     * @描述 获取统计报表数据 异步执行
      * @参数
      * @返回值
      * @创建人 saya.ac.cn-刘能凯
@@ -825,53 +805,92 @@ public class CoreServiceImpl implements ICoreService {
         // 统计图片总数
         PictureEntity pictureEntity = new PictureEntity();
         pictureEntity.setSource(userSession.getUser());
-        Long pictureCount = pictureStorageService.getPictuBase64Count(pictureEntity);
-        result.put("pictureCount", pictureCount);
+        CompletableFuture<Long> pictureCountFuture = CompletableFuture.supplyAsync(()->pictureStorageService.getPictuBase64Count(pictureEntity));
+
         // 统计文件总数
         FilesEntity filesEntity = new FilesEntity();
         filesEntity.setSource(userSession.getUser());
-        Long fileCount = filesService.getFileCount(filesEntity);
-        result.put("fileCount", fileCount);
+        CompletableFuture<Long> fileCountFuture = CompletableFuture.supplyAsync(()->filesService.getFileCount(filesEntity));
+
         // 统计笔记簿总数
         NoteBookEntity bookEntity = new NoteBookEntity();
         bookEntity.setSource(userSession.getUser());
-        Long bookCount = noteBookService.getNoteBookCount(bookEntity);
-        result.put("bookCount", bookCount);
+        CompletableFuture<Long> bookCountFuture = CompletableFuture.supplyAsync(()->noteBookService.getNoteBookCount(bookEntity));
+
         // 统计笔记总数
         NotesEntity notesEntity = new NotesEntity();
         notesEntity.setNotebook(bookEntity);
-        Long notesCount = notesService.getNotesCount(notesEntity);
-        result.put("notesCount", notesCount);
+        CompletableFuture<Long> notesCountFuture = CompletableFuture.supplyAsync(()->notesService.getNotesCount(notesEntity));
+
         // 统计计划总数
         PlanEntity planEntity = new PlanEntity();
         planEntity.setSource(userSession.getUser());
-        Long planCount = planService.getPlanCount(planEntity);
-        result.put("planCount", planCount);
+        CompletableFuture<Long> planCountFuture = CompletableFuture.supplyAsync(()->planService.getPlanCount(planEntity));
+
         // 统计公告总数
         NewsEntity newsEntity = new NewsEntity();
         newsEntity.setSource(userSession.getUser());
-        Long newsCount = newsService.getNewsCount(newsEntity);
-        result.put("newsCount", newsCount);
-        // 统计留言总数
-        GuestBookEntity guestBookEntity = new GuestBookEntity();
-        Long guestCount = guestBookService.getGuestBookCount(guestBookEntity);
-        result.put("guestCount", guestCount);
+        CompletableFuture<Long> newsCountFuture = CompletableFuture.supplyAsync(()->newsService.getNewsCount(newsEntity));
+
         // 统计登录总数
         LogEntity logEntity = new LogEntity();
         logEntity.setUser(userSession.getUser());
         logEntity.setType("OX001");
-        Long logCount = logService.selectCount(logEntity);
+        CompletableFuture<Long> logCountFuture = CompletableFuture.supplyAsync(()->logService.selectCount(logEntity));
+
+        CompletableFuture<Map<String, Object>> news6Future = CompletableFuture.supplyAsync(()->newsService.countPre6MonthNews(userSession.getUser()));
+
+        CompletableFuture<Map<String, Object>> log6Future = CompletableFuture.supplyAsync(()->userService.countPre6Logs(userSession.getUser()));
+
+        CompletableFuture<Map<String, Object>> files6Future = CompletableFuture.supplyAsync(()->filesService.countPre6Files(userSession.getUser()));
+
+        CompletableFuture<Map<String, Object>> memo6Future = CompletableFuture.supplyAsync(()->memoService.countPre6Memo(userSession.getUser()));
+
+        CompletableFuture<List<TransactionListEntity>> financial6Future = CompletableFuture.supplyAsync(()->financialDeclareService.countPre6Financial(userSession.getUser()));
+
+        Long pictureCount = pictureCountFuture.exceptionally(f -> 0L).get();
+        result.put("pictureCount", pictureCount);
+
+        Long fileCount = fileCountFuture.exceptionally(f -> 0L).get();
+        result.put("fileCount", fileCount);
+
+        Long bookCount = bookCountFuture.exceptionally(f -> 0L).get();
+        result.put("bookCount", bookCount);
+
+        Long notesCount = notesCountFuture.exceptionally(f -> 0L).get();
+        result.put("notesCount", notesCount);
+
+        Long planCount = planCountFuture.exceptionally(f -> 0L).get();
+        result.put("planCount", planCount);
+
+        Long newsCount = newsCountFuture.exceptionally(f -> 0L).get();
+        result.put("newsCount", newsCount);
+
+        Long logCount = logCountFuture.exceptionally(f -> 0L).get();
         result.put("logCount", logCount);
+
+        Map<String, Object> news6 = news6Future.exceptionally(f -> null).get();
+        result.put("news6", news6);
+
+        Map<String, Object> log6 = log6Future.exceptionally(f -> null).get();
+        result.put("log6", log6);
+
+        Map<String, Object> files6 = files6Future.exceptionally(f -> null).get();
+        result.put("files6", files6);
+
+        Map<String, Object> memo6 = memo6Future.exceptionally(f -> null).get();
+        result.put("memo6", memo6);
+
+        List<TransactionListEntity> financial6 = financial6Future.exceptionally(f -> null).get();
+        result.put("financial6", financial6);
+
         // 统计笔记簿
         bookEntity.setStartLine(0);
         bookEntity.setEndLine(bookCount.intValue());
-        List<NoteBookEntity> bookList = noteBookService.getNoteBook(bookEntity);
+        CompletableFuture<List<NoteBookEntity>> bookListFuture = CompletableFuture.supplyAsync(()->noteBookService.getNoteBook(bookEntity));
+        List<NoteBookEntity> bookList = bookListFuture.exceptionally(f -> null).get();
         result.put("bookList", bookList);
-        result.put("news6", userService.countPre6MonthNews(userSession.getUser()));
-        result.put("log6", userService.countPre6Logs(userSession.getUser()));
-        result.put("files6", userService.countPre6Files(userSession.getUser()));
-        result.put("board", userService.countPre6Board());
-        result.put("financial6", userService.countPre6Financial(userSession.getUser()));
+
         return ResultUtil.success(result);
     }
 }

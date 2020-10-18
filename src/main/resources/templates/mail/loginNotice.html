@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="{{asset('/static/img/favicon.ico')}}"/>
+    <title>暖心阁(saya.ac.cn)-邮件系统</title>
+</head>
+<body>
+</body>
+<body>
+<table class="mainTable"
+       style="margin: 0 auto;font-size: inherit; line-height: inherit; text-align: center; border-spacing: 0; border-collapse: collapse; -premailer-cellpadding: 0; -premailer-cellspacing: 0; padding: 0; border: 0;"
+       align="center" cellpadding="0" cellspacing="0">
+    <tbody>
+    <tr>
+        <td class="topPadding"
+            style="font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; height: 16px; -premailer-height: 16;"
+            height="16"></td>
+    </tr>
+    <tr>
+        <td class="centerColumn" style="width: 685px; -premailer-width: 685;">
+            <table style="font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; font-size: inherit; line-height: 18px; padding: 0px; border: 0px;">
+                <tbody>
+                <tr>
+                    <td class="content_margin" style="width: 40px;"></td>
+                    <td class="email_font" style="font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; line-height: 18px; padding-top: 44px;text-align: left;
+                                   font-size: 14px; color: #333; font-smooth: always; -webkit-font-smoothing: antialiased;">
+                        Hi，<span th:text="${userName}"></span>：
+                    </td>
+                    <td class="content_margin" style="width: 40px;"></td>
+                </tr>
+                <tr>
+                    <td class="content_margin" style="width: 40px;"></td>
+                    <td class="email_font" style="font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; line-height: 18px;text-align: left;
+                                 font-size: 14px; color: #333; padding: 17px 0 0 1em; font-smooth: always; -webkit-font-smoothing: antialiased;">
+                        您正在使用<span th:text="${account}"></span>账号登录<span th:text="${platform}"></span>，请确认是否本人操作，若非本人的操作，请尽快登录https://saya.ac.cn/login,修改密码。
+                    </td>
+                    <td class="content_margin" style="width: 40px;"></td>
+                </tr>
+                <tr>
+                    <td class="content_margin" style="width: 40px;"></td>
+                    <td class="email_font" style="font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; line-height: 18px;text-align: left;
+                                   font-size: 14px; color: #333; padding: 18px 0 0 1em; font-smooth: always; -webkit-font-smoothing: antialiased;">
+                        <div>
+                            <span>登录时间：</span>
+                            <span th:text="${loginTime}">12</span>
+                        </div>
+                        <div>
+                            <span>登录地点：</span>
+                            <span th:text="${city}">12</span>
+                        </div>
+                        <div>
+                            <span>登录ip：</span>
+                            <span th:text="${ip}">12</span>
+                        </div>
+                    </td>
+                    <td class="content_margin" style="width: 40px;"></td>
+                </tr>
+                <tr>
+                    <td class="content_margin" style="width: 40px;"></td>
+                    <td class="email_font" style="font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; line-height: 18px; font-smooth: always; -webkit-font-smoothing: antialiased;                                  text-align: left;
+                                       font-size: 14px; color: #333; padding: 18px 0 0 1em;">
+                        如果您看过上述信息，请忽略此电子邮件。
+                    </td>
+                    <td class="content_margin" style="width: 40px;"></td>
+                </tr>
+                <tr>
+                    <td class="content_margin" style="width: 40px;"></td>
+                    <td class="email_font"
+                        style="text-align: left;font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; line-height: 18px; font-smooth: always; -webkit-font-smoothing: antialiased; color: #333; padding: 3px 0 19px 0; font-size: 14px;">
+                        此致！
+                    </td>
+                    <td class="content_margin" style="width: 40px;"></td>
+                </tr>
+                <tr>
+                    <td class="content_margin" style="width: 40px;"></td>
+                    <td class="email_font" style="text-align: left;
+                                     font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; line-height: 18px; font-size: 14px; font-smooth: always; -webkit-font-smoothing: antialiased; color: #333; padding: 17px 0 13px 0;text-align: right;">
+                        Saya.ac.cn-实验室中心
+                        <br>
+                        <span th:text="${sendTime}"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td class="content_margin" style="width: 40px;"></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr class="footerTopPadding email_font" style="height: 17px; -premailer-height: 17;" height="17">
+        <td style="font-family: 'Geneva', Helvetica, Arial, sans-serif;"></td>
+    </tr>
+    <tr>
+        <td class="footer background email_font"
+            style="font-family: 'Geneva', Helvetica, Arial, sans-serif; font-smooth: always; -webkit-font-smoothing: antialiased; width: 685px; font-size: 11px; line-height: 14px; color: #888; text-align: center; background-repeat: no-repeat; background-position: center top; padding: 15px 0 12px; -webkit-text-size-adjust:100%;"
+            colspan="3" background="{{asset('/static/img/footer_gradient_web.png')}}" align="center">
+            <span class="bottomContent" colspan="3">
+                        <span class="footer1" style="white-space: nowrap;">
+                          Copyright © <script>document.write(new Date().getFullYear())</script>
+                        </span>
+                        <span style="white-space: nowrap;">
+                          Saya.ac.cn, 实验室中心
+                        </span>
+                        <span class="footer1" style="white-space: nowrap;">
+                          保留所有权利。
+                        </span>
+                      </span>
+        </td>
+    </tr>
+    <tr class="footerBottomPadding email_font" style="height: 50px; -premailer-height: 50;" height="50">
+        <td style="font-family: 'Geneva', Helvetica, Arial, sans-serif;">
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

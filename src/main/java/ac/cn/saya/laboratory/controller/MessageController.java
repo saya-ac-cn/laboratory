@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(value = "/backend/api/message")
 public class MessageController {
 
-    @Autowired()
+    @Autowired
     @Qualifier("messageServiceImpl")
     private MessageServiceImpl messageServiceImpl;
 

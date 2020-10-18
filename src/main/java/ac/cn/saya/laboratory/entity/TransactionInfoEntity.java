@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 /**
  * @Title: TransactionInfoEntity
  * @ProjectName DataCenter
@@ -37,7 +39,7 @@ public class TransactionInfoEntity extends BaseEntity{
     /**
      * '交易额',
      */
-    private Double currencyNumber;
+    private BigDecimal currencyNumber;
 
     /**
      * 交易明细

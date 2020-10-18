@@ -7,6 +7,7 @@ import ac.cn.saya.laboratory.tools.ResultUtil;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -40,6 +41,8 @@ public class SystemInterceptor implements HandlerInterceptor {
             // 设置将字符以"UTF-8"编码输出到客户端浏览器
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json; charset=utf-8");
+            // 401（未授权） 请求要求身份验证
+            response.setStatus(401);
             //获取PrintWriter输出流
             PrintWriter out = response.getWriter();
             out.write(JSON.toJSONString(ResultUtil.error(-7, "请登录")));

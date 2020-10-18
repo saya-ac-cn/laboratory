@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ac.cn.saya.laboratory.persistent.primary.dao.BackupLogDAO">
+
+    <!--记录备份日志-->
+    <insert id="insertBackup" parameterType="backup" >
+        INSERT INTO `backuplog` (
+            `url`,
+            `archiveDate`,
+            `createtime`
+        )
+        VALUES
+            (
+                #{backupUrl},
+                date_format(now(),'%Y-%m-%d'),
+                NOW()
+            );
+    </insert>
+
+    <!--删除前n天的备份日志-->
+    <delete id="deleteBackup" parameterType="backup">
+        delete from backuplog where archiveDate <![CDATA[ < ]]>  DATE_SUB(CURDATE(), INTERVAL #{saveMonth} MONTH)
+    </delete>
+
+    <!-- 查询一条备份详情-->
+    <select id="getBackupOne" parameterType="backup" resultType="backup">
+        select
+        a.`url`,a.`archiveDate`,a.`createtime`
+        from
+          backuplog a
+        where
+           a.`archiveDate` = #{archiveDate}
+    </select>
+
+
+    <!-- 分页查看备份记录-->
+    <select id="getBackupPagin" parameterType="backup" resultType="backup">
+        select
+          a.`url`,a.`archiveDate`,a.`createtime`
+        from
+          backuplog a
+        <where>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.archiveDate,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+            <if test = "saveMonth != null and saveMonth != 0">
+                and a.archiveDate <![CDATA[ < ]]>  DATE_SUB(CURDATE(), INTERVAL #{saveMonth} MONTH)
+            </if>
+        </where>
+        order by archiveDate desc
+        limit #{startLine},#{endLine}
+    </select>
+
+    <!-- 查看备份记录总数-->
+    <select id="getBackupCount" parameterType="backup" resultType="java.lang.Long">
+        select
+          count(*)
+        from
+          backuplog a
+        <where>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.archiveDate,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+            <if test = "saveMonth != null and saveMonth != 0">
+                and a.archiveDate <![CDATA[ < ]]>  DATE_SUB(CURDATE(), INTERVAL #{saveMonth} MONTH)
+            </if>
+        </where>
+    </select>
+
+</mapper>
+
+
+
+
+
+

@@ -2,7 +2,7 @@ package ac.cn.saya.laboratory.service.impl;
 
 import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.service.*;
+import ac.cn.saya.laboratory.persistent.business.service.*;
 import ac.cn.saya.laboratory.service.IFrontendService;
 import ac.cn.saya.laboratory.tools.*;
 import com.alibaba.fastjson.JSONObject;
@@ -19,7 +19,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +62,6 @@ public class FrontendServiceImpl implements IFrontendService {
     private NotesService notesService;
 
     /**
-     * @param entity
      * @描述 查询一条动态
      * @参数
      * @返回值
@@ -101,7 +99,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页的动态
      * @参数
      * @返回值
@@ -142,7 +139,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页文件列表
      * @参数
      * @返回值
@@ -183,9 +179,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param id
-     * @param request
-     * @param response
      * @描述 下载文件
      * @参数
      * @返回值
@@ -239,7 +232,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param entity
      * @描述 留言
      * @参数
      * @返回值
@@ -336,7 +328,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param entity
      * @描述 获取笔记簿【公开】
      * @参数
      * @返回值
@@ -357,7 +348,6 @@ public class FrontendServiceImpl implements IFrontendService {
     }
 
     /**
-     * @param entity
      * @描述 获取分页的笔记
      * @参数
      * @返回值

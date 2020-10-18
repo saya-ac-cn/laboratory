@@ -5,10 +5,12 @@ package ac.cn.saya.laboratory.tools;
  */
 public enum ResultEnum {
 
+    FILE_TOO_BIG(-9, "文件太大"),
+    FILE_TYPE_ERROR(-9, "文件类型错误"),
     DB_ERROR(-8, "数据库读写失败"),
     NOT_CHECKING(-7, "未登录"),
     NOT_PARAMETER(-6, "缺少参数"),
-    FORBID_POWER(-5, "接口已关闭"),
+    FORBID_POWER(-5, "接口已关闭,不能操作历史数据"),
     RollBACK(-4, "操作无效，数据回滚"),
     NOT_EXIST(-3, "记录不存在"),
     ERROP(-2, "处理失败"),
