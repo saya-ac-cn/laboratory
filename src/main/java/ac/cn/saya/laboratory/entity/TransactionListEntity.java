@@ -27,7 +27,7 @@ public class TransactionListEntity extends BaseEntity {
      */
     private Integer tradeId;
     /**
-     * 存入
+     * 收入
      */
     private BigDecimal deposited;
     /**
@@ -63,11 +63,11 @@ public class TransactionListEntity extends BaseEntity {
      */
     private String updateTime;
     /**
-     * 交易类别
+     * 交易类别(非数据库字段)
      */
     private TransactionTypeEntity tradeTypeEntity;
     /**
-     * 明细表
+     * 明细表(非数据库字段)
      */
     private List<TransactionInfoEntity> infoList;
 

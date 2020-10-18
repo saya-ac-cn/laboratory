@@ -1,0 +1,38 @@
+package ac.cn.saya.laboratory;
+
+import ac.cn.saya.laboratory.entity.BillOfDayEntity;
+import ac.cn.saya.laboratory.entity.TransactionListEntity;
+import ac.cn.saya.laboratory.persistent.financial.dao.BillDAO;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+/**
+ * @Title: DAOTest
+ * @ProjectName laboratory
+ * @Description: TODO
+ * @Author saya
+ * @Date: 2020/10/18 23:23
+ * @Description:
+ */
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = LaboratoryApplication.class)
+public class DAOTest {
+
+    @Resource
+    private BillDAO billDAO;
+
+    @Test
+    public void queryBillByDayTest(){
+        TransactionListEntity query = new TransactionListEntity();
+        query.setTradeDate("2018-06");
+        List<BillOfDayEntity> list = billDAO.queryBillByDay(query);
+        return;
+    }
+
+}
