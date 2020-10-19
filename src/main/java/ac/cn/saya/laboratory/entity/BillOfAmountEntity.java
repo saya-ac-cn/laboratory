@@ -8,21 +8,22 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 账单（按天）
- * @Title: BillOfDayEntity
+ * 账单（按摘要）
+ * @Title: BillOfAmountEntity
  * @ProjectName laboratory
  * @Description: TODO
  * @Author saya
- * @Date: 2020/10/18 22:30
+ * @Date: 2020/10/19 22:38
  * @Description:
  */
 
 @NoArgsConstructor
 @Getter
 @Setter
-public class BillOfDayEntity extends BaseEntity {
+public class BillOfAmountEntity extends BaseEntity {
 
-    private static final long serialVersionUID = -1183336932192709824L;
+
+    private static final long serialVersionUID = 6658557743945115675L;
 
     /**
      * 交易时间
@@ -50,7 +51,7 @@ public class BillOfDayEntity extends BaseEntity {
     private BigDecimal currencyNumber;
 
     /**
-     * 子账单
+     * 关联的摘要
      */
-    private List<TransactionListEntity> transactionList;
+    private TransactionAmountEntity amountEntity;
 }

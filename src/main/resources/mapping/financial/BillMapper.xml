@@ -76,4 +76,90 @@
         order by a.billDate desc
     </select>
 
+    <!--统计指定月份的总收入和支出-->
+    <select id="totalBalance" parameterType="billOfDay" resultType="billOfDay">
+        SELECT
+            SUM(a.deposited) AS deposited ,
+            SUM(a.expenditure) AS expenditure ,
+            SUM(a.currencyNumber) AS currencyNumber
+        FROM
+            transaction_list a
+        WHERE
+            a.source = #{source} AND a.tradeDate LIKE concat(#{tradeDate} , '%')
+    </select>
+
+    <resultMap id="returnBillOfAmountList" type="billOfAmount">
+        <result column="billDeposited" property="deposited"/>
+        <result column="billExpenditure" property="expenditure"/>
+        <result column="billCurrencyNumber" property="currencyNumber"/>
+        <association property="amountEntity" javaType="transactionAmount">
+            <id column="transactionAmount" property="id"/>
+            <result column="flog" property="flog"/>
+            <result column="tag" property="tag"/>
+        </association>
+    </resultMap>
+
+    <!--查询指定月份中各摘要的收支情况-->
+    <select id="queryBillByAmount" parameterType="billOfAmount" resultMap="returnBillOfAmountList">
+        SELECT
+            b.*,a.*
+        FROM
+            transaction_amount a
+        INNER JOIN  (
+            SELECT
+                c.transactionAmount ,
+                sum(c.deposited) AS deposited ,
+                sum(c.expenditure) AS expenditure ,
+                sum(c.currencyNumber) AS currencyNumber
+            FROM
+                transaction_list c
+            WHERE
+                c.source = #{source} AND c.tradeDate LIKE concat(#{tradeDate} , '%')
+            GROUP BY
+                a.transactionAmount
+        ) b ON a.id = b.transactionAmount
+    </select>
+
+    <resultMap id="returnBillBalanceRank" type="transactionList">
+        <result column="deposited" property="deposited"/>
+        <result column="expenditure" property="expenditure"/>
+        <result column="currencyNumber" property="currencyNumber"/>
+        <association property="tradeAmountEntity" javaType="transactionAmount">
+            <id column="transactionAmount" property="id"/>
+            <result column="flog" property="flog"/>
+            <result column="tag" property="tag"/>
+        </association>
+        <association property="tradeTypeEntity" javaType="transactionType">
+            <id column="tradeType" property="id"/>
+            <result column="transactionType" property="transactionType"/>
+        </association>
+    </resultMap>
+
+    <!-- 查询指定月份中支出（flag=-1）或收入（flag=1）的排行 -->
+    <select id="queryBillBalanceRank" resultMap="returnBillBalanceRank">
+        SELECT
+            a.transactionAmount ,
+            a.deposited ,
+            a.expenditure ,
+            a.currencyNumber ,
+            b.tag ,
+            b.flog ,
+            c.id,
+            c.transactionType
+        FROM
+            transaction_list a
+        LEFT JOIN transaction_amount b ON a.transactionAmount = b.id
+        LEFT JOIN transaction_type c ON a.tradeType = c.id
+        WHERE
+            a.source = #{source} AND a.tradeDate LIKE concat(#{tradeDate} , '%')
+        <if test = 'flag != null and flag == 1'>
+            ORDER BY
+                a.deposited DESC
+        </if>
+        <if test = 'flag != null and flag == -1'>
+            ORDER BY
+                a.expenditure DESC
+        </if>
+    </select>
+
 </mapper> 

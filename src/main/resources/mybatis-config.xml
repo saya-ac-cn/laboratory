@@ -29,5 +29,6 @@
         <typeAlias alias="backup" type="ac.cn.saya.laboratory.entity.BackupLogEntity"/>
         <typeAlias alias="memo" type="ac.cn.saya.laboratory.entity.MemoEntity"/>
         <typeAlias alias="billOfDay" type="ac.cn.saya.laboratory.entity.BillOfDayEntity"/>
+        <typeAlias alias="billOfAmount" type="ac.cn.saya.laboratory.entity.BillOfAmountEntity"/>
     </typeAliases>
 </configuration>
