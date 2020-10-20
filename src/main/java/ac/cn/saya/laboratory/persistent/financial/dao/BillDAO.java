@@ -36,11 +36,11 @@ public interface BillDAO {
     public BillOfDayEntity totalBalance(BillOfDayEntity param);
 
     /**
-     * 查询指定月份中各摘要的收支情况
+     * 统计指定月份中各摘要的收支情况
      * @param param
      * @return
      */
-    public List<BillOfAmountEntity> queryBillByAmount(BillOfAmountEntity param);
+    public List<BillOfAmountEntity> totalBillByAmount(BillOfAmountEntity param);
 
     /**
      * 查询指定月份中支出（flag=-1）或收入（flag=1）的排行
@@ -50,5 +50,19 @@ public interface BillDAO {
      * @return
      */
     public List<TransactionListEntity> queryBillBalanceRank(@Param("tradeDate") String tradeDate,@Param("source") String source,@Param("flag") int flag);
+
+    /**
+     * 查询指定月份中，某一摘要类型的收支数据
+     * @param param
+     * @return
+     */
+    public List<TransactionListEntity> queryBillByAmount(TransactionListEntity param);
+
+    /**
+     * 查询账单明细
+     * @param param
+     * @return
+     */
+    public TransactionListEntity queryBillDetail(TransactionListEntity param);
 
 }

@@ -35,4 +35,13 @@ public class DAOTest {
         return;
     }
 
+    @Test
+    public void queryBillDetail(){
+        TransactionListEntity query = new TransactionListEntity();
+        query.setTradeId(703);
+        query.setSource("Pandora");
+        TransactionListEntity entity = billDAO.queryBillDetail(query);
+        return;
+    }
+
 }

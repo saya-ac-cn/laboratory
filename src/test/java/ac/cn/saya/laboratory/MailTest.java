@@ -30,13 +30,13 @@ import java.io.File;
 @SpringBootTest(classes = LaboratoryApplication.class)
 public class MailTest {
 
-    @Autowired
+    //@Autowired
     private MailService mailService;
 
-    @Resource
+    //@Resource
     private TemplateEngine templateEngine;
 
-    @Resource
+    //@Resource
     private SystemServiceImpl service;
 
     @Test
