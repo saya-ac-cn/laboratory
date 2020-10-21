@@ -1,5 +1,7 @@
 package ac.cn.saya.laboratory.tools;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 统一返回的外包装类
  */
@@ -13,7 +15,7 @@ public class ResultUtil {
      * @param object
      * @return
      */
-    public static Result success(Object object) {
+    public static Result success(@NotNull Object object) {
         Result result = new Result();
         result.setCode(0);
         result.setMsg("成功");
@@ -40,7 +42,7 @@ public class ResultUtil {
      * @param object
      * @return
      */
-    public static Result success(int code,String msg,Object object)
+    public static Result success(@NotNull int code,@NotNull String msg,@NotNull Object object)
     {
         Result result = new Result();
         result.setCode(code);
@@ -56,7 +58,7 @@ public class ResultUtil {
      * @param msg
      * @return
      */
-    public static Result error(int code, String msg) {
+    public static Result error(@NotNull int code, @NotNull String msg) {
         Result result = new Result();
         result.setCode(code);
         result.setMsg(msg);
@@ -68,7 +70,7 @@ public class ResultUtil {
      * @param value
      * @return
      */
-    public static Result error(ResultEnum value) {
+    public static Result error(@NotNull ResultEnum value) {
         Result result = new Result();
         result.setCode(value.getCode());
         result.setMsg(value.getMsg());
