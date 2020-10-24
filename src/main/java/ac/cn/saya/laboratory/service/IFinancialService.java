@@ -23,64 +23,59 @@ import java.util.List;
 public interface IFinancialService {
 
     /**
-     * @描述 按天分页查询账单
-     * @参数  [param] 其中时间参数 为月格式：2020-10
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息
+     * 按天分页查询账单
+     * @param param
+     * @param request
+     * @return
+     * @throws MyException
      */
-    public Result<Object> getBillByDay(TransactionListEntity param) throws MyException;
+    public Result<Object> getBillByDay(TransactionListEntity param,HttpServletRequest request) throws MyException;
 
     /**
-     * @描述 统计指定月份的总收入和支出
-     * @参数  [param]
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息
+     * 统计指定月份的总收入和支出
+     * @param param
+     * @param request
+     * @return
+     * @throws MyException
      */
-    public Result<Object> totalBalance(BillOfDayEntity param) throws MyException;
+    public Result<Object> totalBalance(BillOfDayEntity param,HttpServletRequest request) throws MyException;
 
     /**
-     * @描述 统计指定月份中各摘要的收支情况
-     * @参数  [param]
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息
+     * 统计指定月份中各摘要的收支情况
+     * @param param
+     * @param request
+     * @return
+     * @throws MyException
      */
-    public Result<Object> totalBillByAmount(BillOfAmountEntity param) throws MyException;
+    public Result<Object> totalBillByAmount(BillOfAmountEntity param,HttpServletRequest request) throws MyException;
 
     /**
-     * @描述 查询指定月份中支出（flag=-1）或收入（flag=1）的排行
-     * @参数  [tradeDate:月份, source:所属用户账单, flag:收支 标志]
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息
+     * 查询指定月份中支出（flag=-1）或收入（flag=1）的排行
+     * @param tradeDate 月份
+     * @param request 所属用户
+     * @param flag flag:收支 标志
+     * @return
+     * @throws MyException
      */
-    public Result<Object> getBillBalanceRank(String tradeDate,String source,int flag) throws MyException;
+    public Result<Object> getBillBalanceRank(String tradeDate,HttpServletRequest request,int flag) throws MyException;
 
     /**
-     * @描述 查询指定月份中，某一摘要类型的收支数据
-     * @参数  [param]
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息
+     * 查询指定月份中，某一摘要类型的收支数据
+     * @param param 查询参数
+     * @param request
+     * @return
+     * @throws MyException
      */
-    public Result<Object> getBillByAmount(TransactionListEntity param) throws MyException;
+    public Result<Object> getBillByAmount(TransactionListEntity param,HttpServletRequest request) throws MyException;
 
     /**
-     * @描述 查询账单明细
-     * @参数  [param]
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息
+     * 查询账单明细
+     * @param param 查询参数
+     * @param request
+     * @return
+     * @throws MyException
      */
-    public Result<Object> getBillDetail(TransactionListEntity param) throws MyException;
+    public Result<Object> getBillDetail(TransactionListEntity param,HttpServletRequest request) throws MyException;
 
     /**
      * 获取所有的交易类别

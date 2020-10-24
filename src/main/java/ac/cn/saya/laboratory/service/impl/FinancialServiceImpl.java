@@ -7,8 +7,6 @@ import ac.cn.saya.laboratory.persistent.financial.service.FinancialDeclareServic
 import ac.cn.saya.laboratory.service.IFinancialService;
 import ac.cn.saya.laboratory.tools.*;
 import com.alibaba.fastjson.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -34,7 +32,6 @@ import java.util.List;
 @Service("financialServiceImpl")
 public class FinancialServiceImpl implements IFinancialService {
 
-    private static Logger logger = LoggerFactory.getLogger(FinancialServiceImpl.class);
 
     @Resource
     @Qualifier("recordService")
@@ -54,11 +51,13 @@ public class FinancialServiceImpl implements IFinancialService {
      * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
      * @创建人  shmily
      * @创建时间  2020/10/21
-     * @修改人和其它信息
+     * @修改人和其它信息 无
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> getBillByDay(TransactionListEntity param){
+    public Result<Object> getBillByDay(TransactionListEntity param,HttpServletRequest request){
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        param.setSource(userSession.getUser());
         List<BillOfDayEntity> billByDayList = financialBillService.getBillByDay(param);
         if (billByDayList == null || billByDayList.isEmpty()) {
             // 没有找到账单
@@ -75,11 +74,12 @@ public class FinancialServiceImpl implements IFinancialService {
      * @创建人  shmily
      * @创建时间  2020/10/21
      * @修改人和其它信息
-     * @return
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> totalBalance(BillOfDayEntity param) throws MyException{
+    public Result<Object> totalBalance(BillOfDayEntity param,HttpServletRequest request) throws MyException{
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        param.setSource(userSession.getUser());
         BillOfDayEntity balance = financialBillService.totalBalance(param);
         if (null == balance){
             throw new MyException(ResultEnum.NOT_EXIST);
@@ -98,7 +98,9 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> totalBillByAmount(BillOfAmountEntity param) throws MyException{
+    public Result<Object> totalBillByAmount(BillOfAmountEntity param,HttpServletRequest request) throws MyException{
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        param.setSource(userSession.getUser());
         List<BillOfAmountEntity> list = financialBillService.totalBillByAmount(param);
         if (list == null || list.isEmpty()) {
             throw new MyException(ResultEnum.NOT_EXIST);
@@ -117,8 +119,9 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> getBillBalanceRank(String tradeDate,String source,int flag) throws MyException{
-        List<TransactionListEntity> balanceRank = financialBillService.getBillBalanceRank(tradeDate, source, flag);
+    public Result<Object> getBillBalanceRank(String tradeDate,HttpServletRequest request,int flag) throws MyException{
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        List<TransactionListEntity> balanceRank = financialBillService.getBillBalanceRank(tradeDate, userSession.getUser(), flag);
         if (balanceRank == null || balanceRank.isEmpty()) {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
@@ -136,7 +139,9 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> getBillByAmount(TransactionListEntity param) throws MyException{
+    public Result<Object> getBillByAmount(TransactionListEntity param,HttpServletRequest request) throws MyException{
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        param.setSource(userSession.getUser());
         List<TransactionListEntity> list = financialBillService.getBillByAmount(param);
         if (list == null || list.isEmpty()) {
             throw new MyException(ResultEnum.NOT_EXIST);
@@ -155,7 +160,9 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> getBillDetail(TransactionListEntity param) throws MyException{
+    public Result<Object> getBillDetail(TransactionListEntity param,HttpServletRequest request) throws MyException{
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        param.setSource(userSession.getUser());
         TransactionListEntity detail = financialBillService.getBillDetail(param);
         if (null == detail){
             throw new MyException(ResultEnum.NOT_EXIST);
@@ -166,9 +173,6 @@ public class FinancialServiceImpl implements IFinancialService {
 
     /**
      * 获取所有的交易类别
-     *
-     * @return
-     * @throws MyException
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
@@ -184,9 +188,6 @@ public class FinancialServiceImpl implements IFinancialService {
 
     /**
      * 获取所有的交易摘要
-     *
-     * @return
-     * @throws MyException
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
@@ -204,10 +205,9 @@ public class FinancialServiceImpl implements IFinancialService {
      * 查看流水（这里不是明细）
      * 根据用户、类型、日期
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 查询参数
+     * @param request 用户会话请求
+     * @return 财政流水记录
      */
     @Override
     public Result<Object> getTransaction(TransactionListEntity entity, HttpServletRequest request) throws MyException {
@@ -248,10 +248,9 @@ public class FinancialServiceImpl implements IFinancialService {
      * 查看流水子明细
      * 根据父id，本位id，flog
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 查询参数
+     * @param request 用户会话请求
+     * @return 支付详情
      */
     @Override
     public Result<Object> getTransactionInfo(TransactionInfoEntity entity, HttpServletRequest request) throws MyException {
@@ -289,10 +288,9 @@ public class FinancialServiceImpl implements IFinancialService {
      * 查询详细的流水明细总数
      * 根据用户、类型、日期
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 查询参数
+     * @param request 用户会话请求
+     * @return 完整的流水详情
      */
     @Override
     public Result<Object> getTransactionFinal(TransactionListEntity entity, HttpServletRequest request) throws MyException {
@@ -333,10 +331,9 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * 添加财政记录父+子
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @return 处理结果
      */
     @Override
     public Result<Object> insertTransaction(TransactionListEntity entity, HttpServletRequest request) throws MyException {
@@ -353,10 +350,9 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * 修改财政记录父
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @return 处理结果
      */
     @Override
     public Result<Object> updateTransaction(TransactionListEntity entity, HttpServletRequest request) throws MyException {
@@ -379,10 +375,9 @@ public class FinancialServiceImpl implements IFinancialService {
      * 这里是级联删除
      * 删除财政记录父+子
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @return 处理结果
      */
     @Override
     public Result<Object> deleteTransaction(TransactionListEntity entity, HttpServletRequest request) throws MyException {
@@ -393,9 +388,7 @@ public class FinancialServiceImpl implements IFinancialService {
             UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
             Result<Object> result = financialDeclareService.deleteTransaction(entity, userSession.getUser());
             if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
-                /**
-                 * 删除流水
-                 */
+                //删除流水
                 recordService.record("OX027", request);
             }
             return result;
@@ -406,10 +399,9 @@ public class FinancialServiceImpl implements IFinancialService {
      * 单行
      * 添加财政子记录
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @return 处理结果
      */
     @Override
     public Result<Object> insertTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws MyException {
@@ -417,9 +409,7 @@ public class FinancialServiceImpl implements IFinancialService {
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         Result<Object> result = financialDeclareService.insertTransactioninfo(entity, userSession.getUser());
         if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
-            /**
-             * 删除流水
-             */
+            //删除流水
             recordService.record("OX028", request);
         }
         return result;
@@ -429,10 +419,9 @@ public class FinancialServiceImpl implements IFinancialService {
      * 单行
      * 修改财政子记录
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @return 处理结果
      */
     @Override
     public Result<Object> updateTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws MyException {
@@ -448,10 +437,9 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * 删除财政子记录
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @return 处理结果
      */
     @Override
     public Result<Object> deleteTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws MyException {
@@ -466,11 +454,10 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * 导出流水
      *
-     * @param entity
-     * @param request
-     * @param response
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @param response 响应的会话参数
+     * @return 文件流
      */
     @Override
     public Result<Object> outTransactionListExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws MyException {
@@ -521,11 +508,10 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * 导出完整流水及明细
      *
-     * @param entity
-     * @param request
-     * @param response
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @param response 响应的会话参数
+     * @return 文件流
      */
     @Override
     public Result<Object> outTransactionInfoExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws MyException {
@@ -583,10 +569,9 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * 按天统计流水
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @return 统计结果
      */
     @Override
     public Result<Object> totalTransactionForDay(TransactionListEntity entity, HttpServletRequest request) throws MyException {
@@ -626,10 +611,9 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * 按月统计流水
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @return 统计结果
      */
     @Override
     public Result<Object> totalTransactionForMonth(TransactionListEntity entity, HttpServletRequest request) throws MyException {
@@ -669,10 +653,9 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * 按年统计流水
      *
-     * @param entity
-     * @param request
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @return 统计结果
      */
     @Override
     public Result<Object> totalTransactionForYear(TransactionListEntity entity, HttpServletRequest request) throws MyException {
@@ -712,11 +695,10 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * 按天导出流水统计报表
      *
-     * @param entity
-     * @param request
-     * @param response
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @param response 响应的会话参数
+     * @return 文件流
      */
     @Override
     public Result<Object> outTransactionForDayExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws MyException {
@@ -762,11 +744,10 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * 按月导出流水统计报表
      *
-     * @param entity
-     * @param request
-     * @param response
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @param response 响应的会话参数
+     * @return 文件流
      */
     @Override
     public Result<Object> outTransactionForMonthExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws MyException {
@@ -812,11 +793,10 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * 按年导出流水统计报表
      *
-     * @param entity
-     * @param request
-     * @param response
-     * @return
-     * @throws MyException
+     * @param entity 表单参数
+     * @param request 用户会话请求
+     * @param response 响应的会话参数
+     * @return 文件流
      */
     @Override
     public Result<Object> outTransactionForYearExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws MyException {
@@ -839,10 +819,10 @@ public class FinancialServiceImpl implements IFinancialService {
             List<JSONObject> jsonObjectList = new ArrayList<>();
             for (TransactionListEntity item : entityList) {
                 JSONObject json = new JSONObject();
-                json.put("tradeDate", item.getTradeDate());
                 json.put("deposited", item.getDeposited());
                 json.put("expenditure", item.getExpenditure());
                 json.put("currencyNumber", item.getCurrencyNumber());
+                json.put("tradeDate", item.getTradeDate());
                 jsonObjectList.add(json);
             }
             // 设置contentType为excel格式

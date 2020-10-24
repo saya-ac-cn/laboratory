@@ -12,69 +12,57 @@ public class ResultUtil {
 
     /**
      * 用于查询，添加，修改等方法返回值
-     * @param object
-     * @return
+     *
+     * @param data 执行成功后返回的数据
+     * @return 包装后的数据
      */
-    public static Result success(@NotNull Object object) {
-        Result result = new Result();
-        result.setCode(0);
-        result.setMsg("成功");
+    public static <T> Result<T> success(@NotNull T data) {
+        return new Result<T>().code(0)
+        .msg("成功")
         //返回执行成功后的模型
-        result.setData(object);
-        return result;
+        .data(data);
     }
 
     /**
      * 用于修改、删除等方法返回的值，只返回操作的结果
-     * @return
+     *
+     * @return 包装后的数据
      */
-    public static Result success() {
-        Result result = new Result();
-        result.setCode(0);
-        result.setMsg("成功");
-        return result;
+    public static <T> Result<T> success() {
+        return new Result<T>().code(0).msg("成功");
     }
 
     /**
      * 用于特殊场景下的返回值（eg：查询学生注册状态）
-     * @param code
-     * @param msg
-     * @param object
-     * @return
+     *
+     * @param code 状态码
+     * @param msg 响应消息
+     * @param data 执行成功后返回的数据
+     * @return 包装后的数据
      */
-    public static Result success(@NotNull int code,@NotNull String msg,@NotNull Object object)
-    {
-        Result result = new Result();
-        result.setCode(code);
-        result.setMsg(msg);
-        //返回执行成功后的模型
-        result.setData(object);
-        return result;
+    public static <T> Result<T> success(@NotNull int code, @NotNull String msg, @NotNull T data) {
+        return new Result<T>().code(code).msg(msg).data(data);
     }
 
     /**
      * 用于错误，异常等方法返回值
-     * @param code
-     * @param msg
-     * @return
+     *
+     * @param code 状态码
+     * @param msg 响应消息
+     * @return 包装后的数据
      */
-    public static Result error(@NotNull int code, @NotNull String msg) {
-        Result result = new Result();
-        result.setCode(code);
-        result.setMsg(msg);
-        return result;
+    public static <T> Result<T> error(@NotNull int code, @NotNull String msg) {
+        return new Result<T>().code(code).msg(msg);
     }
 
     /**
      * 用于错误，异常等方法返回值
-     * @param value
-     * @return
+     *
+     * @param value 异常
+     * @return 包装后的数据
      */
-    public static Result error(@NotNull ResultEnum value) {
-        Result result = new Result();
-        result.setCode(value.getCode());
-        result.setMsg(value.getMsg());
-        return result;
+    public static <T> Result<T> error(@NotNull ResultEnum value) {
+        return new Result<T>().code(value.getCode()).msg(value.getMsg());
     }
 
 }
