@@ -1,5 +1,6 @@
 package ac.cn.saya.laboratory.persistent.business.service;
 
+import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.business.dao.PlanDAO;
@@ -15,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Title: PlanService
@@ -34,6 +37,26 @@ public class PlanService {
 
     @Resource
     private PlanDAO planDAO;
+
+    /**
+     * @描述 查询用户当日的计划安排
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-09-19
+     * @修改人和其它信息
+     */
+    public List<PlanEntity> queryTodayPlan(String user) {
+        List<PlanEntity> plan = new ArrayList<>();
+        try {
+            // 查询用户当日安排
+            plan = planDAO.getTodayPlanListByUser(user);
+        } catch (Exception e) {
+            logger.error("查询用户当日安排失败" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return plan;
+    }
 
     /**
      * @描述 发布计划安排

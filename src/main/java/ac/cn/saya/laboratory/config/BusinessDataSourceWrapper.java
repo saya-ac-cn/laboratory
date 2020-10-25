@@ -12,13 +12,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @Description: TODO
  * @Author liunengkai
  * @Date: 2020-09-22 22:40
- * @Description:业务数据库数据源配置
+ * @Description: 业务数据库数据源配置
  */
 @ConfigurationProperties(prefix = "spring.datasource.business")
 public class BusinessDataSourceWrapper extends DruidDataSource implements InitializingBean {
 
+    private static final long serialVersionUID = -8445311433266771870L;
+
     @Autowired
     private DataSourceProperties basicProperties;
+
 
     @Override
     public void afterPropertiesSet() throws Exception {

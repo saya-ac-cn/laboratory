@@ -5,6 +5,7 @@ import ac.cn.saya.laboratory.entity.ApiEntity;
 import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
+import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.tools.Result;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,13 @@ public interface ICoreService {
      */
     public Result<Object> login(String platform,UserEntity user, HttpServletRequest request) throws Exception;
 
+    /**
+     * 获取微信用户信息
+     * @param jscode 微信生成的登录码
+     * @param request 用户请求会话
+     * @return 获取成功且绑定了，自动登录
+     */
+    public Result<Object> getWxUserDetail(String jscode, HttpServletRequest request) throws MyException;
 
     /**
      * 获取用户的信息

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">    
+    
+<mapper namespace="ac.cn.saya.laboratory.persistent.primary.dao.ThirdUserDAO">
+
+    <resultMap id="userDetail" type="thirdUser">
+        <id column="id" property="id"/>
+        <result column="user" property="user"/>
+        <result column="open_id" property="openId"/>
+        <result column="type" property="type"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="gender" property="gender"/>
+        <result column="language" property="language"/>
+        <result column="city" property="city"/>
+        <result column="province" property="province"/>
+        <result column="country" property="country"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <association property="localUser" javaType="user">
+            <id column="user" property="user"/>
+            <result column="password" property="password"/>
+        </association>
+    </resultMap>
+
+    <!-- 根据三方用户id查询用户信息-->
+    <select id="queryUserByOpenId" resultMap="userDetail" parameterType="thirdUser">
+        select
+            a.*,
+            b.password
+        from
+          third_user a
+          inner join `user` b on a.user = b.user
+        where
+          a.open_id  = #{openId} and `type` = #{type}
+        limit 1
+    </select>
+
+    <!-- 更新第三方用户信息 -->
+    <update id="updateThirdUser" parameterType="thirdUser">
+        update third_user
+        <set>
+            <if test="user != null and user != ''">
+                `user` = #{user},
+            </if>
+            <if test="nickName != null and nickName != ''">
+                `nick_name` = #{nickName},
+            </if>
+            <if test="gender != null and gender != 0">
+                `gender` = #{gender},
+            </if>
+            <if test="language != null and language != ''">
+                `language` = #{language},
+            </if>
+            <if test="city != null and city != ''">
+                `city` = #{city},
+            </if>
+            <if test="province != null and province != ''">
+                `province` = #{province},
+            </if>
+            <if test="country != null and country != ''">
+                `country` = #{country},
+            </if>
+            <if test="avatarUrl != null and avatarUrl != ''">
+                `avatar_url` = #{country},
+            </if>
+            update_time = now()
+        </set>
+        where open_id  = #{openId} and `type` = #{type}
+    </update>
+
+
+
+</mapper> 

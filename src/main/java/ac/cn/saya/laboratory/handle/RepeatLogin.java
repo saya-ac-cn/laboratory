@@ -23,7 +23,7 @@ public class RepeatLogin {
     /**
      * 该HashMap以用户名-HttpSession对象存储一个账号只能被一个人登陆的信息。
      */
-    public static HashMap<String,HttpSession> sessionMap = new HashMap<String,HttpSession>();
+    public static HashMap<String,HttpSession> sessionMap = new HashMap<>();
 
     /**
      * redis方案
@@ -40,9 +40,7 @@ public class RepeatLogin {
             // 删除单一登录中记录的变量 
             if(session.getAttribute("user") != null)
             {
-                /**
-                 * redis方案
-                 */
+                ////redis方案
                 ///String user = (String) session.getAttribute("user");
                 ///redisUtils.hmDelete("DataCenter:SessionMap",user);
                 UserMemory user = (UserMemory) session.getAttribute("user");
@@ -54,13 +52,11 @@ public class RepeatLogin {
     /**
      * 当发现账号已经被人登陆了，就将这个已经登陆上的人的Session从SessionListener.java中的HashMap里给
      * 拿到，并且移除在此HashMap中的记录并将session  invalidate掉
-     * @param username
+     * @param username 用户名
      */
     public static void forceUserLogout(String username)
     {
-        /**
-         * redis方案
-         */
+        ///redis方案
         //if(redisUtils.hmExists("DataCenter:SessionMap",username))
         //{
         //    // 取出用户的SessionID

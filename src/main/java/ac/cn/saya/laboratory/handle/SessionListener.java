@@ -20,7 +20,7 @@ public class SessionListener implements HttpSessionListener {
     /**
      * 该HashMap以用户名-HttpSession对象存储一个账号只能被一个人登陆的信息。
      */
-    //public static HashMap<String,HttpSession> sessionMap = new HashMap<String,HttpSession>();
+    ///public static HashMap<String,HttpSession> sessionMap = new HashMap<String,HttpSession>();
 
 
     // 创建session

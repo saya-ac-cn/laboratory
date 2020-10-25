@@ -12,17 +12,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @Description: TODO
  * @Author liunengkai
  * @Date: 2020-02-02 15:37
- * @Description:财政金融数据库数据源配置
+ * @Description: 财政金融数据库数据源配置
  */
 @ConfigurationProperties(prefix = "spring.datasource.financial")
 public class FinancialDataSourceWrapper extends DruidDataSource implements InitializingBean {
 
+    private static final long serialVersionUID = -4382148522964973815L;
     @Autowired
     private DataSourceProperties basicProperties;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // 如果未找到前缀“spring.datasource.financial”JDBC属性，将使用“Spring.DataSource”前缀JDBC属性。
+        // 如果未找到前缀“spring.datasource.financial”JDBC属性，将使用“Spring.DataSource”前缀JDBC属性。l
         if (super.getUsername() == null) {
             super.setUsername(basicProperties.determineUsername());
         }

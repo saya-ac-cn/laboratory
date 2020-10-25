@@ -1,11 +1,15 @@
 package ac.cn.saya.laboratory;
 
+import ac.cn.saya.laboratory.config.BusinessDataSourceWrapper;
+import ac.cn.saya.laboratory.config.FinancialDataSourceWrapper;
+import ac.cn.saya.laboratory.config.PrimaryDataSourceWrapper;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -27,8 +31,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"ac.cn.saya.laboratory"})
 @EnableTransactionManagement //开启声明式事务
-// 开启定时任务
 @EnableScheduling
+@EnableConfigurationProperties({PrimaryDataSourceWrapper.class,FinancialDataSourceWrapper.class, BusinessDataSourceWrapper.class})
 public class LaboratoryApplication {
 
     private static Logger logger = LoggerFactory.getLogger(LaboratoryApplication.class);

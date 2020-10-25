@@ -73,4 +73,15 @@ public class UserEntity extends BaseEntity {
      * 修改时间
      */
     private String updateTime;
+
+    /**
+     * 三方用户唯一id，非数据库字段
+     */
+    private String  openId;
+
+    /**
+     * 三方用户类型('wx','qq')，非数据库字段
+     */
+    private String  type;
+
 }

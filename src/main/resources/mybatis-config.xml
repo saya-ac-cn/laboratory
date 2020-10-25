@@ -12,6 +12,7 @@
     </settings>
     <typeAliases>
         <typeAlias alias="user" type="ac.cn.saya.laboratory.entity.UserEntity" />
+        <typeAlias alias="thirdUser" type="ac.cn.saya.laboratory.entity.ThirdUserEntity"/>
         <typeAlias alias="log" type="ac.cn.saya.laboratory.entity.LogEntity" />
         <typeAlias alias="logType" type="ac.cn.saya.laboratory.entity.LogTypeEntity" />
         <typeAlias alias="plan" type="ac.cn.saya.laboratory.entity.PlanEntity" />

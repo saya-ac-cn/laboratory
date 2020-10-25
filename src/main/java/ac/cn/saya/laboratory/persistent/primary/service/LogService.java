@@ -2,6 +2,7 @@ package ac.cn.saya.laboratory.persistent.primary.service;
 
 import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.LogTypeEntity;
+import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.primary.dao.LogDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
@@ -17,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @描述 用户业务层实现类
@@ -41,6 +44,26 @@ public class LogService {
     @Resource
     @Qualifier("logDAO")
     private LogDAO logDAO;
+
+    /**
+     * @描述 查询用户当日的计划安排，最近的一次操作
+     * @参数
+     * @返回值
+     * @创建人  saya.ac.cn-刘能凯
+     * @创建时间  2019-09-19
+     * @修改人和其它信息
+     */
+    public LogEntity queryRecentlyLog(String user) {
+        LogEntity log = null;
+        try {
+            // 查询用户最近的操作
+            log = logDAO.queryRecentlyLog(user);
+        } catch (Exception e) {
+            logger.error("查询用户最近的操作失败" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+        }
+        return log;
+    }
 
     /**
      * @描述 插入日志

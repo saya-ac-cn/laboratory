@@ -98,6 +98,9 @@ public class CoreServiceImpl implements ICoreService {
     @Qualifier("financialDeclareService")
     private FinancialDeclareService financialDeclareService;
 
+    @Resource
+    @Qualifier("httpClientUtil")
+    private HttpClientUtil httpClientUtil;
 
     /**
      * 用户登录
@@ -109,6 +112,25 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> login(String platform,UserEntity user, HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession();
+        if ("wx".equals(platform) && !StringUtils.isEmpty(user.getOpenId())){
+            // 微信登录方式
+            ThirdUserEntity wxUser = userService.getThirdUser(user.getOpenId(),"wx");
+            if (null != wxUser) {
+                UserMemory memory = new UserMemory();
+                String ip = HttpRequestUtil.getIpAddress(request);
+                UserEntity entity = userService.getUser(user.getUser());
+                memory.setUser(entity.getUser());
+                memory.setIp(ip);
+                memory.setCity(amapLocateUtils.getCityByIp(ip));
+                // 记录该用户的此次登录成功的信息
+                session.setAttribute("user", memory);
+                JSONObject wxInfo = new JSONObject();
+                wxInfo.put("sessionId", session.getId());
+            }else {
+                return ResultUtil.error(-999,"未能获取到您的信息，请联系运营团队进行添加");
+            }
+        }
         // 校验用户输入的参数
         if (StringUtils.isEmpty(user.getUser()) || StringUtils.isEmpty(user.getPassword())) {
             // 缺少参数
@@ -122,9 +144,12 @@ public class CoreServiceImpl implements ICoreService {
             //未找到该用户
             throw new MyException(ResultEnum.ERROP);
         }
+        Map<String, Object> result = new HashMap<>();
         if (userSession != null) {
             // 读取该用户最近的登录及安排信息
-            Map<String, Object> result = userService.queryUserRecentlyInfo(userSession.getUser());
+            List<PlanEntity> todayPlan = planService.queryTodayPlan(userSession.getUser());
+            result.put("plan",todayPlan.isEmpty()?null:todayPlan);
+            result.put("log",logService.queryRecentlyLog(userSession.getUser()));
             // session 检查到已登录（同一机器设备中）
             entity.setPassword(null);
             // 转换成浏览器可以直接识别的url
@@ -141,17 +166,13 @@ public class CoreServiceImpl implements ICoreService {
             // 由于登录时 可以用用户名 和 邮箱登录 所以 这里用用户查找
             ///if(redisUtils.hmExists("DataCenter:SessionMap",entity.getUser())) {
             if (RepeatLogin.sessionMap.get(user.getUser()) != null) {
-                /**
-                 * 已经登录
-                 * 将已经登陆的信息拿掉,踢下线
-                 */
+                //已经登录，将已经登陆的信息拿掉,踢下线
                 RepeatLogin.forceUserLogout(user.getUser());
             }
             // 比对密码
             //加密后用户的密码
             user.setPassword(DesUtil.encrypt(user.getPassword()));
             if (entity.getPassword().equals(user.getPassword())) {
-                HttpSession session = request.getSession();
                 //设置session
                 // 设置封装到session中的实体信息
                 UserMemory memory = new UserMemory();
@@ -171,7 +192,9 @@ public class CoreServiceImpl implements ICoreService {
                 entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
                 entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
                 // 返回用户的个人信息
-                Map<String, Object> result = userService.queryUserRecentlyInfo(user.getUser());
+                List<PlanEntity> todayPlan = planService.queryTodayPlan(userSession.getUser());
+                result.put("plan",todayPlan.isEmpty()?null:todayPlan);
+                result.put("log",logService.queryRecentlyLog(userSession.getUser()));
                 result.put("user", entity);
                 // 记录本次登录
                 recordService.record("OX001", request);
@@ -183,9 +206,49 @@ public class CoreServiceImpl implements ICoreService {
                 //密码错误
                 throw new MyException(ResultEnum.ERROP);
             }
-
         }
+    }
 
+    /**
+     * 获取微信用户信息
+     * @param code 微信生成的登录码
+     * @param request 用户请求会话
+     * @return 获取成功且绑定了，自动登录
+     */
+    @Override
+    public Result<Object> getWxUserDetail(String code, HttpServletRequest request) throws MyException{
+        JSONObject wxInfo = null;
+        try {
+            // 获取用户的openid
+            //appid和secret是开发者分别是小程序ID和小程序密钥，开发者通过微信公众平台-》设置-》开发设置就可以直接获取，
+            wxInfo = httpClientUtil.getOpenId(code);
+            if (wxInfo == null || StringUtils.isEmpty(wxInfo.getString("openid"))) {
+                return ResultUtil.error(-100010201, "调用微信接口获取用户信息异常");
+            }
+            // 通过openid放到第三方用户表判断用户是否已经绑定
+            ThirdUserEntity user = userService.getThirdUser(wxInfo.getString("openid"),"wx");
+            if (null != user) {
+                UserEntity entity = userService.getUser(user.getUser());
+                // 该用户已经绑定->设置用户登录信息
+                HttpSession session = request.getSession();
+                UserMemory memory = new UserMemory();
+                String ip = HttpRequestUtil.getIpAddress(request);
+                memory.setUser(entity.getUser());
+                memory.setIp(ip);
+                memory.setCity(amapLocateUtils.getCityByIp(ip));
+                // 记录该用户的此次登录成功的信息
+                session.setAttribute("user", memory);
+                wxInfo.put("sessionId", session.getId());
+                wxInfo.put("bind", 1);
+            } else {
+                wxInfo.put("bind", 0);
+            }
+            // 返回含有用户openid的信息
+            return ResultUtil.success(wxInfo);
+        } catch (Exception e) {
+            logger.warn("获取微信用户信息异常：" + Log4jUtils.getTrace(e));
+            return ResultUtil.error(-100010202, "获取微信用户信息异常");
+        }
     }
 
     /**

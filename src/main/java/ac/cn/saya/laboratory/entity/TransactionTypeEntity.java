@@ -10,7 +10,7 @@ import lombok.Setter;
  * @Description: TODO
  * @Author Saya
  * @Date: 2018/8/5 21:28
- * @Description:交易类别表模型
+ * @Description: 交易类别表模型
  */
 @NoArgsConstructor
 @Getter

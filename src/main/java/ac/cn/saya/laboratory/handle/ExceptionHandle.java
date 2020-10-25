@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ExceptionHandle {
 
 
-    private static Logger logger = LoggerFactory.getLogger(ExceptionHandle.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExceptionHandle.class);
 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public Result handle(Exception e) {
+    public Result<Object> handle(Exception e) {
         if (e instanceof MyException) {
             MyException myException = (MyException) e;
             return ResultUtil.error(myException.getCode(), myException.getMessage());

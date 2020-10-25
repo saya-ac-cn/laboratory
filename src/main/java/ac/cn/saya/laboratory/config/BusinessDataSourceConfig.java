@@ -31,7 +31,6 @@ public class BusinessDataSourceConfig {
 
     /**
      * 创建业务数据库数据源
-     * @return
      */
     public DruidDataSource build() {
         return new BusinessDataSourceWrapper();

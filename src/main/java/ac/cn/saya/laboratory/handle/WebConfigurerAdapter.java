@@ -15,14 +15,14 @@ import java.io.File;
  * @Description: TODO
  * @Author Saya
  * @Date: 2018/9/24 23:21
- * @Description:
- * 使用WebMvcConfigurationSupport替代WebMvcConfigurerAdapter;
+ * @Description: 使用WebMvcConfigurationSupport替代WebMvcConfigurerAdapter;
  */
 @Configuration
 public class WebConfigurerAdapter extends WebMvcConfigurationSupport {
 
     /**
      * 允许put
+     *
      * @return
      */
     @Bean
@@ -33,12 +33,13 @@ public class WebConfigurerAdapter extends WebMvcConfigurationSupport {
 
     /**
      * 注册拦截器
+     *
      * @param registry
      */
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
         //注册自定义拦截器，添加拦截路径和排除拦截路径
-        registry.addInterceptor(new SystemInterceptor()).addPathPatterns("/backend/**").excludePathPatterns("/backend/login/*", "/backend/download/*");
+        registry.addInterceptor(new SystemInterceptor()).addPathPatterns("/backend/**").excludePathPatterns("/backend/login/*", "/backend/wx/user", "/backend/download/*");
     }
 
     @Override
@@ -50,7 +51,7 @@ public class WebConfigurerAdapter extends WebMvcConfigurationSupport {
          * addResourceHandler：访问映射路径
          * addResourceLocations：资源绝对路径
          */
-        registry.addResourceHandler("/warehouse/**").addResourceLocations("file:" + System.getProperty("user.home","/home/saya") + File.separator + "warehouse" + File.separator);
+        registry.addResourceHandler("/warehouse/**").addResourceLocations("file:" + System.getProperty("user.home", "/home/saya") + File.separator + "warehouse" + File.separator);
         super.addResourceHandlers(registry);
     }
 

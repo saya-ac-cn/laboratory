@@ -31,7 +31,6 @@ public class FinancialDataSourceConfig {
 
     /**
      * 创建财政数据库数据源
-     * @return
      */
     public DruidDataSource build() {
         return new FinancialDataSourceWrapper();

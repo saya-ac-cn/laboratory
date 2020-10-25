@@ -2,11 +2,13 @@ package ac.cn.saya.laboratory.persistent.primary.service;
 
 import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.PlanEntity;
+import ac.cn.saya.laboratory.entity.ThirdUserEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.primary.dao.LogDAO;
 import ac.cn.saya.laboratory.persistent.business.dao.PlanDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.PrimaryBatchDAO;
+import ac.cn.saya.laboratory.persistent.primary.dao.ThirdUserDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.UserDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
@@ -43,14 +45,50 @@ public class UserService {
     private UserDAO userDAO;
 
     @Resource
-    private LogDAO logDAO;
+    private ThirdUserDAO thirdUserDAO;
 
     @Resource
     @Qualifier("primaryBatchDAO")
     private PrimaryBatchDAO batchDAO;
 
-    @Resource
-    private PlanDAO planDAO;
+    /**
+     * 获取第三方用户信息
+     * @param openId 用户在三方中唯一的标识
+     * @return 三方用户信息
+     */
+    public ThirdUserEntity getThirdUser(String openId,String type){
+        try {
+            ThirdUserEntity query = new ThirdUserEntity();
+            query.setOpenId(openId);
+            query.setType(type);
+            return thirdUserDAO.queryUserByOpenId(query);
+        } catch (Exception e) {
+            logger.error("获取第三方用户信息失败" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
+
+    /**
+     * 更新第三方用户信息
+     * @param param 更新的内容
+     * @return 更新结果
+     */
+    public int updateThirdUser(ThirdUserEntity param){
+        int result = 0;
+        try {
+            result = thirdUserDAO.updateThirdUser(param);
+            if (result <= 0) {
+                // 更新失败
+                result = ResultEnum.ERROP.getCode();
+            }
+            return result;
+        } catch (Exception e) {
+            logger.error("更新第三方用户信息失败" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
 
     /**
      * @描述 获取用户的信息
@@ -79,8 +117,8 @@ public class UserService {
      * @修改人和其它信息
      */
     @Transactional(readOnly = false)
-    public Integer setUser(UserEntity user) {
-        Integer result = 0;
+    public int setUser(UserEntity user) {
+        int result = 0;
         if (user == null || StringUtils.isEmpty(user.getUser())) {
             // 缺少参数
             return ResultEnum.NOT_PARAMETER.getCode();
@@ -115,39 +153,6 @@ public class UserService {
             logger.error(CurrentLineInfo.printCurrentLineInfo());
             throw new MyException(ResultEnum.DB_ERROR);
         }
-    }
-
-    /**
-     * @描述 查询用户当日的计划安排，最近的一次操作
-     * @参数
-     * @返回值
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2019-09-19
-     * @修改人和其它信息
-     */
-    public Map<String, Object> queryUserRecentlyInfo(String user) {
-        List<PlanEntity> plan = null;
-        LogEntity log = null;
-        Map<String, Object> result = new HashMap<>();
-        try {
-            // 查询用户当日安排
-            plan = planDAO.getTodayPlanListByUser(user);
-            result.put("plan",plan);
-        } catch (Exception e) {
-            logger.error("查询用户当日安排失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
-            result.put("plan",null);
-        }
-        try {
-            // 查询用户最近的操作
-            log = logDAO.queryRecentlyLog(user);
-            result.put("log",log);
-        } catch (Exception e) {
-            logger.error("查询用户最近的操作失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
-            result.put("log",null);
-        }
-        return result;
     }
 
 }
