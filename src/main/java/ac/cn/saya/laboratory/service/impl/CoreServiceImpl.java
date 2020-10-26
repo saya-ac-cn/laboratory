@@ -119,7 +119,7 @@ public class CoreServiceImpl implements ICoreService {
             if (null != wxUser) {
                 UserMemory memory = new UserMemory();
                 String ip = HttpRequestUtil.getIpAddress(request);
-                UserEntity entity = userService.getUser(user.getUser());
+                UserEntity entity = userService.getUser(wxUser.getUser());
                 memory.setUser(entity.getUser());
                 memory.setIp(ip);
                 memory.setCity(amapLocateUtils.getCityByIp(ip));
@@ -127,6 +127,7 @@ public class CoreServiceImpl implements ICoreService {
                 session.setAttribute("user", memory);
                 JSONObject wxInfo = new JSONObject();
                 wxInfo.put("sessionId", session.getId());
+                return ResultUtil.success(wxInfo);
             }else {
                 return ResultUtil.error(-999,"未能获取到您的信息，请联系运营团队进行添加");
             }
@@ -144,6 +145,7 @@ public class CoreServiceImpl implements ICoreService {
             //未找到该用户
             throw new MyException(ResultEnum.ERROP);
         }
+
         Map<String, Object> result = new HashMap<>();
         if (userSession != null) {
             // 读取该用户最近的登录及安排信息
@@ -155,7 +157,10 @@ public class CoreServiceImpl implements ICoreService {
             // 转换成浏览器可以直接识别的url
             // 用户logo，及背景图片的返回
             entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
-            entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
+            String pictureUrl = null;
+            if (null != entity.getBackground() && !(StringUtils.isEmpty(pictureUrl = pictureStorageService.getPictureUrl(entity.getBackground())))){
+                entity.setBackgroundUrl(UploadUtils.descUrl(pictureUrl));
+            }
             // 注入用户个人信息
             result.put("user", entity);
             return ResultUtil.success(result);
@@ -190,7 +195,10 @@ public class CoreServiceImpl implements ICoreService {
                 // 转换成浏览器可以直接识别的url
                 // 用户logo，及背景图片的返回
                 entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
-                entity.setBackground(UploadUtils.descUrl(entity.getBackground()));
+                String pictureUrl = null;
+                if (null != entity.getBackground() && !(StringUtils.isEmpty(pictureUrl = pictureStorageService.getPictureUrl(entity.getBackground())))){
+                    entity.setBackgroundUrl(UploadUtils.descUrl(pictureUrl));
+                }
                 // 返回用户的个人信息
                 List<PlanEntity> todayPlan = planService.queryTodayPlan(userSession.getUser());
                 result.put("plan",todayPlan.isEmpty()?null:todayPlan);
@@ -229,15 +237,20 @@ public class CoreServiceImpl implements ICoreService {
             ThirdUserEntity user = userService.getThirdUser(wxInfo.getString("openid"),"wx");
             if (null != user) {
                 UserEntity entity = userService.getUser(user.getUser());
-                // 该用户已经绑定->设置用户登录信息
+                UserMemory userSession = HttpRequestUtil.getUserMemory(request);
                 HttpSession session = request.getSession();
-                UserMemory memory = new UserMemory();
-                String ip = HttpRequestUtil.getIpAddress(request);
-                memory.setUser(entity.getUser());
-                memory.setIp(ip);
-                memory.setCity(amapLocateUtils.getCityByIp(ip));
-                // 记录该用户的此次登录成功的信息
-                session.setAttribute("user", memory);
+                // 未登录
+                if (userSession == null){
+                    // 该用户已经绑定->设置用户登录信息
+
+                    UserMemory memory = new UserMemory();
+                    String ip = HttpRequestUtil.getIpAddress(request);
+                    memory.setUser(entity.getUser());
+                    memory.setIp(ip);
+                    memory.setCity(amapLocateUtils.getCityByIp(ip));
+                    // 记录该用户的此次登录成功的信息
+                    session.setAttribute("user", memory);
+                }
                 wxInfo.put("sessionId", session.getId());
                 wxInfo.put("bind", 1);
             } else {

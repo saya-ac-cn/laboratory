@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -127,6 +128,27 @@ public class PictureStorageService {
     public PictureEntity getOnePictuBase64(PictureEntity entity) {
         try {
             return pictureDAO.getOnePictuBase64(entity);
+        } catch (Exception e) {
+            logger.error("查询一张图片异常：" + Log4jUtils.getTrace(e));
+            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
+
+    /**
+     * 获取指定图片的URL
+     * @param id 图片id
+     * @return 图片访问地址
+     */
+    public String getPictureUrl(int id){
+        PictureEntity query = new PictureEntity();
+        query.setId(id);
+        try {
+            PictureEntity result = pictureDAO.getOnePictuBase64(query);
+            if (null != result){
+                return result.getWeburl();
+            }
+            return null;
         } catch (Exception e) {
             logger.error("查询一张图片异常：" + Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());

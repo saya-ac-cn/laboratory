@@ -13,6 +13,7 @@
             <result column="deposited" property="deposited"/>
             <result column="expenditure" property="expenditure"/>
             <result column="currencyNumber" property="currencyNumber"/>
+            <result column="createTime" property="createTime"/>
             <association property="tradeAmountEntity" javaType="transactionAmount">
                 <id column="transactionAmount" property="id"/>
                 <result column="flog" property="flog"/>
@@ -32,6 +33,7 @@
             b.expenditure ,
             b.currencyNumber ,
             b.transactionAmount ,
+            b.createTime ,
             c.flog ,
             c.tag ,
             b.tradeType ,

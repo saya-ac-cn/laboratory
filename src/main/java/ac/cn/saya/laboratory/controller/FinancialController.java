@@ -265,7 +265,7 @@ public class FinancialController {
     }
 
     /**
-     * 按天分页查询账单
+     * 查询指定月份的账单（按天）
      * @param param 表单查询参数
      * @param request 用户会话请求
      * @return  按天分页账单

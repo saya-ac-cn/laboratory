@@ -63,12 +63,12 @@ public class UserEntity extends BaseEntity {
     /**
      * 用户设置的背景图片编号
      */
-    private Integer backgroundId;
+    private Integer background;
 
     /**
-     * 用户设置的背景
+     * 用户设置的背景，非数据库字段
      */
-    private String background;
+    private String backgroundUrl;
     /**
      * 修改时间
      */
