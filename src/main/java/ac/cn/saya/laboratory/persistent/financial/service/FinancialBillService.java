@@ -74,16 +74,16 @@ public class FinancialBillService {
     }
 
     /**
-     * @描述 统计指定月份中各摘要的收支情况
-     * @参数  [param]
+     * @描述 统计指定月份中各摘要的收支情况（flag=-1）或收入（flag=1）
+     * @参数  [tradeDate:月份, source:所属用户账单, flag:收支 标志]
      * @返回值  java.util.List<ac.cn.saya.laboratory.entity.BillOfAmountEntity>
      * @创建人  shmily
      * @创建时间  2020/10/21
      * @修改人和其它信息
      */
-    public List<BillOfAmountEntity> totalBillByAmount(BillOfAmountEntity param){
+    public List<BillOfAmountEntity> totalBillByAmount(String tradeDate,String source,int flag){
         try {
-            return billDAO.totalBillByAmount(param);
+            return billDAO.totalBillByAmount(tradeDate, source, flag);
         } catch (Exception e) {
             logger.error("统计指定月份中各摘要的收支情况失败:"+Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());

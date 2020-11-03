@@ -287,14 +287,15 @@ public class FinancialController {
     }
 
     /**
-     * 统计指定月份中各摘要的收支情况
-     * @param param 表单查询参数
+     * 统计指定月份中各摘要的收支情况（flag=-1）或收入（flag=1）
+     * @param tradeDate 日期
      * @param request 用户会话请求
+     * @param flag 标志
      * @return 收支列表
      */
     @GetMapping(value = "bill/totalBillByAmount")
-    public Result<Object> totalBillByAmount(BillOfAmountEntity param, HttpServletRequest request) throws MyException{
-        return financialService.totalBillByAmount(param,request);
+    public Result<Object> totalBillByAmount(@RequestParam(value = "tradeDate") String tradeDate,HttpServletRequest request,@RequestParam(value = "flag")int flag) throws MyException{
+        return financialService.totalBillByAmount(tradeDate, request, flag);
     }
 
     /**

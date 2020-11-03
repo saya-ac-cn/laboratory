@@ -41,13 +41,14 @@ public interface IFinancialService {
     public Result<Object> totalBalance(BillOfDayEntity param,HttpServletRequest request) throws MyException;
 
     /**
-     * 统计指定月份中各摘要的收支情况
-     * @param param
-     * @param request
+     * 统计指定月份中各摘要的收支情况flag=-1）或收入（flag=1）
+     * @param tradeDate 月份
+     * @param request 所属用户
+     * @param flag flag:收支 标志
      * @return
      * @throws MyException
      */
-    public Result<Object> totalBillByAmount(BillOfAmountEntity param,HttpServletRequest request) throws MyException;
+    public Result<Object> totalBillByAmount(String tradeDate,HttpServletRequest request,int flag) throws MyException;
 
     /**
      * 查询指定月份中支出（flag=-1）或收入（flag=1）的排行

@@ -10,6 +10,7 @@
         <result column="billExpenditure" property="expenditure"/>
         <result column="billCurrencyNumber" property="currencyNumber"/>
         <collection property="transactionList" ofType="transactionList">
+            <id column="tradeId" property="tradeId"/>
             <result column="deposited" property="deposited"/>
             <result column="expenditure" property="expenditure"/>
             <result column="currencyNumber" property="currencyNumber"/>
@@ -29,7 +30,9 @@
     <!--按天分页查询账单-->
     <select id="queryBillByDay" parameterType="transactionList" resultMap="returnBillOfDayList">
         SELECT
-            a.*, b.deposited ,
+            a.*,
+            b.tradeId ,
+            b.deposited ,
             b.expenditure ,
             b.currencyNumber ,
             b.transactionAmount ,
@@ -91,9 +94,9 @@
     </select>
 
     <resultMap id="returnBillOfAmountList" type="billOfAmount">
-        <result column="billDeposited" property="deposited"/>
-        <result column="billExpenditure" property="expenditure"/>
-        <result column="billCurrencyNumber" property="currencyNumber"/>
+        <result column="deposited" property="deposited"/>
+        <result column="expenditure" property="expenditure"/>
+        <result column="currencyNumber" property="currencyNumber"/>
         <association property="amountEntity" javaType="transactionAmount">
             <id column="transactionAmount" property="id"/>
             <result column="flog" property="flog"/>
@@ -101,7 +104,7 @@
         </association>
     </resultMap>
 
-    <!--统计指定月份中各摘要的收支情况-->
+    <!--统计指定月份中各摘要的收支情况,其中支出（flag=-1）或收入（flag=1）-->
     <select id="totalBillByAmount" parameterType="billOfAmount" resultMap="returnBillOfAmountList">
         SELECT
             b.*,a.*
@@ -118,8 +121,16 @@
             WHERE
                 c.source = #{source} AND c.tradeDate LIKE concat(#{tradeDate} , '%')
             GROUP BY
-                a.transactionAmount
+                c.transactionAmount
         ) b ON a.id = b.transactionAmount
+        <where>
+            <if test = 'flag != null and flag == 1'>
+                a.flog = 1
+            </if>
+            <if test = 'flag != null and flag == -1'>
+                a.flog = 2
+            </if>
+        </where>
     </select>
 
     <resultMap id="returnBillBalanceRank" type="transactionList">
@@ -128,6 +139,7 @@
         <result column="expenditure" property="expenditure"/>
         <result column="currencyNumber" property="currencyNumber"/>
         <result column="tradeDate" property="tradeDate"/>
+        <result column="createTime" property="createTime"/>
         <association property="tradeAmountEntity" javaType="transactionAmount">
             <id column="transactionAmount" property="id"/>
             <result column="flog" property="flog"/>
@@ -148,6 +160,7 @@
             a.expenditure ,
             a.currencyNumber ,
             #{tradeDate} as tradeDate,
+            a.createTime,
             b.tag ,
             b.flog ,
             c.id,

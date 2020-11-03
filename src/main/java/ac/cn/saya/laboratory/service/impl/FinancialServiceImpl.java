@@ -89,7 +89,7 @@ public class FinancialServiceImpl implements IFinancialService {
     }
 
     /**
-     * @描述 统计指定月份中各摘要的收支情况
+     * @描述 统计指定月份中各摘要的收支情况（flag=-1）或收入（flag=1）
      * @参数  [param]
      * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
      * @创建人  shmily
@@ -98,10 +98,9 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> totalBillByAmount(BillOfAmountEntity param,HttpServletRequest request) throws MyException{
+    public Result<Object> totalBillByAmount(String tradeDate,HttpServletRequest request,int flag) throws MyException{
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        param.setSource(userSession.getUser());
-        List<BillOfAmountEntity> list = financialBillService.totalBillByAmount(param);
+        List<BillOfAmountEntity> list = financialBillService.totalBillByAmount(tradeDate, userSession.getUser(), flag);
         if (list == null || list.isEmpty()) {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
