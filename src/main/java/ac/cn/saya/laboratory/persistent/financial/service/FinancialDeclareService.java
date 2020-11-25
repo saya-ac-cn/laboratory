@@ -355,8 +355,8 @@ public class FinancialDeclareService {
                 throw new MyException(ResultEnum.ERROP);
             }
         } catch (MyException e) {
-            e.printStackTrace();
             logger.warn("添加财政记录父+子异常");
+            logger.error("添加财政记录父+子异常,{}",e.getMessage());
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

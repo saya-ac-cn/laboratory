@@ -6,6 +6,7 @@ import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.financial.dao.BillDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
+import ac.cn.saya.laboratory.tools.DateUtils;
 import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.ResultEnum;
 import org.slf4j.Logger;
@@ -15,8 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,7 +50,17 @@ public class FinancialBillService {
      */
     public List<BillOfDayEntity> getBillByDay(TransactionListEntity param){
         try {
-            return billDAO.queryBillByDay(param);
+            List<BillOfDayEntity> list = billDAO.queryBillByDay(param);
+            if (!list.isEmpty()){
+                return list;
+            }
+            String now = DateUtils.getCurrentDateTime(DateUtils.dateFormat);
+            String tradeDate = param.getTradeDate();
+            if (StringUtils.isEmpty(tradeDate) || now.startsWith(tradeDate)){
+                param.setTradeDate(null);
+                return billDAO.queryBillByDay(param);
+            }
+            return Collections.emptyList();
         } catch (Exception e) {
             logger.error("按天分页查询账单失败:"+Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
@@ -65,7 +78,17 @@ public class FinancialBillService {
      */
     public BillOfDayEntity totalBalance(BillOfDayEntity param){
         try {
-            return billDAO.totalBalance(param);
+            BillOfDayEntity balance = billDAO.totalBalance(param);
+            if (null != balance){
+                return balance;
+            }
+            String now = DateUtils.getCurrentDateTime(DateUtils.dateFormat);
+            String tradeDate = param.getTradeDate();
+            if (StringUtils.isEmpty(tradeDate) || now.startsWith(tradeDate)) {
+                param.setTradeDate(null);
+                return billDAO.totalBalance(param);
+            }
+            return null;
         } catch (Exception e) {
             logger.error("统计指定月份的总收入和支出失败:"+Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
@@ -83,7 +106,15 @@ public class FinancialBillService {
      */
     public List<BillOfAmountEntity> totalBillByAmount(String tradeDate,String source,int flag){
         try {
-            return billDAO.totalBillByAmount(tradeDate, source, flag);
+            List<BillOfAmountEntity> list = billDAO.totalBillByAmount(tradeDate, source, flag);
+            if (!list.isEmpty()){
+                return list;
+            }
+            String now = DateUtils.getCurrentDateTime(DateUtils.dateFormat);
+            if (now.startsWith(tradeDate)){
+                return billDAO.totalBillByAmount(null, source, flag);
+            }
+            return Collections.emptyList();
         } catch (Exception e) {
             logger.error("统计指定月份中各摘要的收支情况失败:"+Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());
@@ -101,7 +132,17 @@ public class FinancialBillService {
      */
     public List<TransactionListEntity> getBillBalanceRank(String tradeDate,String source,int flag){
         try {
-            return billDAO.queryBillBalanceRank(tradeDate, source, flag);
+            List<TransactionListEntity> list = billDAO.queryBillBalanceRank(tradeDate, source, flag);
+            if (!list.isEmpty()){
+                return list;
+            }
+            // 用户进入页面默认的当前时间
+            String now = DateUtils.getCurrentDateTime(DateUtils.dateFormat);
+            if (now.startsWith(tradeDate)){
+                // 查询所有数据，按最近的月份排序
+                return billDAO.queryBillBalanceRank(null, source, flag);
+            }
+            return Collections.emptyList();
         } catch (Exception e) {
             logger.error("查询指定月份中支出或收入排行失败:"+Log4jUtils.getTrace(e));
             logger.error(CurrentLineInfo.printCurrentLineInfo());

@@ -90,7 +90,10 @@
         FROM
             transaction_list a
         WHERE
-            a.source = #{source} AND a.tradeDate LIKE concat(#{tradeDate} , '%')
+            a.source = #{source}
+            <if test="tradeDate != null and tradeDate != ''">
+                and a.tradeDate like concat(#{tradeDate} , '%')
+            </if>
     </select>
 
     <resultMap id="returnBillOfAmountList" type="billOfAmount">
@@ -119,7 +122,10 @@
             FROM
                 transaction_list c
             WHERE
-                c.source = #{source} AND c.tradeDate LIKE concat(#{tradeDate} , '%')
+                c.source = #{source}
+                <if test="tradeDate != null and tradeDate != ''">
+                    and c.tradeDate like concat(#{tradeDate} , '%')
+                </if>
             GROUP BY
                 c.transactionAmount
         ) b ON a.id = b.transactionAmount
@@ -170,14 +176,19 @@
         LEFT JOIN transaction_amount b ON a.transactionAmount = b.id
         LEFT JOIN transaction_type c ON a.tradeType = c.id
         WHERE
-            a.source = #{source} AND a.tradeDate LIKE concat(#{tradeDate} , '%')
+            a.source = #{source}
+        <if test="tradeDate != null and tradeDate != ''">
+            and a.tradeDate like concat(#{tradeDate} , '%')
+        </if>
         <if test = 'flag != null and flag == 1'>
-            ORDER BY
-                a.deposited DESC
+            and b.flog = 1
+        ORDER BY
+            a.deposited DESC
         </if>
         <if test = 'flag != null and flag == -1'>
-            ORDER BY
-                a.expenditure DESC
+            and b.flog = 2
+        ORDER BY
+            a.expenditure DESC
         </if>
     </select>
 
