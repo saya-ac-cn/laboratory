@@ -200,9 +200,9 @@ public class CoreServiceImpl implements ICoreService {
                     entity.setBackgroundUrl(UploadUtils.descUrl(pictureUrl));
                 }
                 // 返回用户的个人信息
-                List<PlanEntity> todayPlan = planService.queryTodayPlan(userSession.getUser());
+                List<PlanEntity> todayPlan = planService.queryTodayPlan(user.getUser());
                 result.put("plan",todayPlan.isEmpty()?null:todayPlan);
-                result.put("log",logService.queryRecentlyLog(userSession.getUser()));
+                result.put("log",logService.queryRecentlyLog(user.getUser()));
                 result.put("user", entity);
                 // 记录本次登录
                 recordService.record("OX001", request);
