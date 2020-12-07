@@ -469,6 +469,7 @@ public class FinancialServiceImpl implements IFinancialService {
             //获取满足条件的总记录（不分页）
             Long pageSize = financialDeclareService.selectTransactionCount(entity);
             if (pageSize <= 0) {
+                response.addHeader("status","404");
                 return ResultUtil.error(-1, "没有可导出的数据");
             }
             //设置行索引
@@ -495,12 +496,15 @@ public class FinancialServiceImpl implements IFinancialService {
             response.setCharacterEncoding("UTF-8");
             //设置文件头：最后一个参数是设置下载文件名
             response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("财务流水.xlsx", "UTF-8"));
+            response.addHeader("status","200");
             ServletOutputStream out = response.getOutputStream();
             response.flushBuffer();
             OutExcelUtils.outExcelTemplateSimple(keys, titles, jsonObjectList, out);
         } catch (Exception e) {
             e.printStackTrace();
+            response.addHeader("status","500");
         }
+
         return null;
     }
 
