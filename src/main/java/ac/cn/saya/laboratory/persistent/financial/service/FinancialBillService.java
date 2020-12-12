@@ -54,10 +54,12 @@ public class FinancialBillService {
             if (!list.isEmpty()){
                 return list;
             }
-            String now = DateUtils.getCurrentDateTime(DateUtils.dateFormat);
-            String tradeDate = param.getTradeDate();
-            if (StringUtils.isEmpty(tradeDate) || now.startsWith(tradeDate)){
-                param.setTradeDate(null);
+            param.setTradeDate(null);
+            // 取出最新的账单
+            BillOfDayEntity latestBill = billDAO.queryBillByDayLatest(param);
+            if (null != latestBill && !StringUtils.isEmpty(latestBill.getTradeDate())){
+                // 用最新的账单时间进行查询
+                param.setTradeDate(latestBill.getTradeDate());
                 return billDAO.queryBillByDay(param);
             }
             return Collections.emptyList();
@@ -82,10 +84,12 @@ public class FinancialBillService {
             if (null != balance){
                 return balance;
             }
-            String now = DateUtils.getCurrentDateTime(DateUtils.dateFormat);
-            String tradeDate = param.getTradeDate();
-            if (StringUtils.isEmpty(tradeDate) || now.startsWith(tradeDate)) {
-                param.setTradeDate(null);
+            param.setTradeDate(null);
+            // 取出最新的账单
+            BillOfDayEntity latestBill = billDAO.totalBalanceLatest(param);
+            if (null != latestBill && !StringUtils.isEmpty(latestBill.getTradeDate())){
+                // 用最新的账单时间进行查询
+                param.setTradeDate(latestBill.getTradeDate());
                 return billDAO.totalBalance(param);
             }
             return null;
@@ -110,9 +114,11 @@ public class FinancialBillService {
             if (!list.isEmpty()){
                 return list;
             }
-            String now = DateUtils.getCurrentDateTime(DateUtils.dateFormat);
-            if (now.startsWith(tradeDate)){
-                return billDAO.totalBillByAmount(null, source, flag);
+            // 取出最新的账单
+            BillOfAmountEntity latestBill = billDAO.totalBillByAmountLatest(tradeDate, source, flag);
+            if (null != latestBill && !StringUtils.isEmpty(latestBill.getTradeDate())){
+                // 用最新的账单时间进行查询
+                return billDAO.totalBillByAmount(latestBill.getTradeDate(), source, flag);;
             }
             return Collections.emptyList();
         } catch (Exception e) {
@@ -136,11 +142,11 @@ public class FinancialBillService {
             if (!list.isEmpty()){
                 return list;
             }
-            // 用户进入页面默认的当前时间
-            String now = DateUtils.getCurrentDateTime(DateUtils.dateFormat);
-            if (now.startsWith(tradeDate)){
-                // 查询所有数据，按最近的月份排序
-                return billDAO.queryBillBalanceRank(null, source, flag);
+            // 取出最新的账单
+            TransactionListEntity latestBill = billDAO.queryBillBalanceRankLatest(tradeDate, source, flag);
+            if (null != latestBill && !StringUtils.isEmpty(latestBill.getTradeDate())){
+                // 用最新的账单时间进行查询
+                return billDAO.queryBillBalanceRank(latestBill.getTradeDate(), source, flag);
             }
             return Collections.emptyList();
         } catch (Exception e) {

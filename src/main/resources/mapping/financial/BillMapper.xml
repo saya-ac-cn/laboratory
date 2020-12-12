@@ -81,6 +81,61 @@
         order by a.billDate desc
     </select>
 
+    <!--按天分页查询账单(最新的)-->
+    <select id="queryBillByDayLatest" parameterType="transactionList" resultMap="returnBillOfDayList">
+        SELECT
+            a.*,
+            b.tradeId ,
+            b.deposited ,
+            b.expenditure ,
+            b.currencyNumber ,
+            b.transactionAmount ,
+            b.createTime ,
+            c.flog ,
+            c.tag ,
+            b.tradeType ,
+            d.transactionType
+        FROM
+            (
+                SELECT
+                    e.tradeDate AS billDate ,
+                    sum(e.deposited) AS billDeposited ,
+                    sum(e.expenditure) AS billExpenditure ,
+                    sum(e.currencyNumber) AS billCurrencyNumber
+                FROM
+                    transaction_list e
+                <where>
+                    <if test="tradeDate != null and tradeDate != ''">
+                        e.tradeDate like concat(#{tradeDate},"%")
+                    </if>
+                    <if test = "source != null and source != ''">
+                        and e.source  = #{source}
+                    </if>
+                    <if test="transactionAmount != null and transactionAmount != 0">
+                        and e.transactionAmount = #{transactionAmount}
+                    </if>
+                </where>
+                GROUP BY
+                    e.tradeDate
+            ) a
+        LEFT JOIN transaction_list b ON a.billDate = b.tradeDate
+        LEFT JOIN transaction_amount c ON b.transactionAmount = c.id
+        LEFT JOIN transaction_type d ON b.tradeType = d.id
+        <where>
+            <if test="tradeDate != null and tradeDate != ''">
+                b.tradeDate like concat(#{tradeDate},"%")
+            </if>
+            <if test = "source != null and source != ''">
+                and b.source  = #{source}
+            </if>
+            <if test="transactionAmount != null and transactionAmount != 0">
+                and b.transactionAmount = #{transactionAmount}
+            </if>
+        </where>
+        order by a.billDate desc
+        limit 1
+    </select>
+
     <!--统计指定月份的总收入和支出-->
     <select id="totalBalance" parameterType="billOfDay" resultType="billOfDay">
         SELECT
