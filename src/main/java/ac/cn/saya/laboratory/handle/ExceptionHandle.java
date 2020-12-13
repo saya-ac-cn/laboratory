@@ -1,11 +1,9 @@
 package ac.cn.saya.laboratory.handle;
 
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
+import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.Result;
 import ac.cn.saya.laboratory.tools.ResultUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,9 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ControllerAdvice
 public class ExceptionHandle {
 
-
-    private static final Logger logger = LoggerFactory.getLogger(ExceptionHandle.class);
-
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public Result<Object> handle(Exception e) {
@@ -27,7 +22,7 @@ public class ExceptionHandle {
             return ResultUtil.error(myException.getCode(), myException.getMessage());
         } else {
             //不在定义范围内的异常错误
-            logger.error("处理未能捕获的异常" + Log4jUtils.getTrace(e));
+            CurrentLineInfo.printCurrentLineInfo("处理未能捕获的异常", e, ExceptionHandle.class);
             return ResultUtil.error(-1, "未知错误");
         }
     }

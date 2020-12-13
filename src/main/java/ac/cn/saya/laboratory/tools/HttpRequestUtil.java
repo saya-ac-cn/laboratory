@@ -3,18 +3,14 @@ package ac.cn.saya.laboratory.tools;
 import ac.cn.saya.laboratory.entity.UserMemory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
@@ -30,9 +26,7 @@ import java.util.Map;
  */
 
 public class HttpRequestUtil {
-
-    private static Logger logger = LoggerFactory.getLogger(HttpRequestUtil.class);
-
+    
     /**
      * 向指定URL发送GET方法的请求
      *
@@ -78,8 +72,7 @@ public class HttpRequestUtil {
             }
             in.close();
         } catch (Exception e) {
-            logger.error("发送GET请求出现异常:" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("发送GET请求出现异常",e, HttpRequestUtil.class);
         }
         // 使用finally块来关闭输入流
         finally {
@@ -146,8 +139,7 @@ public class HttpRequestUtil {
                 result.append(line);
             }
         } catch (Exception e) {
-            logger.error("发送 POST 请求出现异常:" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("发送 POST 请求出现异常",e, HttpRequestUtil.class);
         }
         //使用finally块来关闭输出流、输入流
         finally {
@@ -217,8 +209,7 @@ public class HttpRequestUtil {
             bufferedReader.close();
             httpURLConnection.disconnect();
         } catch (Exception e) {
-            logger.error("发送GET请求出现异常:" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("发送GET请求出现异常",e, HttpRequestUtil.class);
         }
         if (stringBuffer == null) {
             return null;
@@ -269,8 +260,7 @@ public class HttpRequestUtil {
                 }
             }
         } catch (Exception e) {
-            logger.error("获取客户端IP异常:" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取客户端IP异常",e, HttpRequestUtil.class);
             ip = "获取失败";
         }
         if (null == ip){

@@ -4,10 +4,7 @@ import ac.cn.saya.laboratory.entity.NoteBookEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.business.dao.NoteBookDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.ResultEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,10 +23,8 @@ import java.util.List;
  * @Description: 笔记簿接口实现类
  */
 @Service("noteBookService")
-@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
+@Transactional(value = "primaryTransactionManager", readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = MyException.class)
 public class NoteBookService {
-
-    private static Logger logger = LoggerFactory.getLogger(NoteBookService.class);
 
     @Resource
     private NoteBookDAO noteBookDAO;
@@ -46,8 +41,7 @@ public class NoteBookService {
         try {
             return noteBookDAO.insertNoteBook(entity);
         } catch (Exception e) {
-            logger.error("创建笔记簿异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("创建笔记簿异常", e, NoteBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -64,8 +58,7 @@ public class NoteBookService {
         try {
             return noteBookDAO.updateNoteBook(entity);
         } catch (Exception e) {
-            logger.error("编辑修改笔记簿异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("编辑修改笔记簿异常", e, NoteBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -82,8 +75,7 @@ public class NoteBookService {
         try {
             return noteBookDAO.deleteNoteBook(entity);
         } catch (Exception e) {
-            logger.error("删除笔记簿异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("删除笔记簿异常", e, NoteBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -101,8 +93,7 @@ public class NoteBookService {
         try {
             return noteBookDAO.getOneNoteBook(entity);
         } catch (Exception e) {
-            logger.error("查询笔记簿异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询笔记簿异常", e, NoteBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -125,8 +116,7 @@ public class NoteBookService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("获取分页后的笔记簿发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取分页后的笔记簿发生异常", e, NoteBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -144,8 +134,7 @@ public class NoteBookService {
         try {
             return noteBookDAO.getNoteBookCount(entity);
         } catch (Exception e) {
-            logger.error("获取笔记簿总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取笔记簿总数时发生异常", e, NoteBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -168,8 +157,7 @@ public class NoteBookService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("获取笔记簿发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取笔记簿发生异常", e, NoteBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

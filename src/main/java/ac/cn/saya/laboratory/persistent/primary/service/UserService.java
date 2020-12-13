@@ -1,20 +1,13 @@
 package ac.cn.saya.laboratory.persistent.primary.service;
 
-import ac.cn.saya.laboratory.entity.LogEntity;
-import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.entity.ThirdUserEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.primary.dao.LogDAO;
-import ac.cn.saya.laboratory.persistent.business.dao.PlanDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.PrimaryBatchDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.ThirdUserDAO;
 import ac.cn.saya.laboratory.persistent.primary.dao.UserDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.ResultEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -23,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,9 +29,7 @@ import java.util.Map;
 @Service("userService")
 @Transactional(value = "primaryTransactionManager",readOnly = true,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class UserService {
-
-    private static Logger logger = LoggerFactory.getLogger(UserService.class);
-
+    
     @Resource
     private UserDAO userDAO;
 
@@ -63,8 +52,7 @@ public class UserService {
             query.setType(type);
             return thirdUserDAO.queryUserByOpenId(query);
         } catch (Exception e) {
-            logger.error("获取第三方用户信息失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取第三方用户信息失败",e, UserService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -84,8 +72,7 @@ public class UserService {
             }
             return result;
         } catch (Exception e) {
-            logger.error("更新第三方用户信息失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("更新第三方用户信息失败",e, UserService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -102,8 +89,7 @@ public class UserService {
         try {
             return userDAO.queryUser(user);
         } catch (Exception e) {
-            logger.error("获取用户信息失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取用户信息失败",e, UserService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -131,8 +117,7 @@ public class UserService {
             }
             return result;
         } catch (Exception e) {
-            logger.error("修改用户信息失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("修改用户信息失败",e, UserService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -149,8 +134,7 @@ public class UserService {
         try {
             return batchDAO.countPre6Logs(user);
         } catch (Exception e) {
-            logger.error("查询近半年活跃情况失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询近半年活跃情况失败",e, UserService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

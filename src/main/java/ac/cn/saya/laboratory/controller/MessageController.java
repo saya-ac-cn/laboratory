@@ -1,8 +1,8 @@
 package ac.cn.saya.laboratory.controller;
 
 import ac.cn.saya.laboratory.entity.*;
-import ac.cn.saya.laboratory.tools.Result;
 import ac.cn.saya.laboratory.service.impl.MessageServiceImpl;
+import ac.cn.saya.laboratory.tools.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;

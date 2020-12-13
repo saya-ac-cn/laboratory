@@ -27,8 +27,6 @@ import java.net.URLConnection;
 @Component("httpClientUtil")
 public class HttpClientUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpClientUtil.class);
-
     @Value("${wx.appid}")
     private String appId;
 
@@ -103,7 +101,7 @@ public class HttpClientUtil {
             JSONObject jsonObject = JSON.parseObject(sb.toString());
             return jsonObject;
         } catch (Exception e) {
-            logger.warn("调用微信接口异常：" + Log4jUtils.getTrace(e));
+            CurrentLineInfo.printCurrentLineInfo("调用微信接口异常",e, HttpClientUtil.class);
             return null;
         }
         // 使用finally块来关闭输入流
@@ -154,8 +152,7 @@ public class HttpClientUtil {
                 result += line;
             }
         } catch (Exception e) {
-            System.out.println("发送 POST 请求出现异常!" + e);
-            e.printStackTrace();
+            CurrentLineInfo.printCurrentLineInfo("发送 POST 请求出现异常",e, HttpClientUtil.class);
         }
         //使用finally块来关闭输出流、输入流
         finally {

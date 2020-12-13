@@ -4,7 +4,6 @@ import ac.cn.saya.laboratory.config.BusinessDataSourceWrapper;
 import ac.cn.saya.laboratory.config.FinancialDataSourceWrapper;
 import ac.cn.saya.laboratory.config.PrimaryDataSourceWrapper;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -48,8 +47,7 @@ public class LaboratoryApplication {
             //项目启动完成打印项目名
             logger.warn("实验室中心已经启动 ... ");
         } catch (Exception e) {
-            logger.error("实验室中心已经启动失败:",Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("实验室中心已经启动失败",e, LaboratoryApplication.class);
         }
     }
 

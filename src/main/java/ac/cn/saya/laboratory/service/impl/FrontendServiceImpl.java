@@ -6,8 +6,6 @@ import ac.cn.saya.laboratory.persistent.business.service.*;
 import ac.cn.saya.laboratory.service.IFrontendService;
 import ac.cn.saya.laboratory.tools.*;
 import com.alibaba.fastjson.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -34,8 +32,6 @@ import java.util.Map;
  */
 @Service("frontendServiceImpl")
 public class FrontendServiceImpl implements IFrontendService {
-
-    private static Logger logger = LoggerFactory.getLogger(FrontendServiceImpl.class);
 
     @Resource
     @Qualifier("newsService")
@@ -257,6 +253,7 @@ public class FrontendServiceImpl implements IFrontendService {
 
     /**
      * 查看行程安排
+     *
      * @描述
      * @参数 [data, request]
      * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>

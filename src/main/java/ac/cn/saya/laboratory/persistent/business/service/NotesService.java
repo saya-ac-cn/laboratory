@@ -3,14 +3,10 @@ package ac.cn.saya.laboratory.persistent.business.service;
 import ac.cn.saya.laboratory.entity.NotesEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.business.dao.BusinessBatchDAO;
-import ac.cn.saya.laboratory.persistent.primary.dao.PrimaryBatchDAO;
 import ac.cn.saya.laboratory.persistent.business.dao.NotesDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.HtmlUtils;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.ResultEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -32,10 +28,8 @@ import java.util.stream.Collectors;
  * @Description: 笔记接口实现类
  */
 @Service("notesService")
-@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
+@Transactional(value = "primaryTransactionManager", readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = MyException.class)
 public class NotesService {
-
-    private static Logger logger = LoggerFactory.getLogger(NotesService.class);
 
     @Resource
     private NotesDAO notesDAO;
@@ -56,8 +50,7 @@ public class NotesService {
         try {
             return notesDAO.insertNotes(entity);
         } catch (Exception e) {
-            logger.error("创建笔记异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("创建笔记异常", e, NotesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -74,8 +67,7 @@ public class NotesService {
         try {
             return notesDAO.updateNotes(entity);
         } catch (Exception e) {
-            logger.error("编辑修改笔记异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("编辑修改笔记异常", e, NotesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -92,8 +84,7 @@ public class NotesService {
         try {
             return notesDAO.deleteNotes(entity);
         } catch (Exception e) {
-            logger.error("删除笔记异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("删除笔记异常", e, NotesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -111,8 +102,7 @@ public class NotesService {
         try {
             return notesDAO.getOneNotes(entity);
         } catch (Exception e) {
-            logger.error("查询笔记异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询笔记异常", e, NotesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -135,13 +125,12 @@ public class NotesService {
             }
             // 过滤文本
             list = list.stream().map(item -> {
-                item.setContent(HtmlUtils.SplitHtmlText(item.getContent(),150));
+                item.setContent(HtmlUtils.SplitHtmlText(item.getContent(), 150));
                 return item;
             }).collect(Collectors.toList());
             return list;
         } catch (Exception e) {
-            logger.error("获取分页后的笔记发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取分页后的笔记发生异常", e, NotesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -159,8 +148,7 @@ public class NotesService {
         try {
             return notesDAO.getNotesCount(entity);
         } catch (Exception e) {
-            logger.error("获取笔记总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取笔记总数时发生异常", e, NotesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -168,7 +156,7 @@ public class NotesService {
     /**
      * @描述 查询指定id附近的笔记
      * @参数 [notesId]
-     * @返回值 java.util.Map<java.lang.String   ,   java.lang.String>
+     * @返回值 java.util.Map<java.lang.String, java.lang.String>
      * @创建人 saya.ac.cn-刘能凯
      * @创建时间 2019-04-02
      * @修改人和其它信息
@@ -178,8 +166,7 @@ public class NotesService {
         try {
             return batchDAO.getNewsNotesPreAndNext(2, notesId);
         } catch (Exception e) {
-            logger.error("获取上下笔记时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取上下笔记时发生异常", e, NotesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

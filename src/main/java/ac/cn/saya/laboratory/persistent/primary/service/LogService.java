@@ -2,14 +2,10 @@ package ac.cn.saya.laboratory.persistent.primary.service;
 
 import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.LogTypeEntity;
-import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.primary.dao.LogDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.ResultEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -18,9 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @描述 用户业务层实现类
@@ -38,8 +32,6 @@ import java.util.Map;
 @Service("logService")
 @Transactional(value = "primaryTransactionManager",readOnly = true,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class LogService {
-
-    private static Logger logger = LoggerFactory.getLogger(LogService.class);
 
     @Resource
     @Qualifier("logDAO")
@@ -59,8 +51,7 @@ public class LogService {
             // 查询用户最近的操作
             log = logDAO.queryRecentlyLog(user);
         } catch (Exception e) {
-            logger.error("查询用户最近的操作失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询用户最近的操作失败",e, LogService.class);
         }
         return log;
     }
@@ -87,8 +78,7 @@ public class LogService {
             }
             return flog;
         } catch (Exception e) {
-            logger.error("插入日志时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("插入日志时发生异常",e, LogService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -110,8 +100,7 @@ public class LogService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("查询日志类别时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询日志类别时发生异常",e, LogService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -133,8 +122,7 @@ public class LogService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("查询日志时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询日志时发生异常",e, LogService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -151,8 +139,7 @@ public class LogService {
         try {
             return logDAO.selectCount(entity);
         } catch (Exception e) {
-            logger.error("统计日志总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("统计日志总数时发生异常",e, LogService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

@@ -22,6 +22,14 @@ import java.util.List;
 public interface BillDAO {
 
     /**
+     * 获取指定用户下最近的一次交易
+     *
+     * @param source 用户
+     * @return
+     */
+    public TransactionListEntity queryLatestBillByUser(@Param("source") String source);
+
+    /**
      * 按天分页查询账单
      * @param param 其中时间参数 为月格式：2020-10
      * @return
@@ -34,6 +42,7 @@ public interface BillDAO {
      * @return
      */
     public BillOfDayEntity totalBalance(BillOfDayEntity param);
+
 
     /**
      * 统计指定月份中各摘要的收支情况（flag=-1）或收入（flag=1）

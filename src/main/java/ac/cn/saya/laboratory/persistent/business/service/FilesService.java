@@ -5,10 +5,7 @@ import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.business.dao.BusinessBatchDAO;
 import ac.cn.saya.laboratory.persistent.business.dao.FilesDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.ResultEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -32,10 +29,7 @@ import java.util.Map;
 @Service("filesService")
 @Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class FilesService {
-
-
-    private static Logger logger = LoggerFactory.getLogger(FilesService.class);
-
+    
     @Resource
     @Qualifier("businessBatchDAO")
     private BusinessBatchDAO batchDAO;
@@ -55,8 +49,7 @@ public class FilesService {
         try {
             return filesDAO.insertFile(entity);
         } catch (Exception e) {
-            logger.error("添加文件上传记录异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("添加文件上传记录异常",e, FilesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -73,8 +66,7 @@ public class FilesService {
         try {
             return filesDAO.updateFile(entity);
         } catch (Exception e) {
-            logger.error("保存修改文件记录异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("保存修改文件记录异常",e, FilesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -91,8 +83,7 @@ public class FilesService {
         try {
             return filesDAO.deleteFile(entity);
         } catch (Exception e) {
-            logger.error("删除文件记录异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("删除文件记录异常",e, FilesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -115,8 +106,7 @@ public class FilesService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("查询分页后的文件列表发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询分页后的文件列表发生异常",e, FilesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -134,8 +124,7 @@ public class FilesService {
         try {
             return filesDAO.getFileCount(entity);
         } catch (Exception e) {
-            logger.error("查询文件总数异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询文件总数异常",e, FilesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -153,8 +142,7 @@ public class FilesService {
         try {
             return filesDAO.getOneFile(entity);
         } catch (Exception e) {
-            logger.error("获取一条文件信息异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取一条文件信息异常",e, FilesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -171,8 +159,7 @@ public class FilesService {
         try {
             return batchDAO.countPre6Files(user);
         } catch (Exception e) {
-            logger.error("查询近半年文件上传情况失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询近半年文件上传情况失败",e, FilesService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

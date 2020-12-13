@@ -1,10 +1,6 @@
 package ac.cn.saya.laboratory.thread;
 
-import ac.cn.saya.laboratory.service.impl.SystemServiceImpl;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.concurrent.Callable;
@@ -19,8 +15,6 @@ import java.util.concurrent.Callable;
  */
 
 public class MysqlDumpThread implements Callable<Boolean> {
-
-    private static Logger logger = LoggerFactory.getLogger(SystemServiceImpl.class);
 
     /**
      * MySQL数据库所在服务器地址IP
@@ -113,8 +107,7 @@ public class MysqlDumpThread implements Callable<Boolean> {
                 result = true;
             }
         } catch (IOException e) {
-            logger.error("备份数据库异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("备份数据库异常",e, MysqlDumpThread.class);
         } finally {
             try {
                 if (bufferedReader != null) {

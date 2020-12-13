@@ -3,10 +3,8 @@ package ac.cn.saya.laboratory.service.impl;
 import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.UserMemory;
 import ac.cn.saya.laboratory.persistent.primary.service.LogService;
+import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.DateUtils;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 
 @Service("recordService")
 public class RecordService {
-
-    private static Logger logger = LoggerFactory.getLogger(RecordService.class);
 
     @Resource
     @Qualifier("logService")
@@ -49,8 +45,7 @@ public class RecordService {
             LogEntity entity = new LogEntity(user.getUser(), type, user.getIp(), user.getCity(), datetime);
             logService.insert(entity);
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.warn("记录日志异常" + Log4jUtils.getTrace(e));
+            CurrentLineInfo.printCurrentLineInfo("记录日志异常", e, RecordService.class);
         }
     }
 

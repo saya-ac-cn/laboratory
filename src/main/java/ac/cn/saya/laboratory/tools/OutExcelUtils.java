@@ -6,8 +6,6 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletOutputStream;
 import java.util.List;
@@ -23,8 +21,6 @@ import java.util.List;
  */
 
 public class OutExcelUtils {
-
-    private static Logger logger = LoggerFactory.getLogger(OutExcelUtils.class);
 
     /**
      * 导出到xlsx文件，这里是单行标题不含嵌套
@@ -71,8 +67,7 @@ public class OutExcelUtils {
             out.flush();
             out.close();
         }catch(Exception e){
-            logger.error("导出Excel失败"+ Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("导出Excel失败",e, OutExcelUtils.class);
         }
     }
 

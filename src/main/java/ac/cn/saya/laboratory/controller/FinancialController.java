@@ -1,6 +1,5 @@
 package ac.cn.saya.laboratory.controller;
 
-import ac.cn.saya.laboratory.entity.BillOfAmountEntity;
 import ac.cn.saya.laboratory.entity.BillOfDayEntity;
 import ac.cn.saya.laboratory.entity.TransactionInfoEntity;
 import ac.cn.saya.laboratory.entity.TransactionListEntity;

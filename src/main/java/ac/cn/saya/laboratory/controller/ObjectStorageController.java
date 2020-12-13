@@ -3,8 +3,8 @@ package ac.cn.saya.laboratory.controller;
 import ac.cn.saya.laboratory.entity.BackupLogEntity;
 import ac.cn.saya.laboratory.entity.FilesEntity;
 import ac.cn.saya.laboratory.entity.PictureEntity;
-import ac.cn.saya.laboratory.tools.Result;
 import ac.cn.saya.laboratory.service.impl.ObjectStorageServiceImpl;
+import ac.cn.saya.laboratory.tools.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
 
 /**
  * 对象存储控制器

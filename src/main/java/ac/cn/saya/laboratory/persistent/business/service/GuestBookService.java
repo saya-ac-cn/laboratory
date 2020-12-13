@@ -4,10 +4,7 @@ import ac.cn.saya.laboratory.entity.GuestBookEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.business.dao.GuestBookDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.ResultEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,11 +24,8 @@ import java.util.List;
  */
 
 @Service("guestBookService")
-@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
+@Transactional(value = "primaryTransactionManager", readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = MyException.class)
 public class GuestBookService {
-
-
-    private static Logger logger = LoggerFactory.getLogger(GuestBookService.class);
 
     @Resource
     private GuestBookDAO guestBookDAO;
@@ -48,8 +42,7 @@ public class GuestBookService {
         try {
             return guestBookDAO.insertGuestBook(entity);
         } catch (Exception e) {
-            logger.error("用户留言异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("用户留言异常", e, GuestBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -66,8 +59,7 @@ public class GuestBookService {
         try {
             return guestBookDAO.updateGuestBook(entity);
         } catch (Exception e) {
-            logger.error("审核修改留言异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("审核修改留言异常", e, GuestBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -85,8 +77,7 @@ public class GuestBookService {
         try {
             return guestBookDAO.getOneGuestBook(entity);
         } catch (Exception e) {
-            logger.error("查询动态异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询动态异常", e, GuestBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -109,8 +100,7 @@ public class GuestBookService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("获取分页后的留言发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取分页后的留言发生异常", e, GuestBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -128,8 +118,7 @@ public class GuestBookService {
         try {
             return guestBookDAO.getGuestBookCount(entity);
         } catch (Exception e) {
-            logger.error("获取留言总数异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取留言总数异常", e, GuestBookService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

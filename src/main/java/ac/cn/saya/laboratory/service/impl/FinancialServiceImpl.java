@@ -443,7 +443,12 @@ public class FinancialServiceImpl implements IFinancialService {
     @Override
     public Result<Object> deleteTransactioninfo(TransactionInfoEntity entity, HttpServletRequest request) throws MyException {
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        Result<Object> result = financialDeclareService.deleteTransactioninfo(entity, userSession.getUser());
+        Result<Object> result = null;
+        try {
+            result = financialDeclareService.deleteTransactioninfo(entity, userSession.getUser());
+        } catch (Exception e) {
+            throw new MyException(ResultEnum.ERROP);
+        }
         if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
             recordService.record("OX030", request);
         }

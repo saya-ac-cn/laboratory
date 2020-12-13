@@ -1,14 +1,10 @@
 package ac.cn.saya.laboratory.persistent.business.service;
 
-import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.business.dao.PlanDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.ResultEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Title: PlanService
@@ -32,8 +26,6 @@ import java.util.Map;
 @Service("planService")
 @Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class PlanService {
-
-    private static Logger logger = LoggerFactory.getLogger(PlanService.class);
 
     @Resource
     private PlanDAO planDAO;
@@ -52,8 +44,7 @@ public class PlanService {
             // 查询用户当日安排
             plan = planDAO.getTodayPlanListByUser(user);
         } catch (Exception e) {
-            logger.error("查询用户当日安排失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询用户当日安排失败",e, PlanService.class);
         }
         return plan;
     }
@@ -78,8 +69,7 @@ public class PlanService {
             }
             return flog;
         } catch (Exception e) {
-            logger.error("发布计划安排异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("发布计划安排异常",e, PlanService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -122,8 +112,7 @@ public class PlanService {
             }
             return flog;
         } catch (Exception e) {
-            logger.error("编辑修改计划安排异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("编辑修改计划安排异常",e, PlanService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -140,8 +129,7 @@ public class PlanService {
         try {
             return planDAO.deletePlan(entity);
         } catch (Exception e) {
-            logger.error("删除计划安排异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("删除计划安排异常",e, PlanService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -159,8 +147,7 @@ public class PlanService {
         try {
             return planDAO.getOnePlan(entity);
         } catch (Exception e) {
-            logger.error("查询一条计划安排异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询一条计划安排异常",e, PlanService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -182,8 +169,7 @@ public class PlanService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("获取计划安排列表异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取计划安排列表异常",e, PlanService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -201,8 +187,7 @@ public class PlanService {
         try {
             return planDAO.getPlanCount(entity);
         } catch (Exception e) {
-            logger.error("统计计划总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("统计计划总数时发生异常",e, PlanService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -217,16 +202,14 @@ public class PlanService {
      */
     @Transactional(readOnly = true)
     public List<PlanEntity> getTodayPlanList() {
-        List<PlanEntity> list = new ArrayList<>();
         try {
-            list = planDAO.getTodayPlanList();
+            List<PlanEntity> list = planDAO.getTodayPlanList();
             if (list.size() <= 0) {
                 list = null;
             }
             return list;
         } catch (Exception e) {
-            logger.error("获取当天的计划内容异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取当天的计划内容异常",e, PlanService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

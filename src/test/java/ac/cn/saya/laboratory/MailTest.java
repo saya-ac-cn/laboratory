@@ -2,20 +2,12 @@ package ac.cn.saya.laboratory;
 
 import ac.cn.saya.laboratory.service.impl.MailService;
 import ac.cn.saya.laboratory.service.impl.SystemServiceImpl;
-import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.DateUtils;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
-import ac.cn.saya.laboratory.tools.RandomUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import javax.annotation.Resource;
-import java.io.File;
 
 /**
  * @Title: MailTest
@@ -40,7 +32,7 @@ public class MailTest {
     private SystemServiceImpl service;
 
     @Test
-    public void mysqlDump(){
+    public void mysqlDump() {
         service.backupDatabase();
     }
 
@@ -56,7 +48,6 @@ public class MailTest {
         String emailContent = templateEngine.process("mail/backUpDB", context);
         //mailService.sendHtmlMail("pandoras@189.cn","数据库备份结果报告",emailContent);
     }
-
 
 
 }

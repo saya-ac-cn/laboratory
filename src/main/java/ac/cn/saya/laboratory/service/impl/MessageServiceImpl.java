@@ -8,8 +8,6 @@ import ac.cn.saya.laboratory.tools.Paging;
 import ac.cn.saya.laboratory.tools.Result;
 import ac.cn.saya.laboratory.tools.ResultEnum;
 import ac.cn.saya.laboratory.tools.ResultUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -28,8 +26,6 @@ import java.util.List;
  */
 @Service("messageServiceImpl")
 public class MessageServiceImpl implements IMessageService {
-
-    private static Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
 
     @Resource
     @Qualifier("recordService")//日志助手表

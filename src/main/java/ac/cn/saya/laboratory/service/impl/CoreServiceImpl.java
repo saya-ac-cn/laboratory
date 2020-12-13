@@ -5,12 +5,11 @@ import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.handle.RepeatLogin;
 import ac.cn.saya.laboratory.persistent.business.service.*;
 import ac.cn.saya.laboratory.persistent.financial.service.FinancialDeclareService;
-import ac.cn.saya.laboratory.persistent.primary.service.*;
+import ac.cn.saya.laboratory.persistent.primary.service.LogService;
+import ac.cn.saya.laboratory.persistent.primary.service.UserService;
 import ac.cn.saya.laboratory.service.ICoreService;
 import ac.cn.saya.laboratory.tools.*;
 import com.alibaba.fastjson.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -39,8 +38,6 @@ import java.util.concurrent.CompletableFuture;
 
 @Service("coreServiceImpl")
 public class CoreServiceImpl implements ICoreService {
-
-    private static Logger logger = LoggerFactory.getLogger(CoreServiceImpl.class);
 
     @Resource
     @Qualifier("userService")
@@ -259,7 +256,7 @@ public class CoreServiceImpl implements ICoreService {
             // 返回含有用户openid的信息
             return ResultUtil.success(wxInfo);
         } catch (Exception e) {
-            logger.warn("获取微信用户信息异常：" + Log4jUtils.getTrace(e));
+            CurrentLineInfo.printCurrentLineInfo("获取微信用户信息异常",e, CoreServiceImpl.class);
             return ResultUtil.error(-100010202, "获取微信用户信息异常");
         }
     }

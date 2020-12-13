@@ -9,8 +9,6 @@ import ac.cn.saya.laboratory.persistent.financial.dao.FinancialBatchDAO;
 import ac.cn.saya.laboratory.persistent.financial.dao.TransactionReadDAO;
 import ac.cn.saya.laboratory.persistent.financial.dao.TransactionWriteDAO;
 import ac.cn.saya.laboratory.tools.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -33,8 +31,6 @@ import java.util.List;
 @Service("financialDeclareService")
 @Transactional(value = "financialTransactionManager",readOnly = true,propagation= Propagation.REQUIRED, isolation= Isolation.SERIALIZABLE, rollbackFor=MyException.class)
 public class FinancialDeclareService {
-
-    private static Logger logger = LoggerFactory.getLogger(FinancialDeclareService.class);
 
     @Resource
     @Qualifier("transactionWriteDAO")
@@ -60,8 +56,7 @@ public class FinancialDeclareService {
         try {
             return batchDAO.countPre6Financial(user);
         } catch (Exception e) {
-            logger.error("查询近半年财政收支情况失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询近半年财政收支情况失败",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -79,8 +74,7 @@ public class FinancialDeclareService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("查询交易类别时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询交易类别时发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -98,8 +92,7 @@ public class FinancialDeclareService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("查询交易摘要时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询交易摘要时发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -115,8 +108,7 @@ public class FinancialDeclareService {
         try {
             return transactionReadDAO.selectTransactionPage(entity);
         } catch (Exception e) {
-            logger.error("查看流水时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查看流水时发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -132,8 +124,7 @@ public class FinancialDeclareService {
         try {
             return transactionReadDAO.selectTransactionCount(entity);
         } catch (Exception e) {
-            logger.error("查看流水总数总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查看流水总数总数时发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -152,8 +143,7 @@ public class FinancialDeclareService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("查看流水明细发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查看流水明细发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -168,8 +158,7 @@ public class FinancialDeclareService {
         try {
             return transactionReadDAO.selectTransactionInfoCount(entity);
         } catch (Exception e) {
-            logger.error("查看查看流水明细总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查看查看流水明细总数时发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -184,8 +173,7 @@ public class FinancialDeclareService {
         try {
             return transactionReadDAO.selectTransactionFinalPage(entity);
         } catch (Exception e) {
-            logger.error("查询详细的流水明细发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询详细的流水明细发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -200,8 +188,7 @@ public class FinancialDeclareService {
         try {
             return transactionReadDAO.selectTransactionFinalCount(entity);
         } catch (Exception e) {
-            logger.error("查询详细的流水明细总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询详细的流水明细总数时发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -216,8 +203,7 @@ public class FinancialDeclareService {
         try {
             return transactionReadDAO.selectTransactionForDayPage(entity);
         } catch (Exception e) {
-            logger.error("按天分页统计财务报表异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("按天分页统计财务报表异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -232,8 +218,7 @@ public class FinancialDeclareService {
         try {
             return transactionReadDAO.selectTransactionForDayCount(entity);
         } catch (Exception e) {
-            logger.error("按天统计财务报表流水总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("按天统计财务报表流水总数时发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -248,8 +233,7 @@ public class FinancialDeclareService {
         try {
             return transactionReadDAO.selectTransactionForMonthPage(entity);
         } catch (Exception e) {
-            logger.error("按月分页统计（只统计到上月的最后一天）异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("按月分页统计（只统计到上月的最后一天）异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -264,8 +248,7 @@ public class FinancialDeclareService {
         try {
             return transactionReadDAO.selectTransactionForMonthCount(entity);
         } catch (Exception e) {
-            logger.error("按月统计（只统计到上月的最后一天）总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("按月统计（只统计到上月的最后一天）总数时发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -280,8 +263,7 @@ public class FinancialDeclareService {
         try {
             return transactionReadDAO.selectTransactionForYearPage(entity);
         } catch (Exception e) {
-            logger.error("按年分页统计（只统计到上一年的最后一天）异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("按年分页统计（只统计到上一年的最后一天）异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -296,8 +278,7 @@ public class FinancialDeclareService {
         try {
             return transactionReadDAO.selectTransactionForYearCount(entity);
         } catch (Exception e) {
-            logger.error("按年统计（只统计到上一年的最后一天）总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("按年统计（只统计到上一年的最后一天）总数时发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -326,7 +307,6 @@ public class FinancialDeclareService {
                 if (item.getFlog() == 2) {
                     // 支取
                     takeMoney = takeMoney.add(item.getCurrencyNumber());
-                    continue;
                 }
             }
             // 当日发生总金额（存入+支取）
@@ -351,12 +331,11 @@ public class FinancialDeclareService {
                 }
                 return ResultUtil.success();
             } else {
-                logger.warn("添加财政记录父+子异常");
+                CurrentLineInfo.printCurrentLineInfo("添加财政记录父+子异常","数据库返回修改结果标志异常", FinancialDeclareService.class);
                 throw new MyException(ResultEnum.ERROP);
             }
         } catch (MyException e) {
-            logger.warn("添加财政记录父+子异常");
-            logger.error("添加财政记录父+子异常,{}",e.getMessage());
+            CurrentLineInfo.printCurrentLineInfo("添加财政记录父+子异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -383,12 +362,12 @@ public class FinancialDeclareService {
                 if (transactionWriteDAO.updateTransactionList(entity) > 0) {
                     return ResultUtil.success();
                 } else {
-                    logger.warn("修改财政记录异常");
+                    CurrentLineInfo.printCurrentLineInfo("查询近半年财政收支情况失败","数据库返回修改结果标志异常", FinancialDeclareService.class);
                     throw new MyException(ResultEnum.DB_ERROR);
                 }
             } catch (MyException e) {
                 e.printStackTrace();
-                logger.warn("修改财政记录父异常");
+                CurrentLineInfo.printCurrentLineInfo("修改财政记录父异常",e, FinancialDeclareService.class);
                 throw new MyException(ResultEnum.DB_ERROR);
             }
         }
@@ -420,7 +399,7 @@ public class FinancialDeclareService {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.warn("删除财政记录父+子异常");
+                CurrentLineInfo.printCurrentLineInfo("删除财政记录父+子异常",e, FinancialDeclareService.class);
                 throw new MyException(ResultEnum.DB_ERROR);
             }
         }
@@ -495,11 +474,11 @@ public class FinancialDeclareService {
                     return ResultUtil.error(-1, "财政父表数据丢失");
                 }
             } else {
-                logger.warn("写入财政字表失败");
+                CurrentLineInfo.printCurrentLineInfo("查询近半年财政收支情况失败","写入财政字表失败", FinancialDeclareService.class);
                 throw new MyException(ResultEnum.ERROP);
             }
         } else {
-            logger.warn("写入财政子表失败");
+            CurrentLineInfo.printCurrentLineInfo("查询近半年财政收支情况失败","写入财政子表失败", FinancialDeclareService.class);
             throw new MyException(ResultEnum.ERROP);
         }
     }
@@ -573,11 +552,11 @@ public class FinancialDeclareService {
                     return ResultUtil.error(-1, "财政父表数据丢失");
                 }
             } else {
-                logger.warn("修改财政子表失败");
+                CurrentLineInfo.printCurrentLineInfo("查询近半年财政收支情况失败","修改财政子表失败", FinancialDeclareService.class);
                 throw new MyException(ResultEnum.ERROP);
             }
         } else {
-            logger.warn("修改财政子表失败");
+            CurrentLineInfo.printCurrentLineInfo("查询近半年财政收支情况失败","修改财政子表失败", FinancialDeclareService.class);
             throw new MyException(ResultEnum.ERROP);
         }
     }
@@ -602,75 +581,76 @@ public class FinancialDeclareService {
         // 财政子表记录总行数
         Long itemConut = transactionReadDAO.selectTransactionInfoCount(queryEntity);
         if (itemConut > 0) {
-            if (itemConut == 1 || itemConut.equals(1)) {
-                // 只有一条记录时，直接调用父表的方法级联删除即可
-                if (transactionWriteDAO.deleteTransactionList(entity.getTradeId(), user) > 0) {
-                    return ResultUtil.success("End");
-                } else {
-                    return ResultUtil.error(-1, "删除失败");
-                }
-            } else {
-                // 先删除子表，然后修改父表的值
-                if (transactionWriteDAO.deleteTransactionInfo(entity.getId()) > 0) {
-                    // 查询本流水号下的所有子记录
-                    // 财政子表记录总行数
-                    itemConut = transactionReadDAO.selectTransactionInfoCount(queryEntity);
-                    if (itemConut > 0) {
-                        queryEntity.setStartLine(0);
-                        queryEntity.setEndLine(itemConut.intValue());
-                        List<TransactionInfoEntity> itemList = transactionReadDAO.selectTransactionInfoPage(queryEntity);
-                        // 存入总金额
-                        BigDecimal saveMoney = new BigDecimal("0.0");
-                        // 支取总金额
-                        BigDecimal takeMoney = new BigDecimal("0.0");
-                        TransactionListEntity queryParentEntity = new TransactionListEntity();
-                        // 根据主键进行查询，最多只能有一条
-                        queryParentEntity.setTradeId(entity.getTradeId());
-                        queryParentEntity.setStartLine(0);
-                        queryParentEntity.setEndLine(1);
-                        List<TransactionListEntity> transactionPage = transactionReadDAO.selectTransactionPage(queryParentEntity);
-                        if (transactionPage.size() > 0) {
-                            TransactionListEntity writeEntity = transactionPage.get(0);
-                            for (TransactionInfoEntity item : itemList) {
-                                if (item.getFlog() == 1) {
-                                    // 存入
-                                    saveMoney = saveMoney.add(item.getCurrencyNumber());
-                                    continue;
-                                }
-                                if (item.getFlog() == 2) {
-                                    // 支取
-                                    takeMoney = takeMoney.add(item.getCurrencyNumber());
-                                    continue;
-                                }
-                            }
-                            // 当日发生总金额（存入+支取）
-                            BigDecimal happenMoney = new BigDecimal(saveMoney.toString()).add(takeMoney);
-                            // 设置存入总金额
-                            writeEntity.setDeposited(saveMoney);
-                            // 设置支取总金额
-                            writeEntity.setExpenditure(takeMoney);
-                            // 设置交易总金额
-                            writeEntity.setCurrencyNumber(happenMoney);
-                            //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-                            writeEntity.setSource(user);
-                            // 开始写入父表的数据
-                            if (transactionWriteDAO.updateTransactionList(writeEntity) > 0) {
-                                // 删除后父表及子表还有相关数据，返回前端Exist，不关闭弹框
-                                return ResultUtil.success("Exist");
-                            } else {
-                                throw new MyException(ResultEnum.RollBACK);
-                            }
-                        } else {
-                            return ResultUtil.error(-1, "财政父表数据丢失");
-                        }
-                    } else {
-                        logger.warn("修改财政子表失败");
-                        throw new MyException(ResultEnum.ERROP);
+            try {
+                if (itemConut == 1 || itemConut.equals(1)) {
+                    // 只有一条记录时，直接调用父表的方法级联删除即可
+                    if (transactionWriteDAO.deleteTransactionList(entity.getTradeId(), user) > 0) {
+                        return ResultUtil.success("End");
                     }
                 } else {
-                    return ResultUtil.error(-1, "删除失败");
+                    // 先删除子表，然后修改父表的值
+                    if (transactionWriteDAO.deleteTransactionInfo(entity.getId()) > 0) {
+                        // 查询本流水号下的所有子记录
+                        // 财政子表记录总行数
+                        itemConut = transactionReadDAO.selectTransactionInfoCount(queryEntity);
+                        if (itemConut > 0) {
+                            queryEntity.setStartLine(0);
+                            queryEntity.setEndLine(itemConut.intValue());
+                            List<TransactionInfoEntity> itemList = transactionReadDAO.selectTransactionInfoPage(queryEntity);
+                            // 存入总金额
+                            BigDecimal saveMoney = new BigDecimal("0.0");
+                            // 支取总金额
+                            BigDecimal takeMoney = new BigDecimal("0.0");
+                            TransactionListEntity queryParentEntity = new TransactionListEntity();
+                            // 根据主键进行查询，最多只能有一条
+                            queryParentEntity.setTradeId(entity.getTradeId());
+                            queryParentEntity.setStartLine(0);
+                            queryParentEntity.setEndLine(1);
+                            List<TransactionListEntity> transactionPage = transactionReadDAO.selectTransactionPage(queryParentEntity);
+                            if (transactionPage.size() > 0) {
+                                TransactionListEntity writeEntity = transactionPage.get(0);
+                                for (TransactionInfoEntity item : itemList) {
+                                    if (item.getFlog() == 1) {
+                                        // 存入
+                                        saveMoney = saveMoney.add(item.getCurrencyNumber());
+                                        continue;
+                                    }
+                                    if (item.getFlog() == 2) {
+                                        // 支取
+                                        takeMoney = takeMoney.add(item.getCurrencyNumber());
+                                        continue;
+                                    }
+                                }
+                                // 当日发生总金额（存入+支取）
+                                BigDecimal happenMoney = new BigDecimal(saveMoney.toString()).add(takeMoney);
+                                // 设置存入总金额
+                                writeEntity.setDeposited(saveMoney);
+                                // 设置支取总金额
+                                writeEntity.setExpenditure(takeMoney);
+                                // 设置交易总金额
+                                writeEntity.setCurrencyNumber(happenMoney);
+                                //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
+                                writeEntity.setSource(user);
+                                // 开始写入父表的数据
+                                if (transactionWriteDAO.updateTransactionList(writeEntity) > 0) {
+                                    // 删除后父表及子表还有相关数据，返回前端Exist，不关闭弹框
+                                    return ResultUtil.success("Exist");
+                                } else {
+                                    throw new MyException(ResultEnum.RollBACK);
+                                }
+                            } else {
+                                return ResultUtil.error(-1, "财政父表数据丢失");
+                            }
+                        } else {
+                            CurrentLineInfo.printCurrentLineInfo("修改财政子表失败","数据库修改异常", FinancialDeclareService.class);
+                            throw new MyException(ResultEnum.ERROP);
+                        }
+                    }
                 }
+            } catch (MyException e) {
+                CurrentLineInfo.printCurrentLineInfo("删除财政子记录",e, FinancialDeclareService.class);
             }
+            return ResultUtil.error(-1, "删除失败");
         } else {
             return ResultUtil.error(-1, "记录已经不存在");
         }

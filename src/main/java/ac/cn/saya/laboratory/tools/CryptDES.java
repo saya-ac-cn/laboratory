@@ -11,7 +11,7 @@ import sun.misc.BASE64Encoder;
 
 public  class CryptDES {
 
-    private static byte[] desKey="********".getBytes();//设置默认的密钥
+    private static byte[] desKey="Pandora520815".getBytes();//设置默认的密钥
 
     /**
      * java加密：0vDVbS4Bzi7Zzop7XrsbdQ==

@@ -35,8 +35,6 @@ import java.util.concurrent.FutureTask;
 @Service("systemServiceImpl")
 public class SystemServiceImpl implements SystemService {
 
-    private static Logger logger = LoggerFactory.getLogger(SystemServiceImpl.class);
-
     @Value("${backup.dburl}")
     private String dburl;
 
@@ -108,11 +106,9 @@ public class SystemServiceImpl implements SystemService {
                 sendBackUpMail(executeTime, "失败", "-");
             }
         } catch (ExecutionException e){
-            logger.error("备份数据库计划异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("备份数据库计划异常",e,SystemServiceImpl.class);
         }catch (InterruptedException e) {
-            logger.error("备份数据库计划异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("备份数据库计划异常",e,SystemServiceImpl.class);
         }
         return false;
     }
@@ -147,8 +143,7 @@ public class SystemServiceImpl implements SystemService {
                 backupLogService.deleteBackup(queryEntity);
             }
         } catch (Exception e) {
-            logger.error("清理备份数据库计划异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("清理备份数据库计划异常",e,SystemServiceImpl.class);
         }
         return false;
     }
@@ -178,8 +173,7 @@ public class SystemServiceImpl implements SystemService {
                 return true;
             }
         } catch (Exception e) {
-            logger.error("日程安排邮件发送定时任务异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("日程安排邮件发送定时任务异常",e,SystemServiceImpl.class);
         }
         return false;
     }
@@ -205,8 +199,7 @@ public class SystemServiceImpl implements SystemService {
             String emailContent = templateEngine.process("mail/backUpDB", context);
             mailService.sendHtmlMail(mail, "数据库备份结果报告", emailContent);
         } catch (Exception e) {
-            logger.error("邮件发送异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("邮件发送异常",e,SystemServiceImpl.class);
         }
     }
 
@@ -229,8 +222,7 @@ public class SystemServiceImpl implements SystemService {
             String emailContent = templateEngine.process("mail/remindPlan", context);
             mailService.sendHtmlMail(userEmail, "今日计划安排提醒", emailContent);
         } catch (Exception e) {
-            logger.error("邮件发送异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("邮件发送异常",e,SystemServiceImpl.class);
         }
     }
 
@@ -257,8 +249,7 @@ public class SystemServiceImpl implements SystemService {
             String emailContent = templateEngine.process("mail/loginNotice", context);
             mailService.sendHtmlMail(userEmail, "登录提醒", emailContent);
         } catch (Exception e) {
-            logger.error("邮件发送异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("邮件发送异常",e,SystemServiceImpl.class);
         }
     }
 

@@ -1,14 +1,10 @@
 package ac.cn.saya.laboratory.service.impl;
 
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
@@ -23,10 +19,8 @@ import java.io.UnsupportedEncodingException;
  * @Date: 2019-03-01 21:33
  * @Description:
  */
-@Service("mailService")
+//@Service("mailService")
 public class MailService {
-
-    private static Logger logger = LoggerFactory.getLogger(MailService.class);
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -53,14 +47,11 @@ public class MailService {
             javaMailSender.send(message);
             return true;
         } catch (MessagingException e) {
-            logger.error("发送邮件时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("发送邮件时发生异常",e, MailService.class);
         } catch (UnsupportedEncodingException e) {
-            logger.error("发送邮件时，发送者地址异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("发送邮件时，发送者地址异常",e, MailService.class);
         } catch (Exception e) {
-            logger.error("发送邮件时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("发送邮件时发生异常",e, MailService.class);
         }
         return false;
     }

@@ -4,10 +4,7 @@ import ac.cn.saya.laboratory.entity.BackupLogEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.primary.dao.BackupLogDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.ResultEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -27,10 +24,8 @@ import java.util.List;
  * @Description: 平台数据库备份日志记录
  */
 @Service("backupLogService")
-@Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
+@Transactional(value = "primaryTransactionManager", readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = MyException.class)
 public class BackupLogService {
-
-    private static Logger logger = LoggerFactory.getLogger(BackupLogService.class);
 
     @Resource
     @Qualifier("backupLogDAO")
@@ -48,8 +43,7 @@ public class BackupLogService {
         try {
             return backupLogDAO.insertBackup(backupUrl);
         } catch (Exception e) {
-            logger.error("新增备份记录异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("新增备份记录异常", e, BackupLogService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -67,8 +61,7 @@ public class BackupLogService {
         try {
             return backupLogDAO.deleteBackup(entity);
         } catch (Exception e) {
-            logger.error("删除备份数据异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("删除备份数据异常", e, BackupLogService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -86,8 +79,7 @@ public class BackupLogService {
         try {
             return backupLogDAO.getBackupOne(entity);
         } catch (Exception e) {
-            logger.error("查询单条备份记录异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询单条备份记录异常", e, BackupLogService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -110,8 +102,7 @@ public class BackupLogService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("分页查看备份记录发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("分页查看备份记录发生异常", e, BackupLogService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -129,8 +120,7 @@ public class BackupLogService {
         try {
             return backupLogDAO.getBackupCount(entity);
         } catch (Exception e) {
-            logger.error("查看备份记录总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查看备份记录总数时发生异常", e, BackupLogService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

@@ -6,10 +6,7 @@ import ac.cn.saya.laboratory.persistent.business.dao.BusinessBatchDAO;
 import ac.cn.saya.laboratory.persistent.business.dao.MemoDAO;
 import ac.cn.saya.laboratory.tools.AesUtil;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
-import ac.cn.saya.laboratory.tools.Log4jUtils;
 import ac.cn.saya.laboratory.tools.ResultEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -32,9 +29,7 @@ import java.util.Map;
 @Service("memoService")
 @Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class MemoService {
-
-    private static Logger logger = LoggerFactory.getLogger(MemoService.class);
-
+    
     @Resource
     @Qualifier("businessBatchDAO")
     private BusinessBatchDAO batchDAO;
@@ -55,8 +50,7 @@ public class MemoService {
             entity.setContent(AesUtil.Encrypt(entity.getContent()));
             return memoDAO.insert(entity);
         } catch (Exception e) {
-            logger.error("创建便笺异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("创建便笺异常",e, MemoService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -79,8 +73,7 @@ public class MemoService {
             }
             return result;
         } catch (Exception e) {
-            logger.error("查询便笺异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询便笺异常",e, MemoService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -98,8 +91,7 @@ public class MemoService {
             entity.setContent(AesUtil.Encrypt(entity.getContent()));
             return memoDAO.update(entity);
         } catch (Exception e) {
-            logger.error("修改便笺异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("修改便笺异常",e, MemoService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -116,8 +108,7 @@ public class MemoService {
         try {
             return memoDAO.delete(entity);
         } catch (Exception e) {
-            logger.error("删除便笺异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("删除便笺异常",e, MemoService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -139,8 +130,7 @@ public class MemoService {
             }
             return list;
         } catch (Exception e) {
-            logger.error("获取分页后的便笺列表异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取分页后的便笺列表异常",e, MemoService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -158,8 +148,7 @@ public class MemoService {
         try {
             return memoDAO.queryCount(entity);
         } catch (Exception e) {
-            logger.error("获取便笺总数时发生异常：" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("获取便笺总数时发生异常",e, MemoService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }
@@ -176,8 +165,7 @@ public class MemoService {
         try {
             return batchDAO.countPre6Memo(user);
         } catch (Exception e) {
-            logger.error("查询近半年便笺发布情况失败" + Log4jUtils.getTrace(e));
-            logger.error(CurrentLineInfo.printCurrentLineInfo());
+            CurrentLineInfo.printCurrentLineInfo("查询近半年便笺发布情况失败",e, MemoService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

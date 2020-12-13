@@ -5,13 +5,11 @@ import ac.cn.saya.laboratory.entity.FilesEntity;
 import ac.cn.saya.laboratory.entity.PictureEntity;
 import ac.cn.saya.laboratory.entity.UserMemory;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.primary.service.BackupLogService;
 import ac.cn.saya.laboratory.persistent.business.service.FilesService;
 import ac.cn.saya.laboratory.persistent.business.service.PictureStorageService;
+import ac.cn.saya.laboratory.persistent.primary.service.BackupLogService;
 import ac.cn.saya.laboratory.service.IObjectStorageService;
 import ac.cn.saya.laboratory.tools.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -37,8 +35,6 @@ import java.util.List;
  */
 @Service("objectStorageServiceImpl")
 public class ObjectStorageServiceImpl implements IObjectStorageService {
-
-    private static Logger logger = LoggerFactory.getLogger(ObjectStorageServiceImpl.class);
 
     @Resource
     @Qualifier("recordService")//日志助手表
