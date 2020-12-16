@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Title: FinancialServiceImpl
@@ -98,13 +99,13 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> totalBillByAmount(String tradeDate,HttpServletRequest request,int flag) throws MyException{
+    public Result<Object> totalBillByAmount(String tradeDate,HttpServletRequest request) throws MyException{
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        List<BillOfAmountEntity> list = financialBillService.totalBillByAmount(tradeDate, userSession.getUser(), flag);
-        if (list == null || list.isEmpty()) {
+        Map<String, List<BillOfAmountEntity>> result = financialBillService.totalBillByAmount(tradeDate, userSession.getUser());
+        if (!result.isEmpty()) {
+            return ResultUtil.success(result);
+        }else {
             throw new MyException(ResultEnum.NOT_EXIST);
-        } else {
-            return ResultUtil.success(list);
         }
     }
 
@@ -118,13 +119,13 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> getBillBalanceRank(String tradeDate,HttpServletRequest request,int flag) throws MyException{
+    public Result<Object> getBillBalanceRank(String tradeDate,HttpServletRequest request) throws MyException{
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        List<TransactionListEntity> balanceRank = financialBillService.getBillBalanceRank(tradeDate, userSession.getUser(), flag);
-        if (balanceRank == null || balanceRank.isEmpty()) {
+        Map<String,List<TransactionListEntity>> result = financialBillService.getBillBalanceRank(tradeDate, userSession.getUser());
+        if (result.isEmpty()) {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
-            return ResultUtil.success(balanceRank);
+            return ResultUtil.success(result);
         }
     }
 

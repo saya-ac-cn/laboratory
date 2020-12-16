@@ -44,21 +44,19 @@ public interface IFinancialService {
      * 统计指定月份中各摘要的收支情况flag=-1）或收入（flag=1）
      * @param tradeDate 月份
      * @param request 所属用户
-     * @param flag flag:收支 标志
      * @return
      * @throws MyException
      */
-    public Result<Object> totalBillByAmount(String tradeDate,HttpServletRequest request,int flag) throws MyException;
+    public Result<Object> totalBillByAmount(String tradeDate,HttpServletRequest request) throws MyException;
 
     /**
      * 查询指定月份中支出（flag=-1）或收入（flag=1）的排行
      * @param tradeDate 月份
      * @param request 所属用户
-     * @param flag flag:收支 标志
      * @return
      * @throws MyException
      */
-    public Result<Object> getBillBalanceRank(String tradeDate,HttpServletRequest request,int flag) throws MyException;
+    public Result<Object> getBillBalanceRank(String tradeDate,HttpServletRequest request) throws MyException;
 
     /**
      * 查询指定月份中，某一摘要类型的收支数据
