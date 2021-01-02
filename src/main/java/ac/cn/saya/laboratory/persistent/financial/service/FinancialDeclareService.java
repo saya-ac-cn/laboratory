@@ -164,7 +164,7 @@ public class FinancialDeclareService {
     }
 
     /**
-     * 查询详细的流水明细
+     * 查询详细的流水明细（明细记录未折叠存放）
      *
      * @param entity
      * @return
@@ -189,6 +189,51 @@ public class FinancialDeclareService {
             return transactionReadDAO.selectTransactionFinalCount(entity);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查询详细的流水明细总数时发生异常",e, FinancialDeclareService.class);
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
+
+    /**
+     * 查看收支明细（明细记录折叠存）
+     *
+     * @param entity
+     * @return
+     */
+    public TransactionListEntity selectTransactionDetail(TransactionListEntity entity) {
+        try {
+            return transactionReadDAO.selectTransactionDetail(entity);
+        } catch (Exception e) {
+            CurrentLineInfo.printCurrentLineInfo("查看收支明细（明细记录折叠存）",e, FinancialDeclareService.class);
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
+
+    /**
+     * 分页查看收支明细（明细记录折叠存）
+     *
+     * @param entity
+     * @return
+     */
+    public List<TransactionListEntity> selectTransactionDetailPage(TransactionListEntity entity) {
+        try {
+            return transactionReadDAO.selectTransactionDetailPage(entity);
+        } catch (Exception e) {
+            CurrentLineInfo.printCurrentLineInfo("分页查看收支明细（明细记录折叠存）",e, FinancialDeclareService.class);
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
+
+    /**
+     * 分页查看收支明细总数（明细记录折叠存）
+     *
+     * @param entity
+     * @return
+     */
+    public Long selectTransactionDetailCount(TransactionListEntity entity) {
+        try {
+            return transactionReadDAO.selectTransactionDetailCount(entity);
+        } catch (Exception e) {
+            CurrentLineInfo.printCurrentLineInfo("分页查看收支明细总数（明细记录折叠存）",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

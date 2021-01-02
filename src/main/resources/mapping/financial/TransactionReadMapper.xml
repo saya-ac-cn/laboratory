@@ -189,7 +189,7 @@
         </association>
     </resultMap>
 
-    <!--查询详细的流水明细-->
+    <!--查询详细的流水明细（明细记录未折叠存放）-->
     <select id="selectTransactionFinalPage" parameterType="transactionList" resultMap="returnTransactionFinalList">
         select
             a.id,
@@ -235,7 +235,6 @@
         from
         transaction_info a
         left join transaction_list b on a.tradeId = b.tradeId
-        left join transaction_type c on b.tradeType = c.id
         <where>
             <if test = "source != null and source != ''">
                 and b.source  = #{source}
@@ -245,6 +244,150 @@
             </if>
             <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
                 and date_format(b.createTime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+    <!--查询详细的流水明细返回的Map-->
+    <resultMap id="returnTransactionDetail" type="transactionList">
+        <id column="tradeId" property="tradeId"/>
+        <result column="deposited" property="deposited"/>
+        <result column="source" property="source"/>
+        <result column="expenditure" property="expenditure"/>
+        <result column="tradeDate" property="tradeDate"/>
+        <result column="currencyNumber" property="currencyNumber"/>
+        <result column="transactionAmount" property="transactionAmount"/>
+        <result column="createTime" property="createTime"/>
+        <result column="updateTime" property="updateTime"/>
+        <association property="tradeTypeEntity" javaType="transactionType">
+            <id column="tradeType" property="id"/>
+            <result column="transactionType" property="transactionType"/>
+        </association>
+        <association property="tradeAmountEntity" javaType="transactionAmount">
+            <id column="transactionAmount" property="id"/>
+            <result column="tag" property="tag"/>
+        </association>
+        <collection property="infoList" ofType="transactionInfo">
+            <id column="id" property="id"/>
+            <result column="flog" property="flog"/>
+            <result column="currencyNumber" property="currencyNumber"/>
+            <result column="currencyDetails" property="currencyDetails"/>
+        </collection>
+    </resultMap>
+
+    <!--查看收支明细（明细记录折叠存）-->
+    <select id="selectTransactionDetail" parameterType="transactionList" resultMap="returnTransactionDetail">
+        select
+            a.tradeId,
+            a.deposited,
+            a.source,
+            a.expenditure,
+            a.tradeDate,
+            a.currencyNumber,
+            a.tradeType,
+            a.transactionAmount,
+            a.createTime,
+            a.updateTime,
+            b.transactionType,
+            c.tag,
+            d.id,
+            d.flog,
+            d.currencyNumber,
+            d.currencyDetails
+        from
+            transaction_list a
+            left join transaction_type b on a.tradeType = b.id
+            left join transaction_amount c on a.transactionAmount = c.id
+            left join  transaction_info d on a.tradeId = d.tradeId
+        <where>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="tradeType != null and tradeType != 0">
+                and a.tradeType = #{tradeType}
+            </if>
+            <if test="transactionAmount != null and transactionAmount != 0">
+                and a.transactionAmount = #{transactionAmount}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.createTime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+            </if>
+        </where>
+    </select>
+
+    <!--分页查看收支明细（明细记录折叠存）-->
+    <select id="selectTransactionDetailPage" parameterType="transactionList" resultMap="returnTransactionDetail">
+        select
+            a.tradeId,
+            a.deposited,
+            a.source,
+            a.expenditure,
+            a.tradeDate,
+            a.currencyNumber,
+            a.tradeType,
+            a.transactionAmount,
+            a.createTime,
+            a.updateTime,
+            b.transactionType,
+            c.tag,
+            d.id,
+            d.flog,
+            d.currencyNumber,
+            d.currencyDetails
+        from
+            (
+                select
+                    tradeId,
+                    deposited,
+                    source,
+                    expenditure,
+                    tradeDate,
+                    currencyNumber,
+                    tradeType,
+                    transactionAmount,
+                    createTime,
+                    updateTime
+                from transaction_list
+                <where>
+                    <if test = "source != null and source != ''">
+                        and source  = #{source}
+                    </if>
+                    <if test="tradeType != null and tradeType != 0">
+                        and tradeType = #{tradeType}
+                    </if>
+                    <if test="transactionAmount != null and transactionAmount != 0">
+                        and transactionAmount = #{transactionAmount}
+                    </if>
+                    <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                        and date_format(createTime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
+                    </if>
+                </where>
+                order by tradeId desc
+                limit #{startLine},#{endLine}
+            ) a
+            left join transaction_type b on a.tradeType = b.id
+            left join transaction_amount c on a.transactionAmount = c.id
+            left join  transaction_info d on a.tradeId = d.tradeId
+    </select>
+
+    <!--分页查看收支明细总数（明细记录折叠存）-->
+    <select id="selectTransactionDetailCount" parameterType="transactionList" resultType="java.lang.Long">
+        select
+            count(*)
+        from
+            transaction_list a
+        <where>
+            <if test = "source != null and source != ''">
+                and a.source  = #{source}
+            </if>
+            <if test="tradeType != null and tradeType != 0">
+                and a.tradeType = #{tradeType}
+            </if>
+            <if test="transactionAmount != null and transactionAmount != 0">
+                and a.transactionAmount = #{transactionAmount}
+            </if>
+            <if test="beginTime != null and beginTime != ''and endTime != null and endTime != ''">
+                and date_format(a.createTime,'%Y-%m-%d') between date_format(#{beginTime},'%Y-%m-%d')  and date_format(#{endTime},'%Y-%m-%d')
             </if>
         </where>
     </select>

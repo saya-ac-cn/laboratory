@@ -154,6 +154,8 @@ public class DateUtils {
         System.out.println("本月天数:" + DateUtils.getLengthOfMonth("2019-10-20"));
         System.out.println("本月第一天是:" + getFirstDayWeek("2019-10-20"));
         checkIsCurrentMonth("2020-04-20");
+
+        System.out.println("2020-04-11".length()>7?"2020-04-11".substring(0,7):"-");
     }
 
 }

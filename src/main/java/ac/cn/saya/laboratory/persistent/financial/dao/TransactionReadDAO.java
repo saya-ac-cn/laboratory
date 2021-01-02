@@ -75,7 +75,7 @@ public interface TransactionReadDAO {
     public Long selectTransactionInfoCount(TransactionInfoEntity entity);
 
     /**
-     * 查询详细的流水明细
+     * 查询详细的流水明细（明细记录未折叠存放）
      *
      * @param entity
      * @return
@@ -89,6 +89,27 @@ public interface TransactionReadDAO {
      * @return
      */
     public Long selectTransactionFinalCount(TransactionListEntity entity);
+
+    /**
+     * 查看收支明细（明细记录折叠存）
+     * @param entity
+     * @return
+     */
+    public TransactionListEntity selectTransactionDetail(TransactionListEntity entity);
+
+    /**
+     * 分页查看收支明细（明细记录折叠存）
+     * @param entity
+     * @return
+     */
+    public List<TransactionListEntity> selectTransactionDetailPage(TransactionListEntity entity);
+
+    /**
+     * 分页查看收支明细总数（明细记录折叠存）
+     * @param entity
+     * @return
+     */
+    public Long selectTransactionDetailCount(TransactionListEntity entity);
 
     /**
      * 按天分页统计财务报表

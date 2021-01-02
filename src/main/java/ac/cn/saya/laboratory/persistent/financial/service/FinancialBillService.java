@@ -16,7 +16,9 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Title: FinancialBillService
@@ -98,19 +100,27 @@ public class FinancialBillService {
      * @创建时间 2020/10/21
      * @修改人和其它信息
      */
-    public List<BillOfAmountEntity> totalBillByAmount(String tradeDate, String source, int flag) {
+    public Map<String, List<BillOfAmountEntity>> totalBillByAmount(String tradeDate, String source) {
         try {
-            List<BillOfAmountEntity> list = billDAO.totalBillByAmount(tradeDate, source, flag);
-            if (!list.isEmpty()) {
-                return list;
+            List<BillOfAmountEntity> incomeList = billDAO.totalBillByAmount(tradeDate, source, 1);
+            List<BillOfAmountEntity> payList = billDAO.totalBillByAmount(tradeDate, source, -1);
+            Map<String, List<BillOfAmountEntity>> result = new HashMap<>(2);
+            if (!incomeList.isEmpty() || !payList.isEmpty()) {
+                result.put("income",incomeList);
+                result.put("pay",payList);
+                return result;
             }
             // 取出最新的账单
             TransactionListEntity latestBill = billDAO.queryLatestBillByUser(source);
             if (null != latestBill && !StringUtils.isEmpty(latestBill.getTradeDate())) {
                 // 用最新的账单时间进行查询
-                return billDAO.totalBillByAmount(latestBill.getTradeDate(), source, flag);
+                incomeList = billDAO.totalBillByAmount((latestBill.getTradeDate()).length()>7?(latestBill.getTradeDate()).substring(0,7):"-1", source, 1);
+                payList = billDAO.totalBillByAmount((latestBill.getTradeDate()).length()>7?(latestBill.getTradeDate()).substring(0,7):"-1", source, -1);
+                result.put("income",incomeList);
+                result.put("pay",payList);
+                return result;
             }
-            return Collections.emptyList();
+            throw new MyException(ResultEnum.NOT_EXIST);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("统计指定月份中各摘要的收支情况失败", e, FinancialBillService.class);
             throw new MyException(ResultEnum.DB_ERROR);
@@ -125,19 +135,27 @@ public class FinancialBillService {
      * @创建时间 2020/10/21
      * @修改人和其它信息
      */
-    public List<TransactionListEntity> getBillBalanceRank(String tradeDate, String source, int flag) {
+    public Map<String,List<TransactionListEntity>> getBillBalanceRank(String tradeDate, String source) {
         try {
-            List<TransactionListEntity> list = billDAO.queryBillBalanceRank(tradeDate, source, flag);
-            if (!list.isEmpty()) {
-                return list;
+            List<TransactionListEntity> incomeList = billDAO.queryBillBalanceRank(tradeDate, source, 1);
+            List<TransactionListEntity> payList = billDAO.queryBillBalanceRank(tradeDate, source, -1);
+            Map<String,List<TransactionListEntity>> result = new HashMap<>(2);
+            if (!incomeList.isEmpty() || !payList.isEmpty()) {
+                result.put("income",incomeList);
+                result.put("pay",payList);
+                return result;
             }
             // 取出最新的账单
             TransactionListEntity latestBill = billDAO.queryLatestBillByUser(source);
             if (null != latestBill && !StringUtils.isEmpty(latestBill.getTradeDate())) {
                 // 用最新的账单时间进行查询
-                return billDAO.queryBillBalanceRank(latestBill.getTradeDate(), source, flag);
+                incomeList = billDAO.queryBillBalanceRank((latestBill.getTradeDate()).length()>7?(latestBill.getTradeDate()).substring(0,7):"-1", source, 1);
+                payList = billDAO.queryBillBalanceRank((latestBill.getTradeDate()).length()>7?(latestBill.getTradeDate()).substring(0,7):"-1", source, -1);
+                result.put("income",incomeList);
+                result.put("pay",payList);
+                return result;
             }
-            return Collections.emptyList();
+            throw new MyException(ResultEnum.NOT_EXIST);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查询指定月份中支出或收入排行失败", e, FinancialBillService.class);
             throw new MyException(ResultEnum.DB_ERROR);

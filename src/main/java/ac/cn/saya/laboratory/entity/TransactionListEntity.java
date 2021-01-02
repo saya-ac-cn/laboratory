@@ -13,8 +13,7 @@ import java.util.List;
  * @Description: TODO
  * @Author Saya
  * @Date: 2018/10/27 22:36
- * @Description:
- * 交易表
+ * @Description: 交易表
  */
 @NoArgsConstructor
 @Getter
@@ -72,7 +71,7 @@ public class TransactionListEntity extends BaseEntity {
     private List<TransactionInfoEntity> infoList;
 
     /**
-     * 摘要
+     * 摘要(非数据库字段)
      */
     private TransactionAmountEntity tradeAmountEntity;
 

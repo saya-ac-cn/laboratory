@@ -285,7 +285,7 @@ public class FinancialServiceImpl implements IFinancialService {
     }
 
     /**
-     * 查询详细的流水明细总数
+     * 查询详细的流水明细（明细记录未折叠存放）
      * 根据用户、类型、日期
      *
      * @param entity 查询参数
@@ -319,6 +319,68 @@ public class FinancialServiceImpl implements IFinancialService {
             entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
             //获取满足条件的记录集合
             List<TransactionInfoEntity> list = financialDeclareService.selectTransactionFinalPage(entity);
+            paging.setGrid(list);
+            return ResultUtil.success(paging);
+        } else {
+            //未找到有效记录
+            throw new MyException(ResultEnum.NOT_EXIST);
+        }
+    }
+
+    /**
+     * 查看收支明细（明细记录折叠存）
+     * 根据用户、类型、摘要、日期
+     *
+     * @param entity 查询参数
+     * @param request 用户会话请求
+     * @return
+     */
+    @Override
+    public Result<TransactionListEntity> getTransactionDetail(TransactionListEntity entity, HttpServletRequest request) throws MyException{
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
+        TransactionListEntity detail = financialDeclareService.selectTransactionDetail(entity);
+        if (null == detail){
+            throw new MyException(ResultEnum.NOT_EXIST);
+        } else {
+            return ResultUtil.success(detail);
+        }
+    }
+
+    /**
+     * 分页查看收支明细（明细记录折叠存）
+     * 根据用户、类型、摘要、日期
+     *
+     * @param entity 查询参数
+     * @param request 用户会话请求
+     * @return
+     */
+    @Override
+    public Result<Object> getTransactionDetailPage(TransactionListEntity entity, HttpServletRequest request) throws MyException{
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
+        Paging paging = new Paging();
+        if (entity.getNowPage() == null) {
+            entity.setNowPage(1);
+        }
+        if (entity.getPageSize() == null) {
+            entity.setPageSize(20);
+        }
+        //每页显示记录的数量
+        paging.setPageSize(entity.getPageSize());
+        //获取满足条件的总记录（不分页）
+        Long pageSize = financialDeclareService.selectTransactionDetailCount(entity);
+        if (pageSize > 0) {
+            //总记录数
+            paging.setDateSum(pageSize);
+            //计算总页数
+            paging.setTotalPage();
+            //设置当前的页码-并校验是否超出页码范围
+            paging.setPageNow(entity.getNowPage());
+            //设置行索引
+            entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
+            //获取满足条件的记录集合
+            List<TransactionListEntity> list = financialDeclareService.selectTransactionDetailPage(entity);
             paging.setGrid(list);
             return ResultUtil.success(paging);
         } else {

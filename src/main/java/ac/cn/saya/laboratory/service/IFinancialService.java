@@ -115,7 +115,7 @@ public interface IFinancialService {
     public Result<Object> getTransactionInfo(TransactionInfoEntity entity, HttpServletRequest request) throws MyException;
 
     /**
-     * 查询详细的流水明细总数
+     * 查询详细的流水明细（明细记录未折叠存放）
      * 根据用户、类型、日期
      *
      * @param entity
@@ -124,6 +124,26 @@ public interface IFinancialService {
      * @throws MyException
      */
     public Result<Object> getTransactionFinal(TransactionListEntity entity, HttpServletRequest request) throws MyException;
+
+    /**
+     * 查看收支明细（明细记录折叠存）
+     * 根据用户、类型、摘要、日期
+     *
+     * @param entity
+     * @param request
+     * @return
+     */
+    public Result<TransactionListEntity> getTransactionDetail(TransactionListEntity entity, HttpServletRequest request) throws MyException;
+
+    /**
+     * 分页查看收支明细（明细记录折叠存）
+     * 根据用户、类型、摘要、日期
+     *
+     * @param entity
+     * @param request
+     * @return
+     */
+    public Result<Object> getTransactionDetailPage(TransactionListEntity entity, HttpServletRequest request) throws MyException;
 
 
     /**

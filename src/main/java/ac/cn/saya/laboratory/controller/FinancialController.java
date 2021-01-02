@@ -78,15 +78,39 @@ public class FinancialController {
     }
 
     /**
-     * 获取完整的流水明细
+     * 查询详细的流水明细（明细记录未折叠存放）
      *
      * @param entity 查询参数
      * @param request 用户会话请求
      * @return 完整的流水详情
      */
-    @GetMapping(value = "transactionFinal")
+    //@GetMapping(value = "transactionFinal")
     public Result<Object> getTransactionFinal(TransactionListEntity entity, HttpServletRequest request) throws MyException {
         return financialService.getTransactionFinal(entity, request);
+    }
+
+    /**
+     * 查看收支明细（明细记录折叠存）
+     *
+     * @param entity 查询参数
+     * @param request 用户会话请求
+     * @return 完整的流水详情
+     */
+    @GetMapping(value = "transactionDetail")
+    public Result<TransactionListEntity> getTransactionDetail(TransactionListEntity entity, HttpServletRequest request) throws MyException {
+        return financialService.getTransactionDetail(entity, request);
+    }
+
+    /**
+     * 分页查看收支明细（明细记录折叠存）
+     *
+     * @param entity 查询参数
+     * @param request 用户会话请求
+     * @return 完整的流水详情
+     */
+    @GetMapping(value = "transactionDetailPage")
+    public Result<Object> getTransactionDetailPage(TransactionListEntity entity, HttpServletRequest request) throws MyException {
+        return financialService.getTransactionDetailPage(entity, request);
     }
 
     /**
@@ -289,24 +313,22 @@ public class FinancialController {
      * 统计指定月份中各摘要的收支情况（flag=-1）或收入（flag=1）
      * @param tradeDate 日期
      * @param request 用户会话请求
-     * @param flag 标志
      * @return 收支列表
      */
     @GetMapping(value = "bill/totalBillByAmount")
-    public Result<Object> totalBillByAmount(@RequestParam(value = "tradeDate") String tradeDate,HttpServletRequest request,@RequestParam(value = "flag")int flag) throws MyException{
-        return financialService.totalBillByAmount(tradeDate, request, flag);
+    public Result<Object> totalBillByAmount(@RequestParam(value = "tradeDate") String tradeDate,HttpServletRequest request) throws MyException{
+        return financialService.totalBillByAmount(tradeDate, request);
     }
 
     /**
      * 查询指定月份中支出（flag=-1）或收入（flag=1）的排行
      * @param tradeDate 日期
      * @param request 用户会话请求
-     * @param flag 标志
      * @return 收支排行
      */
     @GetMapping(value = "bill/billBalanceRank")
-    public Result<Object> getBillBalanceRank(@RequestParam(value = "tradeDate") String tradeDate,HttpServletRequest request,@RequestParam(value = "flag")int flag){
-        return financialService.getBillBalanceRank(tradeDate, request, flag);
+    public Result<Object> getBillBalanceRank(@RequestParam(value = "tradeDate") String tradeDate,HttpServletRequest request){
+        return financialService.getBillBalanceRank(tradeDate, request);
     }
 
     /**
