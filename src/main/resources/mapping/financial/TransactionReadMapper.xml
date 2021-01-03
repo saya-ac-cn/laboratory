@@ -214,6 +214,9 @@
             left join transaction_type c on b.tradeType = c.id
             left join transaction_amount d on c.id = b.transactionAmount
         <where>
+            <if test="tradeId != null and tradeId != ''">
+                b.tradeId = #{tradeId}
+            </if>
             <if test = "source != null and source != ''">
                 and b.source  = #{source}
             </if>
@@ -236,6 +239,9 @@
         transaction_info a
         left join transaction_list b on a.tradeId = b.tradeId
         <where>
+            <if test="tradeId != null and tradeId != ''">
+                b.tradeId = #{tradeId}
+            </if>
             <if test = "source != null and source != ''">
                 and b.source  = #{source}
             </if>
@@ -255,7 +261,7 @@
         <result column="source" property="source"/>
         <result column="expenditure" property="expenditure"/>
         <result column="tradeDate" property="tradeDate"/>
-        <result column="currencyNumber" property="currencyNumber"/>
+        <result column="billNumber" property="currencyNumber"/>
         <result column="transactionAmount" property="transactionAmount"/>
         <result column="createTime" property="createTime"/>
         <result column="updateTime" property="updateTime"/>
@@ -283,7 +289,7 @@
             a.source,
             a.expenditure,
             a.tradeDate,
-            a.currencyNumber,
+            a.currencyNumber as billNumber,
             a.tradeType,
             a.transactionAmount,
             a.createTime,
@@ -300,6 +306,9 @@
             left join transaction_amount c on a.transactionAmount = c.id
             left join  transaction_info d on a.tradeId = d.tradeId
         <where>
+            <if test="tradeId != null and tradeId != ''">
+                a.tradeId = #{tradeId}
+            </if>
             <if test = "source != null and source != ''">
                 and a.source  = #{source}
             </if>
@@ -323,7 +332,7 @@
             a.source,
             a.expenditure,
             a.tradeDate,
-            a.currencyNumber,
+            a.billNumber,
             a.tradeType,
             a.transactionAmount,
             a.createTime,
@@ -342,13 +351,16 @@
                     source,
                     expenditure,
                     tradeDate,
-                    currencyNumber,
+                    currencyNumber as billNumber,
                     tradeType,
                     transactionAmount,
                     createTime,
                     updateTime
                 from transaction_list
                 <where>
+                    <if test="tradeId != null and tradeId != ''">
+                        tradeId = #{tradeId}
+                    </if>
                     <if test = "source != null and source != ''">
                         and source  = #{source}
                     </if>
@@ -377,6 +389,9 @@
         from
             transaction_list a
         <where>
+            <if test="tradeId != null and tradeId != ''">
+                a.tradeId = #{tradeId}
+            </if>
             <if test = "source != null and source != ''">
                 and a.source  = #{source}
             </if>
