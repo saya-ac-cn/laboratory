@@ -265,6 +265,7 @@
         <result column="transactionAmount" property="transactionAmount"/>
         <result column="createTime" property="createTime"/>
         <result column="updateTime" property="updateTime"/>
+        <result column="tradeType" property="tradeType"/>
         <association property="tradeTypeEntity" javaType="transactionType">
             <id column="tradeType" property="id"/>
             <result column="transactionType" property="transactionType"/>
