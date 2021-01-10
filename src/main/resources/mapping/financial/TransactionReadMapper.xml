@@ -277,6 +277,7 @@
         <collection property="infoList" ofType="transactionInfo">
             <id column="id" property="id"/>
             <result column="flog" property="flog"/>
+            <result column="tradeId" property="tradeId"/>
             <result column="currencyNumber" property="currencyNumber"/>
             <result column="currencyDetails" property="currencyDetails"/>
         </collection>
