@@ -138,19 +138,6 @@ public class ExposeController {
     }
 
     /**
-     * @描述 留言
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019-03-22
-     * @修改人和其它信息
-     */
-    @PostMapping("/frontend/write/board")
-    public Result<Object> insertGuestBook(@RequestBody GuestBookEntity message) throws Exception {
-        return frontendServiceImpl.insertGuestBook(message);
-    }
-
-    /**
      * @描述 查看计划安排
      * @参数
      * @返回值

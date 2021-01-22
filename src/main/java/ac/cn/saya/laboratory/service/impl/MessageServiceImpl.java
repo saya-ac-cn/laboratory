@@ -35,9 +35,6 @@ public class MessageServiceImpl implements IMessageService {
     @Qualifier("newsService")
     private NewsService newsService;
 
-    @Resource
-    @Qualifier("guestBookService")
-    private GuestBookService guestBookService;
 
     @Resource
     @Qualifier("noteBookService")
@@ -207,97 +204,6 @@ public class MessageServiceImpl implements IMessageService {
         }
     }
 
-    /**
-     * @描述 审核修改
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/11
-     * @修改人和其它信息
-     */
-    @Override
-    public Result<Object> updateGuestBook(GuestBookEntity entity, HttpServletRequest request) throws Exception {
-        // 校验用户输入的参数
-        if (entity == null) {
-            // 缺少参数
-            throw new MyException(ResultEnum.NOT_PARAMETER);
-        }
-        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        entity.setSource(userSession.getUser());
-        if (guestBookService.updateGuestBook(entity) > 0) {
-            /**
-             * 记录日志
-             */
-            recordService.record("OX010", request);
-            return ResultUtil.success();
-        } else {
-            throw new MyException(ResultEnum.ERROP);
-        }
-    }
-
-    /**
-     * @描述 查询一条留言
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/12
-     * @修改人和其它信息
-     */
-    @Override
-    public Result<Object> queryOneGuestBook(GuestBookEntity entity) throws Exception {
-        if (entity == null || entity.getId() == null) {
-            // 缺少参数
-            throw new MyException(ResultEnum.NOT_PARAMETER);
-        }
-        GuestBookEntity result = guestBookService.queryOneGuestBook(entity);
-        if (result == null) {
-            //未找到有效记录
-            throw new MyException(ResultEnum.NOT_EXIST);
-        } else {
-            return ResultUtil.success(result);
-        }
-    }
-
-    /**
-     * @描述 获取分页的留言
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/11
-     * @修改人和其它信息
-     */
-    @Override
-    public Result<Object> getGuestBookList(GuestBookEntity entity) throws Exception {
-        Paging paging = new Paging();
-        if (entity.getNowPage() == null) {
-            entity.setNowPage(1);
-        }
-        if (entity.getPageSize() == null) {
-            entity.setPageSize(20);
-        }
-        //每页显示记录的数量
-        paging.setPageSize(entity.getPageSize());
-        //获取满足条件的总记录（不分页）
-        Long pageSize = guestBookService.getGuestBookCount(entity);
-        if (pageSize > 0) {
-            //总记录数
-            paging.setDateSum(pageSize);
-            //计算总页数
-            paging.setTotalPage();
-            //设置当前的页码-并校验是否超出页码范围
-            paging.setPageNow(entity.getNowPage());
-            //设置行索引
-            entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
-            //获取满足条件的记录集合
-            List<GuestBookEntity> list = guestBookService.getGuestBookPage(entity);
-            paging.setGrid(list);
-            return ResultUtil.success(paging);
-        } else {
-            //未找到有效记录
-            throw new MyException(ResultEnum.NOT_EXIST);
-        }
-    }
 
     /**
      * @描述 创建笔记簿

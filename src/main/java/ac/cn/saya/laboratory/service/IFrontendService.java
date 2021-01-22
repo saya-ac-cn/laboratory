@@ -60,16 +60,6 @@ public interface IFrontendService {
     public Result<Object> downloadFile(String user, Integer id, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
     /**
-     * @描述 留言
-     * @参数
-     * @返回值
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2019/1/11
-     * @修改人和其它信息
-     */
-    public Result<Object> insertGuestBook(GuestBookEntity entity) throws Exception;
-
-    /**
      * 查看行程安排
      * @描述
      * @参数 [data, request]

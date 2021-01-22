@@ -42,10 +42,6 @@ public class FrontendServiceImpl implements IFrontendService {
     private FilesService filesService;
 
     @Resource
-    @Qualifier("guestBookService")
-    private GuestBookService guestBookService;
-
-    @Resource
     @Qualifier("planService")
     private PlanService planService;
 
@@ -224,30 +220,6 @@ public class FrontendServiceImpl implements IFrontendService {
             bis.close();
             fis.close();
             return ResultUtil.success();
-        }
-    }
-
-    /**
-     * @描述 留言
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/11
-     * @修改人和其它信息
-     */
-    @Override
-    public Result<Object> insertGuestBook(GuestBookEntity entity) throws Exception {
-        // 校验用户输入的参数
-        if (entity == null) {
-            // 缺少参数
-            throw new MyException(ResultEnum.NOT_PARAMETER);
-        }
-        // 设置为待审核
-        entity.setStatus(2);
-        if (guestBookService.insertGuestBook(entity) > 0) {
-            return ResultUtil.success();
-        } else {
-            throw new MyException(ResultEnum.ERROP);
         }
     }
 

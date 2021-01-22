@@ -66,37 +66,6 @@ public interface IMessageService {
      */
     public Result<Object> getNewsList(NewsEntity entity, HttpServletRequest request) throws Exception;
 
-
-    /**
-     * @描述 审核修改
-     * @参数
-     * @返回值
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2019/1/11
-     * @修改人和其它信息
-     */
-    public Result<Object> updateGuestBook(GuestBookEntity entity, HttpServletRequest request) throws Exception;
-
-    /**
-     * @描述 查询一条留言
-     * @参数
-     * @返回值
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2019/1/12
-     * @修改人和其它信息
-     */
-    public Result<Object> queryOneGuestBook(GuestBookEntity entity) throws Exception;
-
-    /**
-     * @描述 获取分页的留言
-     * @参数
-     * @返回值
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2019/1/11
-     * @修改人和其它信息
-     */
-    public Result<Object> getGuestBookList(GuestBookEntity entity) throws Exception;
-
     /**
      * @描述 创建笔记簿
      * @参数

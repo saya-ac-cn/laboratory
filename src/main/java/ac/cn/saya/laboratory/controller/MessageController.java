@@ -93,45 +93,6 @@ public class MessageController {
     }
 
     /**
-     * @描述 审核留言
-     * @参数  [entity, request]
-     * @返回值  ac.cn.saya.datacenter.tools.Result<java.lang.Object>
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2019/1/12
-     * @修改人和其它信息
-     */
-    @PutMapping(value = "guestbook/check")
-    public Result<Object> checkGuestBook(@RequestBody GuestBookEntity entity, HttpServletRequest request) throws Exception{
-        return messageServiceImpl.updateGuestBook(entity,request);
-    }
-
-    /**
-     * @描述 获取分页的留言
-     * @参数
-     * @返回值  
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2019/1/12
-     * @修改人和其它信息
-     */
-    @GetMapping(value = "guestbook")
-    public Result<Object> getGuestBookList(GuestBookEntity entity) throws Exception{
-        return  messageServiceImpl.getGuestBookList(entity);
-    }
-
-    /**
-     * @描述 查询一条留言
-     * @参数  [entity]
-     * @返回值  ac.cn.saya.datacenter.tools.Result<java.lang.Object>
-     * @创建人  saya.ac.cn-刘能凯
-     * @创建时间  2019/1/12
-     * @修改人和其它信息
-     */
-    @GetMapping(value = "guestbook/show")
-    public Result<Object> getOneNews(GuestBookEntity entity) throws Exception{
-        return messageServiceImpl.queryOneGuestBook(entity);
-    }
-
-    /**
      * @描述 创建笔记簿
      * @参数  [entity, request]
      * @返回值  ac.cn.saya.datacenter.tools.Result<java.lang.Object>
