@@ -6,6 +6,7 @@ import ac.cn.saya.laboratory.persistent.financial.service.FinancialBillService;
 import ac.cn.saya.laboratory.persistent.financial.service.FinancialDeclareService;
 import ac.cn.saya.laboratory.service.IFinancialService;
 import ac.cn.saya.laboratory.tools.*;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -285,49 +286,6 @@ public class FinancialServiceImpl implements IFinancialService {
     }
 
     /**
-     * 查询详细的流水明细（明细记录未折叠存放）
-     * 根据用户、类型、日期
-     *
-     * @param entity 查询参数
-     * @param request 用户会话请求
-     * @return 完整的流水详情
-     */
-    @Override
-    public Result<Object> getTransactionFinal(TransactionListEntity entity, HttpServletRequest request) throws MyException {
-        //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
-        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        entity.setSource(userSession.getUser());
-        Paging paging = new Paging();
-        if (entity.getNowPage() == null) {
-            entity.setNowPage(1);
-        }
-        if (entity.getPageSize() == null) {
-            entity.setPageSize(20);
-        }
-        //每页显示记录的数量
-        paging.setPageSize(entity.getPageSize());
-        //获取满足条件的总记录（不分页）
-        Long pageSize = financialDeclareService.selectTransactionFinalCount(entity);
-        if (pageSize > 0) {
-            //总记录数
-            paging.setDateSum(pageSize);
-            //计算总页数
-            paging.setTotalPage();
-            //设置当前的页码-并校验是否超出页码范围
-            paging.setPageNow(entity.getNowPage());
-            //设置行索引
-            entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
-            //获取满足条件的记录集合
-            List<TransactionInfoEntity> list = financialDeclareService.selectTransactionFinalPage(entity);
-            paging.setGrid(list);
-            return ResultUtil.success(paging);
-        } else {
-            //未找到有效记录
-            throw new MyException(ResultEnum.NOT_EXIST);
-        }
-    }
-
-    /**
      * 查看收支明细（明细记录折叠存）
      * 根据用户、类型、摘要、日期
      *
@@ -530,7 +488,7 @@ public class FinancialServiceImpl implements IFinancialService {
     public Result<Object> outTransactionListExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws MyException {
         String[] keys = {"tradeId", "deposited", "expenditure", "transactionType", "currencyNumber", "tradeDate", "transactionAmount", "createTime", "updateTime"};
         //放置到第一行的字段名
-        String[] titles = {"流水号", "存入", "取出", "交易方式", "产生总额", "产生日期", "摘要", "创建时间", "修改时间"};
+        String[] titles = {"流水号", "收入金额", "支出金额", "交易方式", "收支总额", "交易时间", "摘要", "填报时间", "修改时间"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         try {
@@ -586,14 +544,15 @@ public class FinancialServiceImpl implements IFinancialService {
      */
     @Override
     public Result<Object> outTransactionInfoExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws MyException {
-        String[] keys = {"tradeId", "deposited", "expenditure", "transactionType", "currencyNumber", "tradeDate", "transactionAmount", "flog", "itemNumber", "currencyDetails", "createTime", "updateTime"};
+        String[] rootKeys = {"tradeId", "deposited", "expenditure","billNumber","tradeType","tradeDate","source","transactionAmount","createTime", "updateTime"};
+        String[] childKeys = {"infoList","currencyDetails","flog", "currencyNumber"};
         //放置到第一行的字段名
-        String[] titles = {"流水号", "存入", "取出", "交易方式", "产生总额", "产生日期", "摘要", "标志", "金额", "详情", "创建时间", "修改时间"};
+        String[] titles = {"流水号", "存入金额", "取出金额",  "收支总额","交易方式", "交易时间","用户", "摘要", "填报时间", "修改时间","交易说明", "交易类型",  "交易金额"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         try {
             //获取满足条件的总记录（不分页）
-            Long pageSize = financialDeclareService.selectTransactionFinalCount(entity);
+            Long pageSize = financialDeclareService.selectTransactionDetailCount(entity);
             if (pageSize <= 0) {
                 return ResultUtil.error(-1, "没有可导出的数据");
             }
@@ -601,26 +560,36 @@ public class FinancialServiceImpl implements IFinancialService {
             entity.setPage(0, pageSize.intValue());
             entity.setSource(userSession.getUser());
             //获取满足条件的记录集合
-            List<TransactionInfoEntity> entityList = financialDeclareService.selectTransactionFinalPage(entity);
+            List<TransactionListEntity> entityList = financialDeclareService.selectTransactionDetailPage(entity);
             List<JSONObject> jsonObjectList = new ArrayList<>();
-            for (TransactionInfoEntity item : entityList) {
+            for (TransactionListEntity item : entityList) {
                 JSONObject json = new JSONObject();
-                json.put("tradeId", item.getTransactionListEntity().getTradeId());
-                json.put("deposited", item.getTransactionListEntity().getDeposited());
-                json.put("expenditure", item.getTransactionListEntity().getExpenditure());
-                json.put("transactionType", item.getTransactionListEntity().getTradeTypeEntity().getTransactionType());
-                json.put("currencyNumber", item.getTransactionListEntity().getCurrencyNumber());
-                json.put("tradeDate", item.getTransactionListEntity().getTradeDate());
-                json.put("transactionAmount", item.getTransactionListEntity().getTradeAmountEntity().getTag());
-                if (item.getFlog() == 1) {
-                    json.put("flog", "存入");
-                } else {
-                    json.put("flog", "取出");
+                json.put("tradeId", item.getTradeId());
+                json.put("deposited", item.getDeposited());
+                json.put("expenditure", item.getExpenditure());
+                json.put("billNumber",item.getCurrencyNumber());
+                json.put("tradeType", item.getTradeTypeEntity().getTransactionType());
+                json.put("tradeDate", item.getTradeDate());
+                json.put("source",item.getSource());
+                json.put("transactionAmount", item.getTradeAmountEntity().getTag());
+                json.put("createTime", item.getCreateTime());
+                json.put("updateTime", item.getUpdateTime());
+                List<TransactionInfoEntity> infoList = item.getInfoList();
+                if (null != infoList && !infoList.isEmpty()){
+                    JSONArray infoJson = new JSONArray();
+                    for (TransactionInfoEntity info:infoList) {
+                        JSONObject childJson = new JSONObject();
+                        childJson.put("currencyDetails", info.getCurrencyDetails());
+                        if (info.getFlog() == 1) {
+                            childJson.put("flog", "收入");
+                        } else {
+                            childJson.put("flog", "支出");
+                        }
+                        childJson.put("currencyNumber", info.getCurrencyNumber());
+                        infoJson.add(childJson);
+                    }
+                    json.put(childKeys[0],infoJson);
                 }
-                json.put("itemNumber", item.getCurrencyNumber());
-                json.put("currencyDetails", item.getCurrencyDetails());
-                json.put("createTime", item.getTransactionListEntity().getCreateTime());
-                json.put("updateTime", item.getTransactionListEntity().getUpdateTime());
                 jsonObjectList.add(json);
             }
             // 设置contentType为excel格式
@@ -630,7 +599,7 @@ public class FinancialServiceImpl implements IFinancialService {
             response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("财务流水明细.xlsx", "UTF-8"));
             ServletOutputStream out = response.getOutputStream();
             response.flushBuffer();
-            OutExcelUtils.outExcelTemplateSimple(keys, titles, jsonObjectList, out);
+            OutExcelUtils.outExcelTemplatePlus(rootKeys, childKeys,titles, jsonObjectList, out);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -775,7 +744,7 @@ public class FinancialServiceImpl implements IFinancialService {
     public Result<Object> outTransactionForDayExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws MyException {
         String[] keys = {"tradeDate", "deposited", "expenditure", "currencyNumber"};
         //放置到第一行的字段名
-        String[] titles = {"产生日期", "流入", "流出", "产生总额"};
+        String[] titles = {"交易时间", "收入金额", "支出金额", "收支总额"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         entity.setSource(userSession.getUser());
@@ -824,7 +793,7 @@ public class FinancialServiceImpl implements IFinancialService {
     public Result<Object> outTransactionForMonthExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws MyException {
         String[] keys = {"tradeDate", "deposited", "expenditure", "currencyNumber"};
         //放置到第一行的字段名
-        String[] titles = {"产生日期", "流入", "流出", "产生总额"};
+        String[] titles = {"交易时间", "收入金额", "支出金额", "收支总额"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         entity.setSource(userSession.getUser());
@@ -873,7 +842,7 @@ public class FinancialServiceImpl implements IFinancialService {
     public Result<Object> outTransactionForYearExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws MyException {
         String[] keys = {"tradeDate", "deposited", "expenditure", "currencyNumber"};
         //放置到第一行的字段名
-        String[] titles = {"产生日期", "流入", "流出", "产生总额"};
+        String[] titles = {"交易时间", "收入金额", "支出金额", "收支总额"};
         //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         entity.setSource(userSession.getUser());

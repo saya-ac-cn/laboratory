@@ -164,36 +164,6 @@ public class FinancialDeclareService {
     }
 
     /**
-     * 查询详细的流水明细（明细记录未折叠存放）
-     *
-     * @param entity
-     * @return
-     */
-    public List<TransactionInfoEntity> selectTransactionFinalPage(TransactionListEntity entity) {
-        try {
-            return transactionReadDAO.selectTransactionFinalPage(entity);
-        } catch (Exception e) {
-            CurrentLineInfo.printCurrentLineInfo("查询详细的流水明细发生异常",e, FinancialDeclareService.class);
-            throw new MyException(ResultEnum.DB_ERROR);
-        }
-    }
-
-    /**
-     * 查询详细的流水明细总数
-     *
-     * @param entity
-     * @return
-     */
-    public Long selectTransactionFinalCount(TransactionListEntity entity) {
-        try {
-            return transactionReadDAO.selectTransactionFinalCount(entity);
-        } catch (Exception e) {
-            CurrentLineInfo.printCurrentLineInfo("查询详细的流水明细总数时发生异常",e, FinancialDeclareService.class);
-            throw new MyException(ResultEnum.DB_ERROR);
-        }
-    }
-
-    /**
      * 查看收支明细（明细记录折叠存）
      *
      * @param entity

@@ -151,9 +151,6 @@
             <if test="notebookId != null and notebookId != 0">
                 and b.notebookId  = #{notebookId}
             </if>
-            <if test="notebook.name != null and notebook.name != ''">
-                and a.name like concat('%',#{notebook.name},'%')
-            </if>
             <if test="topic != null and topic != ''">
                 and b.topic like concat('%',#{topic},'%')
             </if>
@@ -187,9 +184,6 @@
             </if>
             <if test="notebookId != null and notebookId != 0">
                 and b.notebookId  = #{notebookId}
-            </if>
-            <if test="notebook.name != null and notebook.name != ''">
-                and a.name like concat('%',#{notebook.name},'%')
             </if>
             <if test="topic != null and topic != ''">
                 and b.topic like concat('%',#{topic},'%')

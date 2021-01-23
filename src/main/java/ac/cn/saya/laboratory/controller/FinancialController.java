@@ -78,18 +78,6 @@ public class FinancialController {
     }
 
     /**
-     * 查询详细的流水明细（明细记录未折叠存放）
-     *
-     * @param entity 查询参数
-     * @param request 用户会话请求
-     * @return 完整的流水详情
-     */
-    //@GetMapping(value = "transactionFinal")
-    public Result<Object> getTransactionFinal(TransactionListEntity entity, HttpServletRequest request) throws MyException {
-        return financialService.getTransactionFinal(entity, request);
-    }
-
-    /**
      * 查看收支明细（明细记录折叠存）
      *
      * @param entity 查询参数
