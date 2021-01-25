@@ -37,7 +37,7 @@ public class FinancialBillService {
     private BillDAO billDAO;
 
     /**
-     * @描述 按天分页查询账单
+     * @描述 按天分页查询账单(若按照给定的日期未查到数据，将按照最后的交易时间作为查询条件)
      * @参数 [param] 其中时间参数 为月格式：2020-10
      * @返回值 java.util.List<ac.cn.saya.laboratory.entity.BillOfDayEntity>
      * @创建人 shmily
@@ -65,7 +65,7 @@ public class FinancialBillService {
     }
 
     /**
-     * @描述 统计指定月份的总收入和支出
+     * @描述 统计指定月份的总收入和支出(若按照给定的日期未查到数据，将按照最后的交易时间作为查询条件)
      * @参数 [param]
      * @返回值 ac.cn.saya.laboratory.entity.BillOfDayEntity
      * @创建人 shmily
@@ -93,21 +93,22 @@ public class FinancialBillService {
     }
 
     /**
-     * @描述 统计指定月份中各摘要的收支情况（flag=-1）或收入（flag=1）
+     * @描述 统计指定月份中各摘要的收支情况（flag=-1）或收入（flag=1）(若按照给定的日期未查到数据，将按照最后的交易时间作为查询条件)
      * @参数 [tradeDate:月份, source:所属用户账单, flag:收支 标志]
-     * @返回值 java.util.List<ac.cn.saya.laboratory.entity.BillOfAmountEntity>
+     * @返回值 Map<String,Object>
      * @创建人 shmily
      * @创建时间 2020/10/21
      * @修改人和其它信息
      */
-    public Map<String, List<BillOfAmountEntity>> totalBillByAmount(String tradeDate, String source) {
+    public Map<String,Object> totalBillByAmount(String tradeDate, String source) {
         try {
             List<BillOfAmountEntity> incomeList = billDAO.totalBillByAmount(tradeDate, source, 1);
             List<BillOfAmountEntity> payList = billDAO.totalBillByAmount(tradeDate, source, -1);
-            Map<String, List<BillOfAmountEntity>> result = new HashMap<>(2);
+            Map<String, Object> result = new HashMap<>(4);
             if (!incomeList.isEmpty() || !payList.isEmpty()) {
                 result.put("income",incomeList);
                 result.put("pay",payList);
+                result.put("tradeDate",tradeDate);
                 return result;
             }
             // 取出最新的账单
@@ -118,6 +119,7 @@ public class FinancialBillService {
                 payList = billDAO.totalBillByAmount((latestBill.getTradeDate()).length()>7?(latestBill.getTradeDate()).substring(0,7):"-1", source, -1);
                 result.put("income",incomeList);
                 result.put("pay",payList);
+                result.put("tradeDate",latestBill.getTradeDate());
                 return result;
             }
             throw new MyException(ResultEnum.NOT_EXIST);
@@ -128,21 +130,22 @@ public class FinancialBillService {
     }
 
     /**
-     * @描述 查询指定月份中支出（flag=-1）或收入（flag=1）的排行
+     * @描述 查询指定月份中支出（flag=-1）或收入（flag=1）的排行 (若按照给定的日期未查到数据，将按照最后的交易时间作为查询条件)
      * @参数 [tradeDate:月份, source:所属用户账单, flag:收支 标志]
-     * @返回值 java.util.List<ac.cn.saya.laboratory.entity.TransactionListEntity>
+     * @返回值 Map<String,Object>
      * @创建人 shmily
      * @创建时间 2020/10/21
      * @修改人和其它信息
      */
-    public Map<String,List<TransactionListEntity>> getBillBalanceRank(String tradeDate, String source) {
+    public Map<String,Object> getBillBalanceRank(String tradeDate, String source) {
         try {
             List<TransactionListEntity> incomeList = billDAO.queryBillBalanceRank(tradeDate, source, 1);
             List<TransactionListEntity> payList = billDAO.queryBillBalanceRank(tradeDate, source, -1);
-            Map<String,List<TransactionListEntity>> result = new HashMap<>(2);
+            Map<String,Object> result = new HashMap<>(4);
             if (!incomeList.isEmpty() || !payList.isEmpty()) {
                 result.put("income",incomeList);
                 result.put("pay",payList);
+                result.put("tradeDate",tradeDate);
                 return result;
             }
             // 取出最新的账单
@@ -153,6 +156,7 @@ public class FinancialBillService {
                 payList = billDAO.queryBillBalanceRank((latestBill.getTradeDate()).length()>7?(latestBill.getTradeDate()).substring(0,7):"-1", source, -1);
                 result.put("income",incomeList);
                 result.put("pay",payList);
+                result.put("tradeDate",latestBill.getTradeDate());
                 return result;
             }
             throw new MyException(ResultEnum.NOT_EXIST);
@@ -192,6 +196,24 @@ public class FinancialBillService {
             return billDAO.queryBillDetail(param);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查询账单明细失败", e, FinancialBillService.class);
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
+
+    /**
+     * 查询指定月份的总收入、支出和总收支（硬查询）
+     * @param param
+     * @return
+     */
+    public BillOfDayEntity totalBalanceHard(BillOfDayEntity param) {
+        try {
+            BillOfDayEntity balance = billDAO.totalBalance(param);
+            if (null != balance) {
+                return balance;
+            }
+            return null;
+        } catch (Exception e) {
+            CurrentLineInfo.printCurrentLineInfo("统计指定月份的总支出失败", e, FinancialBillService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

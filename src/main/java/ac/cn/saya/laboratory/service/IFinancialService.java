@@ -281,4 +281,20 @@ public interface IFinancialService {
      */
     public Result<Object> outTransactionForYearExcel(TransactionListEntity entity, HttpServletRequest request, HttpServletResponse response) throws MyException;
 
+    /**
+     * 收支增长率
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return 本月总收支，日均收支，环比增长，同比增长
+     */
+    public Result<Object> accountGrowthRate(String tradeDate,HttpServletRequest request);
+
+    /**
+     * 收入比重
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return 收入率 总收支
+     */
+    public Result<Object> incomePercentage(String tradeDate,HttpServletRequest request);
+
 }

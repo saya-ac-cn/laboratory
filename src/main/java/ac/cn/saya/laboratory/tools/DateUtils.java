@@ -29,6 +29,11 @@ public class DateUtils {
     public final static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
+     * 日期格式
+     */
+    public final static DateTimeFormatter dateFormatMonth = DateTimeFormatter.ofPattern("yyyy-MM");
+
+    /**
      * 日期时间格式
      */
     public final static DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -153,9 +158,15 @@ public class DateUtils {
         System.out.println("lastDayOfMonth:" + lastDayOfMonth);
         System.out.println("本月天数:" + DateUtils.getLengthOfMonth("2019-10-20"));
         System.out.println("本月第一天是:" + getFirstDayWeek("2019-10-20"));
-        checkIsCurrentMonth("2020-04-20");
+        System.out.println("是否为当前月份:" + checkIsCurrentMonth("2021-01-20"));
 
         System.out.println("2020-04-11".length()>7?"2020-04-11".substring(0,7):"-");
+
+        LocalDate paramDate = LocalDate.parse("2020-02-23", DateUtils.dateFormat);
+        System.out.println("本月已经过去的总天数："+paramDate.getDayOfMonth());
+        LocalDate localDate1 = paramDate.minusMonths(1);
+        LocalDate localDate2 = paramDate.minusYears(1);
+        return;
     }
 
 }

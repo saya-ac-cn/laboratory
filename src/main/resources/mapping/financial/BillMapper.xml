@@ -57,6 +57,7 @@
             b.currencyNumber ,
             b.transactionAmount ,
             b.createTime ,
+            #{tradeDate} as tradeDate,
             c.flog ,
             c.tag ,
             b.tradeType ,
@@ -71,9 +72,7 @@
                 FROM
                     transaction_list e
                 <where>
-                    <if test="tradeDate != null and tradeDate != ''">
                         e.tradeDate like concat(#{tradeDate},"%")
-                    </if>
                     <if test = "source != null and source != ''">
                         and e.source  = #{source}
                     </if>
@@ -103,17 +102,15 @@
 
     <!--统计指定月份的总收入和支出-->
     <select id="totalBalance" parameterType="billOfDay" resultType="billOfDay">
-        SELECT
-            SUM(a.deposited) AS deposited ,
-            SUM(a.expenditure) AS expenditure ,
-            SUM(a.currencyNumber) AS currencyNumber
-        FROM
+        select
+            #{tradeDate} as tradeDate,
+            sum(a.deposited) as deposited,
+            sum(a.expenditure) as expenditure,
+            sum(a.currencyNumber) as currencyNumber
+        from
             transaction_list a
-        WHERE
-            a.source = #{source}
-            <if test="tradeDate != null and tradeDate != ''">
-                and a.tradeDate like concat(#{tradeDate} , '%')
-            </if>
+        where
+            a.source = #{source} and a.tradeDate like concat(#{tradeDate} , '%')
     </select>
 
     <resultMap id="returnBillOfAmountList" type="billOfAmount">

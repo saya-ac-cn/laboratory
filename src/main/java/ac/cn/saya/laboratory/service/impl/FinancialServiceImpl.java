@@ -2,6 +2,7 @@ package ac.cn.saya.laboratory.service.impl;
 
 import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
+import ac.cn.saya.laboratory.persistent.business.service.NotesService;
 import ac.cn.saya.laboratory.persistent.financial.service.FinancialBillService;
 import ac.cn.saya.laboratory.persistent.financial.service.FinancialDeclareService;
 import ac.cn.saya.laboratory.service.IFinancialService;
@@ -18,8 +19,11 @@ import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -102,7 +106,7 @@ public class FinancialServiceImpl implements IFinancialService {
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
     public Result<Object> totalBillByAmount(String tradeDate,HttpServletRequest request) throws MyException{
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        Map<String, List<BillOfAmountEntity>> result = financialBillService.totalBillByAmount(tradeDate, userSession.getUser());
+        Map<String,Object> result = financialBillService.totalBillByAmount(tradeDate, userSession.getUser());
         if (!result.isEmpty()) {
             return ResultUtil.success(result);
         }else {
@@ -113,7 +117,7 @@ public class FinancialServiceImpl implements IFinancialService {
     /**
      * @描述 查询指定月份中支出（flag=-1）或收入（flag=1）的排行
      * @参数  [tradeDate:月份, source:所属用户账单, flag:收支 标志]
-     * @返回值  java.util.List<ac.cn.saya.laboratory.entity.TransactionListEntity>
+     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
      * @创建人  shmily
      * @创建时间  2020/10/21
      * @修改人和其它信息
@@ -122,7 +126,7 @@ public class FinancialServiceImpl implements IFinancialService {
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
     public Result<Object> getBillBalanceRank(String tradeDate,HttpServletRequest request) throws MyException{
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        Map<String,List<TransactionListEntity>> result = financialBillService.getBillBalanceRank(tradeDate, userSession.getUser());
+        Map<String,Object> result = financialBillService.getBillBalanceRank(tradeDate, userSession.getUser());
         if (result.isEmpty()) {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
@@ -877,6 +881,121 @@ public class FinancialServiceImpl implements IFinancialService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 收支增长率
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return 本月总收支，日均收支，环比增长，同比增长
+     */
+    @Override
+    public Result<Object> accountGrowthRate(String tradeDate,HttpServletRequest request){
+        Map<String, BigDecimal> result = new HashMap<>(2);
+        try {
+            // 清洗时间数据 2021-01-25 -> 2021-01
+            LocalDate monthDate = LocalDate.parse(tradeDate, DateUtils.dateFormat);
+            // 总天数，计算日均用
+            int days = 0;
+            if(DateUtils.checkIsCurrentMonth(tradeDate)){
+                // 是当前月，天数为已经过去的天数
+                days = monthDate.getDayOfMonth();
+            }else{
+                days = monthDate.lengthOfMonth();
+            }
+            // 得到上一个月的时间
+            LocalDate lastMonth = monthDate.minusMonths(1);
+            // 得到去年同期这个月的时间
+            LocalDate lastYear = monthDate.minusYears(1);
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+            BillOfDayEntity queryParam = new BillOfDayEntity();
+            queryParam.setTradeDate(monthDate.format(DateUtils.dateFormatMonth));
+            queryParam.setSource(userSession.getUser());
+            // 本月的数据结果
+            BillOfDayEntity _currentMonth = financialBillService.totalBalanceHard(queryParam);
+            BigDecimal _currentMonthAccount = BigDecimal.ZERO;
+            if (null != _currentMonth){
+                // 本月总收入
+                _currentMonthAccount = _currentMonth.getCurrencyNumber();
+            }
+            // 上月的数据结果
+            queryParam.setTradeDate(lastMonth.format(DateUtils.dateFormatMonth));
+            BillOfDayEntity _lastMonth = financialBillService.totalBalanceHard(queryParam);
+            BigDecimal _lastMonthAccount = BigDecimal.ZERO;
+            if (null != _lastMonth){
+                // 上月的总收入
+                _lastMonthAccount = _currentMonth.getCurrencyNumber();
+            }
+            // 去年同期这个月的数据结果
+            queryParam.setTradeDate(lastYear.format(DateUtils.dateFormatMonth));
+            BillOfDayEntity _lastYear = financialBillService.totalBalanceHard(queryParam);
+            BigDecimal _lastYearAccount = BigDecimal.ZERO;
+            if (null != _lastYear){
+                // 去年同期这个月的总收入
+                _lastYearAccount = _currentMonth.getCurrencyNumber();
+            }
+            BigDecimal zero = BigDecimal.ZERO;
+            // 计算日均
+            BigDecimal avgAccount = _currentMonthAccount.divide(new BigDecimal(days),4, BigDecimal.ROUND_HALF_UP);
+            // 计算环比 （本月的值-上月的值）÷上月的值
+            BigDecimal m2m = BigDecimal.ZERO;
+            if (0 != zero.compareTo(_lastMonthAccount)){
+                m2m = (_currentMonthAccount.subtract(_lastMonthAccount)).divide(_lastMonthAccount,4, BigDecimal.ROUND_HALF_UP);
+            }
+            // 计算同比比 （本年的值-去年同期的值）÷去年同期的值
+            BigDecimal y2y = BigDecimal.ZERO;
+            if (0 != zero.compareTo(_lastYearAccount)){
+                y2y = (_currentMonthAccount.subtract(_lastYearAccount)).divide(_lastYearAccount,4, BigDecimal.ROUND_HALF_UP);
+            }
+            result.put("account",_currentMonthAccount);
+            result.put("avg",avgAccount);
+            result.put("m2m",m2m);
+            result.put("y2y",y2y);
+        } catch (Exception e) {
+            result.put("account",new BigDecimal("0.0"));
+            result.put("avg",new BigDecimal("0.0"));
+            result.put("m2m",new BigDecimal("0.0"));
+            result.put("y2y",new BigDecimal("0.0"));
+            CurrentLineInfo.printCurrentLineInfo("统计收支增长率时发生异常", e, FinancialServiceImpl.class);
+        }
+        return ResultUtil.success(result);
+    }
+
+    /**
+     * 收入比重
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return 收入率 总收支
+     */
+    @Override
+    public Result<Object> incomePercentage(String tradeDate,HttpServletRequest request){
+        Map<String, BigDecimal> result = new HashMap<>(2);
+        try {
+            // 清洗时间数据 2021-01-25 -> 2021-01
+            LocalDate monthDate = LocalDate.parse(tradeDate, DateUtils.dateFormat);
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+            BillOfDayEntity queryParam = new BillOfDayEntity();
+            queryParam.setTradeDate(monthDate.format(DateUtils.dateFormatMonth));
+            queryParam.setSource(userSession.getUser());
+            BillOfDayEntity queryResult = financialBillService.totalBalanceHard(queryParam);
+            if (null == queryResult){
+                result.put("account",new BigDecimal("0.0"));
+                result.put("percentage",new BigDecimal("0.0"));
+            }else {
+                result.put("account",queryResult.getCurrencyNumber());
+                BigDecimal zero = BigDecimal.ZERO;
+                BigDecimal percentage = BigDecimal.ZERO;
+                if (0 != zero.compareTo(queryResult.getCurrencyNumber())){
+                    percentage = (queryResult.getDeposited()).divide((queryResult.getCurrencyNumber()),4, BigDecimal.ROUND_HALF_UP);
+                }
+                result.put("percentage",percentage);
+            }
+        } catch (Exception e) {
+            result.put("account",new BigDecimal("0.0"));
+            result.put("percentage",new BigDecimal("0.0"));
+            CurrentLineInfo.printCurrentLineInfo("统计收入比重时发生异常", e, FinancialServiceImpl.class);
+        }
+        return ResultUtil.success(result);
     }
 
 }

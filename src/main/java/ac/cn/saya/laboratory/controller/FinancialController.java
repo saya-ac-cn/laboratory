@@ -276,6 +276,28 @@ public class FinancialController {
     }
 
     /**
+     * 收支增长率
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return 本月总收支，日均收支，环比增长，同比增长
+     */
+    @GetMapping(value = "accountGrowthRate/{tradeDate}")
+    public Result<Object> accountGrowthRate(@PathVariable("tradeDate") String tradeDate,HttpServletRequest request){
+        return financialService.accountGrowthRate(tradeDate,request);
+    }
+
+    /**
+     * 收入比重
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return 收入率 总收支
+     */
+    @GetMapping(value = "incomePercentage/{tradeDate}")
+    public Result<Object> incomePercentage(@PathVariable("tradeDate") String tradeDate,HttpServletRequest request){
+        return financialService.incomePercentage(tradeDate,request);
+    }
+
+    /**
      * 查询指定月份的账单（按天）
      * @param param 表单查询参数
      * @param request 用户会话请求
