@@ -130,9 +130,9 @@ public class UserService {
      * @创建时间 2019-03-03
      * @修改人和其它信息
      */
-    public Map<String, Object> countPre6Logs(String user) {
+    public Map<String, Object> countPre6Logs(String user,String endDate) {
         try {
-            return batchDAO.countPre6Logs(user);
+            return batchDAO.countPre6Logs(user,endDate);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查询近半年活跃情况失败",e, UserService.class);
             throw new MyException(ResultEnum.DB_ERROR);

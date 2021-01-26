@@ -229,5 +229,13 @@ public interface ICoreService {
      */
     public Result<Object> dashBoard(HttpServletRequest request) throws Exception;
 
+    /**
+     * 查询活动率
+     * @param queryMonth 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> activityRate(String queryMonth,HttpServletRequest request) throws Exception;
 
 }

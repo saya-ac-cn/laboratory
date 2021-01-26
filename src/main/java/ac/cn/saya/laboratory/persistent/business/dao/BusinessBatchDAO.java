@@ -23,14 +23,12 @@ import java.util.Map;
 public class BusinessBatchDAO extends PrimaryJDBCConnection {
 
     /**
-     * @描述 调用存储过程查询近半年发表的动态
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019-03-03
-     * @修改人和其它信息
+     * 调用存储过程查询近半年发表的动态
+     * @param user 用户
+     * @param endDate 终止日期
+     * @return
      */
-    public Map<String, Object> countPre6MonthNews(String user) {
+    public Map<String, Object> countPre6MonthNews(String user,String endDate) {
         Map<String, Object> result = null;
         SqlSession sqlSession = null;
         //连接对象
@@ -40,91 +38,10 @@ public class BusinessBatchDAO extends PrimaryJDBCConnection {
             sqlSession = getSqlSession();
             //建立jdbc连接
             sqlCon = sqlSession.getConfiguration().getEnvironment().getDataSource().getConnection();
-            CallableStatement cs = sqlCon.prepareCall("{Call countPre6News(?)}");
+            CallableStatement cs = sqlCon.prepareCall("{Call countPre6News(?,?)}");
             //设置参数
             cs.setString(1, user);
-            //执行
-            cs.executeQuery();
-            ResultSet rs = cs.getResultSet();
-            result = new LinkedHashMap();
-            while (rs.next()) {
-                result.put(rs.getString("totalCount"), rs.getLong("count"));
-            }
-            cs.close();
-            sqlCon.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            //及时关闭资源
-            if (sqlSession != null) {
-                sqlSession.close();
-            }
-            return result;
-        }
-    }
-
-    /**
-     * @描述 调用存储过程查询近半年文件上传情况
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019-03-03
-     * @修改人和其它信息
-     */
-    public Map<String, Object> countPre6Files(String user) {
-        Map<String, Object> result = null;
-        SqlSession sqlSession = null;
-        //连接对象
-        Connection sqlCon = null;
-        try {
-            //获取sqlSession
-            sqlSession = getSqlSession();
-            //建立jdbc连接
-            sqlCon = sqlSession.getConfiguration().getEnvironment().getDataSource().getConnection();
-            CallableStatement cs = sqlCon.prepareCall("{Call countPre6Files(?)}");
-            //设置参数
-            cs.setString(1, user);
-            //执行
-            cs.executeQuery();
-            ResultSet rs = cs.getResultSet();
-            result = new LinkedHashMap();
-            while (rs.next()) {
-                result.put(rs.getString("totalCount"), rs.getLong("count"));
-            }
-            cs.close();
-            sqlCon.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            //及时关闭资源
-            if (sqlSession != null) {
-                sqlSession.close();
-            }
-            return result;
-        }
-    }
-
-    /**
-     * @描述 调用存储过程查询近半年便笺发布情况
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019-03-03
-     * @修改人和其它信息
-     */
-    public Map<String, Object> countPre6Memo(String user) {
-        Map<String, Object> result = null;
-        SqlSession sqlSession = null;
-        //连接对象
-        Connection sqlCon = null;
-        try {
-            //获取sqlSession
-            sqlSession = getSqlSession();
-            //建立jdbc连接
-            sqlCon = sqlSession.getConfiguration().getEnvironment().getDataSource().getConnection();
-            CallableStatement cs = sqlCon.prepareCall("{Call countPre6Memo(?)}");
-            //设置参数
-            cs.setString(1, user);
+            cs.setString(2, endDate);
             //执行
             cs.executeQuery();
             ResultSet rs = cs.getResultSet();

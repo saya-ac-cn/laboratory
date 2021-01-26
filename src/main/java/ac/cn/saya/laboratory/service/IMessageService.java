@@ -226,4 +226,13 @@ public interface IMessageService {
      */
     public Result<Object> getMemoList(MemoEntity entity, HttpServletRequest request) throws Exception;
 
+    /**
+     * 统计动态发布
+     * @param queryMonth 所在月份的日期(2021-01-25格式)
+     * @param request 当前用户会话信息
+     * @return
+     * @throws Exception
+     */
+    public Result<Object> newsRate(String queryMonth,HttpServletRequest request) throws Exception;
+
 }

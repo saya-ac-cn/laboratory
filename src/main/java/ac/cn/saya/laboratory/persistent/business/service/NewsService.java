@@ -182,9 +182,9 @@ public class NewsService {
      * @修改人和其它信息
      */
     @Transactional(readOnly = true)
-    public Map<String, Object> countPre6MonthNews(String user) {
+    public Map<String, Object> countPre6MonthNews(String user,String endDate) {
         try {
-            return batchDAO.countPre6MonthNews(user);
+            return batchDAO.countPre6MonthNews(user,endDate);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查询近半年的动态发布情况失败", e, NewsService.class);
             throw new MyException(ResultEnum.DB_ERROR);

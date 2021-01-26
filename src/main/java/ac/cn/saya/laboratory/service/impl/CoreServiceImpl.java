@@ -20,7 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -911,13 +913,9 @@ public class CoreServiceImpl implements ICoreService {
         logEntity.setType("OX001");
         CompletableFuture<Long> logCountFuture = CompletableFuture.supplyAsync(()->logService.selectCount(logEntity));
 
-        CompletableFuture<Map<String, Object>> news6Future = CompletableFuture.supplyAsync(()->newsService.countPre6MonthNews(userSession.getUser()));
+        CompletableFuture<Map<String, Object>> news6Future = CompletableFuture.supplyAsync(()->newsService.countPre6MonthNews(userSession.getUser(),""));
 
-        CompletableFuture<Map<String, Object>> log6Future = CompletableFuture.supplyAsync(()->userService.countPre6Logs(userSession.getUser()));
-
-        CompletableFuture<Map<String, Object>> files6Future = CompletableFuture.supplyAsync(()->filesService.countPre6Files(userSession.getUser()));
-
-        CompletableFuture<Map<String, Object>> memo6Future = CompletableFuture.supplyAsync(()->memoService.countPre6Memo(userSession.getUser()));
+        CompletableFuture<Map<String, Object>> log6Future = CompletableFuture.supplyAsync(()->userService.countPre6Logs(userSession.getUser(),""));
 
         CompletableFuture<List<TransactionListEntity>> financial6Future = CompletableFuture.supplyAsync(()->financialDeclareService.countPre6Financial(userSession.getUser()));
 
@@ -948,12 +946,6 @@ public class CoreServiceImpl implements ICoreService {
         Map<String, Object> log6 = log6Future.exceptionally(f -> null).get();
         result.put("log6", log6);
 
-        Map<String, Object> files6 = files6Future.exceptionally(f -> null).get();
-        result.put("files6", files6);
-
-        Map<String, Object> memo6 = memo6Future.exceptionally(f -> null).get();
-        result.put("memo6", memo6);
-
         List<TransactionListEntity> financial6 = financial6Future.exceptionally(f -> null).get();
         result.put("financial6", financial6);
 
@@ -964,6 +956,51 @@ public class CoreServiceImpl implements ICoreService {
         List<NoteBookEntity> bookList = bookListFuture.exceptionally(f -> null).get();
         result.put("bookList", bookList);
 
+        return ResultUtil.success(result);
+    }
+
+    /**
+     * 查询活动率
+     * @param queryMonth 所在月份的日期(2021-01-25格式)
+     * @param request 当前用户会话信息
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result<Object> activityRate(String queryMonth,HttpServletRequest request) throws Exception{
+        Map<String, Object> result = new HashMap<>(4);
+        try {
+            LocalDate monthDate = LocalDate.parse(queryMonth, DateUtils.dateFormat);
+            // 总天数，计算日均用
+            int days = 0;
+            if(DateUtils.checkIsCurrentMonth(queryMonth)){
+                // 是当前月，天数为已经过去的天数
+                days = monthDate.getDayOfMonth();
+            }else{
+                days = monthDate.lengthOfMonth();
+            }
+            // 查询本月的活跃次数
+            // 统计登录总数
+            LogEntity logEntity = new LogEntity();
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+            logEntity.setUser(userSession.getUser());
+            logEntity.setBeginTime(DateUtils.getFirstDayOfMonth(queryMonth));
+            logEntity.setEndTime(DateUtils.getLastDayOfMonth(queryMonth));
+            // 本月活跃总数
+            Long currentActivityCount = logService.selectCount(logEntity);
+            // 计算日均
+            BigDecimal avgAccount = (BigDecimal.valueOf(currentActivityCount)).divide(new BigDecimal(days),4, BigDecimal.ROUND_HALF_UP);
+            // 近半年的活跃次数
+            Map<String, Object> log6 = userService.countPre6Logs(userSession.getUser(), queryMonth);
+            result.put("count",currentActivityCount);
+            result.put("avg",avgAccount);
+            result.put("log6",log6);
+        } catch (Exception e) {
+            result.put("count",0);
+            result.put("avg",0);
+            result.put("log6",null);
+            CurrentLineInfo.printCurrentLineInfo("统计活动率时发生异常", e, CoreServiceImpl.class);
+        }
         return ResultUtil.success(result);
     }
 }

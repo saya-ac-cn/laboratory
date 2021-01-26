@@ -300,4 +300,16 @@ public class MessageController {
         return messageServiceImpl.getOneMemo(entity,request);
     }
 
+    /**
+     * 统计动态发布
+     * @param queryMonth 所在月份的日期(2021-01-25格式)
+     * @param request 当前用户会话信息
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "newsRate/{queryMonth}")
+    public Result<Object> newsRate(@PathVariable("queryMonth") String queryMonth,HttpServletRequest request) throws Exception {
+        return messageServiceImpl.newsRate(queryMonth,request);
+    }
+
 }

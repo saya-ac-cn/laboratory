@@ -147,21 +147,4 @@ public class FilesService {
         }
     }
 
-    /**
-     * @描述 查询近半年文件上传情况
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019-03-03
-     * @修改人和其它信息
-     */
-    public Map<String, Object> countPre6Files(String user) {
-        try {
-            return batchDAO.countPre6Files(user);
-        } catch (Exception e) {
-            CurrentLineInfo.printCurrentLineInfo("查询近半年文件上传情况失败",e, FilesService.class);
-            throw new MyException(ResultEnum.DB_ERROR);
-        }
-    }
-
 }

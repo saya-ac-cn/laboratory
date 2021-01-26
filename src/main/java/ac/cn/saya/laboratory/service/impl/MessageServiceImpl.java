@@ -4,17 +4,18 @@ import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.business.service.*;
 import ac.cn.saya.laboratory.service.IMessageService;
-import ac.cn.saya.laboratory.tools.Paging;
-import ac.cn.saya.laboratory.tools.Result;
-import ac.cn.saya.laboratory.tools.ResultEnum;
-import ac.cn.saya.laboratory.tools.ResultUtil;
+import ac.cn.saya.laboratory.tools.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Title: MessageServiceImpl
@@ -694,4 +695,49 @@ public class MessageServiceImpl implements IMessageService {
             throw new MyException(ResultEnum.NOT_EXIST);
         }
     }
+
+    /**
+     * 统计动态发布
+     * @param queryMonth 所在月份的日期(2021-01-25格式)
+     * @param request 当前用户会话信息
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result<Object> newsRate(String queryMonth,HttpServletRequest request) throws Exception{
+        Map<String, Object> result = new HashMap<>(4);
+        try {
+            LocalDate monthDate = LocalDate.parse(queryMonth, DateUtils.dateFormat);
+            // 总天数，计算日均用
+            int days = 0;
+            if(DateUtils.checkIsCurrentMonth(queryMonth)){
+                // 是当前月，天数为已经过去的天数
+                days = monthDate.getDayOfMonth();
+            }else{
+                days = monthDate.lengthOfMonth();
+            }
+            // 查询本月发布的数量
+            NewsEntity newsEntity = new NewsEntity();
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+            newsEntity.setSource(userSession.getUser());
+            newsEntity.setBeginTime(DateUtils.getFirstDayOfMonth(queryMonth));
+            newsEntity.setEndTime(DateUtils.getLastDayOfMonth(queryMonth));
+            // 本月发布总数
+            Long currentPublishCount = newsService.getNewsCount(newsEntity);
+            // 计算日均
+            BigDecimal avgAccount = (BigDecimal.valueOf(currentPublishCount)).divide(new BigDecimal(days),4, BigDecimal.ROUND_HALF_UP);
+            // 近半年的发布数
+            Map<String, Object> log6 = newsService.countPre6MonthNews(userSession.getUser(),queryMonth);
+            result.put("count",currentPublishCount);
+            result.put("avg",avgAccount);
+            result.put("log6",log6);
+        } catch (Exception e) {
+            result.put("count",0);
+            result.put("avg",0);
+            result.put("log6",null);
+            CurrentLineInfo.printCurrentLineInfo("统计动态发布时发生异常", e, MessageServiceImpl.class);
+        }
+        return ResultUtil.success(result);
+    }
+
 }

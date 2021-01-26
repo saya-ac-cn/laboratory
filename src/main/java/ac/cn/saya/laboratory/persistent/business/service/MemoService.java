@@ -153,21 +153,4 @@ public class MemoService {
         }
     }
 
-    /**
-     * @描述 查询近半年便笺发布情况
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019-03-03
-     * @修改人和其它信息
-     */
-    public Map<String, Object> countPre6Memo(String user) {
-        try {
-            return batchDAO.countPre6Memo(user);
-        } catch (Exception e) {
-            CurrentLineInfo.printCurrentLineInfo("查询近半年便笺发布情况失败",e, MemoService.class);
-            throw new MyException(ResultEnum.DB_ERROR);
-        }
-    }
-
 }

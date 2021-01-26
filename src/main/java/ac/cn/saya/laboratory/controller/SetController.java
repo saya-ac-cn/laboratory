@@ -250,5 +250,16 @@ public class SetController {
         return coreServiceImpl.dashBoard(request);
     }
 
+    /**
+     * 查询活动率
+     * @param queryMonth 月份时间（2020-12-20）
+     * @param request 会话请求
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "activityRate/{queryMonth}")
+    public Result<Object> activityRate(@PathVariable("queryMonth") String queryMonth,HttpServletRequest request) throws Exception {
+        return coreServiceImpl.activityRate(queryMonth,request);
+    }
 
 }

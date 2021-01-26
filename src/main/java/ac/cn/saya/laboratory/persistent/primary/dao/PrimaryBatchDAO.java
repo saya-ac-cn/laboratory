@@ -23,14 +23,12 @@ import java.util.*;
 public class PrimaryBatchDAO extends PrimaryJDBCConnection {
 
     /**
-     * @描述 调用存储过程查询近半年活跃情况
-     * @参数
-     * @返回值
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019-03-03
-     * @修改人和其它信息
+     * 调用存储过程查询近半年活跃情况
+     * @param user 用户
+     * @param endDate 终止日期
+     * @return
      */
-    public Map<String, Object> countPre6Logs(String user) {
+    public Map<String, Object> countPre6Logs(String user,String endDate) {
         Map<String, Object> result = null;
         SqlSession sqlSession = null;
         //连接对象
@@ -40,9 +38,10 @@ public class PrimaryBatchDAO extends PrimaryJDBCConnection {
             sqlSession = getSqlSession();
             //建立jdbc连接
             sqlCon = sqlSession.getConfiguration().getEnvironment().getDataSource().getConnection();
-            CallableStatement cs = sqlCon.prepareCall("{Call countPre6Logs(?)}");
+            CallableStatement cs = sqlCon.prepareCall("{Call countPre6Logs(?,?)}");
             //设置参数
             cs.setString(1, user);
+            cs.setString(2, endDate);
             //执行
             cs.executeQuery();
             ResultSet rs = cs.getResultSet();
