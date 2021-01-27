@@ -297,4 +297,20 @@ public interface IFinancialService {
      */
     public Result<Object> incomePercentage(String tradeDate,HttpServletRequest request);
 
+    /**
+     * 统计指定月份中各摘要的排名
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return
+     */
+    public Result<Object> orderByAmount(String tradeDate,HttpServletRequest request);
+
+    /**
+     * 统计指定指定日期月份前6个月的账单
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return
+     */
+    public Result<Object> preSixMonthBill(String tradeDate,HttpServletRequest request);
+
 }

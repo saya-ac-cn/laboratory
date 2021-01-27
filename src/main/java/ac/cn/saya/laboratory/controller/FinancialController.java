@@ -298,6 +298,28 @@ public class FinancialController {
     }
 
     /**
+     * 统计指定月份中各摘要的排名
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return
+     */
+    @GetMapping(value = "orderByAmount/{tradeDate}")
+    public Result<Object> orderByAmount(@PathVariable("tradeDate") String tradeDate,HttpServletRequest request){
+        return financialService.orderByAmount(tradeDate,request);
+    }
+
+    /**
+     * 统计指定指定日期月份前6个月的账单
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return
+     */
+    @GetMapping(value = "preSixMonthBill/{tradeDate}")
+    public Result<Object> preSixMonthBill(@PathVariable("tradeDate") String tradeDate,HttpServletRequest request){
+        return financialService.preSixMonthBill(tradeDate, request);
+    }
+
+    /**
      * 查询指定月份的账单（按天）
      * @param param 表单查询参数
      * @param request 用户会话请求

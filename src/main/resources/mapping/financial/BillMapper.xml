@@ -145,6 +145,8 @@
                 </if>
             GROUP BY
                 c.transactionAmount
+            ORDER BY
+                c.currencyNumber desc
         ) b ON a.id = b.transactionAmount
         <where>
             <if test = 'flag != null and flag == 1'>

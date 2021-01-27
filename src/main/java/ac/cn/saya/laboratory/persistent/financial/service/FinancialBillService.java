@@ -6,6 +6,7 @@ import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.financial.dao.BillDAO;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
+import ac.cn.saya.laboratory.tools.Result;
 import ac.cn.saya.laboratory.tools.ResultEnum;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -214,6 +215,21 @@ public class FinancialBillService {
             return null;
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("统计指定月份的总支出失败", e, FinancialBillService.class);
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
+
+    /**
+     * 统计指定月份中各摘要的排名
+     * @param tradeDate 所在月份的日期
+     * @param source 当前用户会话信息
+     * @return
+     */
+    public List<BillOfAmountEntity> orderByAmount(String tradeDate, String source,int flag){
+        try {
+            return billDAO.totalBillByAmount(tradeDate, source, 1);
+        } catch (Exception e) {
+            CurrentLineInfo.printCurrentLineInfo("统计指定月份中各摘要的排名失败", e, FinancialBillService.class);
             throw new MyException(ResultEnum.DB_ERROR);
         }
     }

@@ -52,9 +52,9 @@ public class FinancialDeclareService {
      * @创建时间 2019-03-03
      * @修改人和其它信息
      */
-    public List<TransactionListEntity> countPre6Financial(String user) {
+    public List<TransactionListEntity> countPre6Financial(String user,String endDate) {
         try {
-            return batchDAO.countPre6Financial(user);
+            return batchDAO.countPre6Financial(user,endDate);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查询近半年财政收支情况失败",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);

@@ -917,7 +917,7 @@ public class CoreServiceImpl implements ICoreService {
 
         CompletableFuture<Map<String, Object>> log6Future = CompletableFuture.supplyAsync(()->userService.countPre6Logs(userSession.getUser(),""));
 
-        CompletableFuture<List<TransactionListEntity>> financial6Future = CompletableFuture.supplyAsync(()->financialDeclareService.countPre6Financial(userSession.getUser()));
+        CompletableFuture<List<TransactionListEntity>> financial6Future = CompletableFuture.supplyAsync(()->financialDeclareService.countPre6Financial(userSession.getUser(),""));
 
         Long pictureCount = pictureCountFuture.exceptionally(f -> 0L).get();
         result.put("pictureCount", pictureCount);

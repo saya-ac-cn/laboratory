@@ -998,4 +998,42 @@ public class FinancialServiceImpl implements IFinancialService {
         return ResultUtil.success(result);
     }
 
+    /**
+     * 统计指定月份中各摘要的排名
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return
+     */
+    @Override
+    public Result<Object> orderByAmount(String tradeDate,HttpServletRequest request){
+        try {
+            // 清洗时间数据 2021-01-25 -> 2021-01
+            LocalDate monthDate = LocalDate.parse(tradeDate, DateUtils.dateFormat);
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+            List<BillOfAmountEntity> rankList = financialBillService.orderByAmount(monthDate.format(DateUtils.dateFormatMonth), userSession.getUser(), 0);
+            return ResultUtil.success(rankList);
+        } catch (Exception e) {
+            CurrentLineInfo.printCurrentLineInfo("统计指定月份中各摘要的排名时发生异常", e, FinancialServiceImpl.class);
+            return ResultUtil.error(ResultEnum.ERROP);
+        }
+    }
+
+    /**
+     * 统计指定指定日期月份前6个月的账单
+     * @param tradeDate 所在月份的日期
+     * @param request 当前用户会话信息
+     * @return
+     */
+    @Override
+    public Result<Object> preSixMonthBill(String tradeDate,HttpServletRequest request){
+        try {
+            UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+            List<TransactionListEntity> billCollection = financialDeclareService.countPre6Financial(userSession.getUser(),tradeDate);
+            return ResultUtil.success(billCollection);
+        } catch (Exception e) {
+            CurrentLineInfo.printCurrentLineInfo("统计指定指定日期月份前6个月的账单时发生异常", e, FinancialServiceImpl.class);
+            return ResultUtil.error(ResultEnum.ERROP);
+        }
+    }
+
 }

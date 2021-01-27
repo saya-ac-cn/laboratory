@@ -31,7 +31,7 @@ public class FinancialBatchDAO extends FinancialJDBCConnection {
      * @创建时间 2019-03-03
      * @修改人和其它信息
      */
-    public List<TransactionListEntity> countPre6Financial(String user) {
+    public List<TransactionListEntity> countPre6Financial(String user,String endDate) {
         List<TransactionListEntity> result = null;
         SqlSession sqlSession = null;
         //连接对象
@@ -41,15 +41,16 @@ public class FinancialBatchDAO extends FinancialJDBCConnection {
             sqlSession = getSqlSession();
             //建立jdbc连接
             sqlCon = sqlSession.getConfiguration().getEnvironment().getDataSource().getConnection();
-            CallableStatement cs = sqlCon.prepareCall("{Call countPre6Financial(?)}");
+            CallableStatement cs = sqlCon.prepareCall("{Call countPre6Financial(?,?)}");
             //设置参数
             cs.setString(1, user);
+            cs.setString(2,endDate);
             //执行
             cs.executeQuery();
             ResultSet rs = cs.getResultSet();
             result = new ArrayList<>();
             while (rs.next()) {
-                result.add(new TransactionListEntity(rs.getString("totalCount"), new BigDecimal(rs.getString("deposited") == null ? "0.0" : rs.getString("deposited")), new BigDecimal(rs.getString("expenditure") == null ? "0.0" : rs.getString("expenditure")), new BigDecimal(rs.getString("currencyNumber") == null ? "0.0" : rs.getString("currencyNumber"))));
+                result.add(new TransactionListEntity(rs.getString("tradeDate"), new BigDecimal(rs.getString("deposited") == null ? "0.0" : rs.getString("deposited")), new BigDecimal(rs.getString("expenditure") == null ? "0.0" : rs.getString("expenditure")), new BigDecimal(rs.getString("currencyNumber") == null ? "0.0" : rs.getString("currencyNumber"))));
             }
             cs.close();
             sqlCon.close();
