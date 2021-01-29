@@ -238,16 +238,16 @@ public class SetController {
     }
 
     /**
-     * @描述 获取控制台数据
+     * @描述 获取统计总数及笔记簿词云数据
      * @参数
      * @返回值
      * @创建人 saya.ac.cn-刘能凯
      * @创建时间 2019-03-03
      * @修改人和其它信息
      */
-    @GetMapping(value = "dashBoard")
-    public Result<Object> dashBoard(HttpServletRequest request) throws Exception {
-        return coreServiceImpl.dashBoard(request);
+    @GetMapping(value = "countAndWordCloud")
+    public Result<Object> countAndWordCloud(HttpServletRequest request) throws Exception {
+        return coreServiceImpl.countAndWordCloud(request);
     }
 
     /**

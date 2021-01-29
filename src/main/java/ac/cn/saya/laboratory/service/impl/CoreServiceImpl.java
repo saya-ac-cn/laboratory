@@ -866,7 +866,7 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @描述 获取统计报表数据 异步执行
+     * @描述 获取统计总数及笔记簿词云数据
      * @参数
      * @返回值
      * @创建人 saya.ac.cn-刘能凯
@@ -874,7 +874,7 @@ public class CoreServiceImpl implements ICoreService {
      * @修改人和其它信息
      */
     @Override
-    public Result<Object> dashBoard(HttpServletRequest request) throws Exception {
+    public Result<Object> countAndWordCloud(HttpServletRequest request) throws Exception {
         Map<String, Object> result = new HashMap<>();
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         // 统计图片总数
@@ -907,18 +907,6 @@ public class CoreServiceImpl implements ICoreService {
         newsEntity.setSource(userSession.getUser());
         CompletableFuture<Long> newsCountFuture = CompletableFuture.supplyAsync(()->newsService.getNewsCount(newsEntity));
 
-        // 统计登录总数
-        LogEntity logEntity = new LogEntity();
-        logEntity.setUser(userSession.getUser());
-        logEntity.setType("OX001");
-        CompletableFuture<Long> logCountFuture = CompletableFuture.supplyAsync(()->logService.selectCount(logEntity));
-
-        CompletableFuture<Map<String, Object>> news6Future = CompletableFuture.supplyAsync(()->newsService.countPre6MonthNews(userSession.getUser(),""));
-
-        CompletableFuture<Map<String, Object>> log6Future = CompletableFuture.supplyAsync(()->userService.countPre6Logs(userSession.getUser(),""));
-
-        CompletableFuture<List<TransactionListEntity>> financial6Future = CompletableFuture.supplyAsync(()->financialDeclareService.countPre6Financial(userSession.getUser(),""));
-
         Long pictureCount = pictureCountFuture.exceptionally(f -> 0L).get();
         result.put("pictureCount", pictureCount);
 
@@ -936,18 +924,6 @@ public class CoreServiceImpl implements ICoreService {
 
         Long newsCount = newsCountFuture.exceptionally(f -> 0L).get();
         result.put("newsCount", newsCount);
-
-        Long logCount = logCountFuture.exceptionally(f -> 0L).get();
-        result.put("logCount", logCount);
-
-        Map<String, Object> news6 = news6Future.exceptionally(f -> null).get();
-        result.put("news6", news6);
-
-        Map<String, Object> log6 = log6Future.exceptionally(f -> null).get();
-        result.put("log6", log6);
-
-        List<TransactionListEntity> financial6 = financial6Future.exceptionally(f -> null).get();
-        result.put("financial6", financial6);
 
         // 统计笔记簿
         bookEntity.setStartLine(0);
