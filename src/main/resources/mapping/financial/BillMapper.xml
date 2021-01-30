@@ -145,8 +145,6 @@
                 </if>
             GROUP BY
                 c.transactionAmount
-            ORDER BY
-                c.currencyNumber desc
         ) b ON a.id = b.transactionAmount
         <where>
             <if test = 'flag != null and flag == 1'>
@@ -156,6 +154,8 @@
                 a.flog = 2
             </if>
         </where>
+        ORDER BY
+          b.currencyNumber desc
     </select>
 
     <resultMap id="returnBillBalanceRank" type="transactionList">

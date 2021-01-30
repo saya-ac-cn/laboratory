@@ -924,7 +924,7 @@ public class FinancialServiceImpl implements IFinancialService {
             BigDecimal _lastMonthAccount = BigDecimal.ZERO;
             if (null != _lastMonth){
                 // 上月的总收入
-                _lastMonthAccount = _currentMonth.getCurrencyNumber();
+                _lastMonthAccount = _lastMonth.getCurrencyNumber();
             }
             // 去年同期这个月的数据结果
             queryParam.setTradeDate(lastYear.format(DateUtils.dateFormatMonth));
@@ -932,20 +932,22 @@ public class FinancialServiceImpl implements IFinancialService {
             BigDecimal _lastYearAccount = BigDecimal.ZERO;
             if (null != _lastYear){
                 // 去年同期这个月的总收入
-                _lastYearAccount = _currentMonth.getCurrencyNumber();
+                _lastYearAccount = _lastYear.getCurrencyNumber();
             }
             BigDecimal zero = BigDecimal.ZERO;
             // 计算日均
-            BigDecimal avgAccount = _currentMonthAccount.divide(new BigDecimal(days),4, BigDecimal.ROUND_HALF_UP);
-            // 计算环比 （本月的值-上月的值）÷上月的值
+            BigDecimal avgAccount = _currentMonthAccount.divide(new BigDecimal(days),2, BigDecimal.ROUND_HALF_UP);
+            // 计算环比 （本月的值-上月的值）÷上月的值(如果上月值为空，不计算)
             BigDecimal m2m = BigDecimal.ZERO;
-            if (0 != zero.compareTo(_lastMonthAccount)){
+            if(_lastMonthAccount != null && 0 != zero.compareTo(_lastMonthAccount)){
                 m2m = (_currentMonthAccount.subtract(_lastMonthAccount)).divide(_lastMonthAccount,4, BigDecimal.ROUND_HALF_UP);
+                m2m = m2m.multiply(BigDecimal.valueOf(100.0));
             }
-            // 计算同比比 （本年的值-去年同期的值）÷去年同期的值
+            // 计算同比比 （本年的值-去年同期的值）÷去年同期的值(如果同期值为空，不计算)
             BigDecimal y2y = BigDecimal.ZERO;
-            if (0 != zero.compareTo(_lastYearAccount)){
+            if(_lastYearAccount != null && 0 != zero.compareTo(_lastYearAccount)){
                 y2y = (_currentMonthAccount.subtract(_lastYearAccount)).divide(_lastYearAccount,4, BigDecimal.ROUND_HALF_UP);
+                y2y = y2y.multiply(BigDecimal.valueOf(100.0));
             }
             result.put("account",_currentMonthAccount);
             result.put("avg",avgAccount);
@@ -988,7 +990,7 @@ public class FinancialServiceImpl implements IFinancialService {
                 if (0 != zero.compareTo(queryResult.getCurrencyNumber())){
                     percentage = (queryResult.getDeposited()).divide((queryResult.getCurrencyNumber()),4, BigDecimal.ROUND_HALF_UP);
                 }
-                result.put("percentage",percentage);
+                result.put("percentage",percentage.multiply(BigDecimal.valueOf(100.0)));
             }
         } catch (Exception e) {
             result.put("account",new BigDecimal("0.0"));

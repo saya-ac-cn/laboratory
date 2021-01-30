@@ -730,11 +730,11 @@ public class MessageServiceImpl implements IMessageService {
             Map<String, Object> log6 = newsService.countPre6MonthNews(userSession.getUser(),queryMonth);
             result.put("count",currentPublishCount);
             result.put("avg",avgAccount);
-            result.put("log6",log6);
+            result.put("news6",log6);
         } catch (Exception e) {
             result.put("count",0);
             result.put("avg",0);
-            result.put("log6",null);
+            result.put("news6",null);
             CurrentLineInfo.printCurrentLineInfo("统计动态发布时发生异常", e, MessageServiceImpl.class);
         }
         return ResultUtil.success(result);

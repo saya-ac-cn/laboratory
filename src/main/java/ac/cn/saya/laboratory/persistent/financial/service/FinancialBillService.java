@@ -227,7 +227,7 @@ public class FinancialBillService {
      */
     public List<BillOfAmountEntity> orderByAmount(String tradeDate, String source,int flag){
         try {
-            return billDAO.totalBillByAmount(tradeDate, source, 1);
+            return billDAO.totalBillByAmount(tradeDate, source, flag);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("统计指定月份中各摘要的排名失败", e, FinancialBillService.class);
             throw new MyException(ResultEnum.DB_ERROR);
