@@ -9,6 +9,7 @@ import ac.cn.saya.laboratory.persistent.primary.service.LogService;
 import ac.cn.saya.laboratory.persistent.primary.service.UserService;
 import ac.cn.saya.laboratory.service.ICoreService;
 import ac.cn.saya.laboratory.tools.*;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -907,30 +908,51 @@ public class CoreServiceImpl implements ICoreService {
         newsEntity.setSource(userSession.getUser());
         CompletableFuture<Long> newsCountFuture = CompletableFuture.supplyAsync(()->newsService.getNewsCount(newsEntity));
 
+        JSONArray roseData = new JSONArray();
+
         Long pictureCount = pictureCountFuture.exceptionally(f -> 0L).get();
-        result.put("pictureCount", pictureCount);
+        JSONObject pictureItem = new JSONObject();
+        pictureItem.put("type","图片");
+        pictureItem.put("value",pictureCount);
+        roseData.add(pictureItem);
 
         Long fileCount = fileCountFuture.exceptionally(f -> 0L).get();
-        result.put("fileCount", fileCount);
+        JSONObject fileItem = new JSONObject();
+        fileItem.put("type","文件");
+        fileItem.put("value",fileCount);
+        roseData.add(fileItem);
 
         Long bookCount = bookCountFuture.exceptionally(f -> 0L).get();
-        result.put("bookCount", bookCount);
+        JSONObject bookItem = new JSONObject();
+        bookItem.put("type","笔记簿");
+        bookItem.put("value",bookCount);
+        roseData.add(bookItem);
 
         Long notesCount = notesCountFuture.exceptionally(f -> 0L).get();
-        result.put("notesCount", notesCount);
+        JSONObject notesItem = new JSONObject();
+        notesItem.put("type","笔记");
+        notesItem.put("value",notesCount);
+        roseData.add(notesItem);
 
         Long planCount = planCountFuture.exceptionally(f -> 0L).get();
-        result.put("planCount", planCount);
+        JSONObject planItem = new JSONObject();
+        planItem.put("type","计划");
+        planItem.put("value",planCount);
+        roseData.add(planItem);
 
         Long newsCount = newsCountFuture.exceptionally(f -> 0L).get();
-        result.put("newsCount", newsCount);
+        JSONObject newsItem = new JSONObject();
+        newsItem.put("type","动态");
+        newsItem.put("value",newsCount);
+        roseData.add(newsItem);
+        result.put("rose", roseData);
 
         // 统计笔记簿
         bookEntity.setStartLine(0);
         bookEntity.setEndLine(bookCount.intValue());
         CompletableFuture<List<NoteBookEntity>> bookListFuture = CompletableFuture.supplyAsync(()->noteBookService.getNoteBook(bookEntity));
         List<NoteBookEntity> bookList = bookListFuture.exceptionally(f -> null).get();
-        result.put("bookList", bookList);
+        result.put("wordCloud", bookList);
 
         return ResultUtil.success(result);
     }

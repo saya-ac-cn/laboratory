@@ -20,7 +20,7 @@ import java.util.Map;
  */
 
 @Repository("businessBatchDAO")
-public class BusinessBatchDAO extends PrimaryJDBCConnection {
+public class BusinessBatchDAO extends BusinessJDBCConnection {
 
     /**
      * 调用存储过程查询近半年发表的动态

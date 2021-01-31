@@ -990,7 +990,7 @@ public class FinancialServiceImpl implements IFinancialService {
                 if (0 != zero.compareTo(queryResult.getCurrencyNumber())){
                     percentage = (queryResult.getDeposited()).divide((queryResult.getCurrencyNumber()),4, BigDecimal.ROUND_HALF_UP);
                 }
-                result.put("percentage",percentage.multiply(BigDecimal.valueOf(100.0)));
+                result.put("percentage",percentage);
             }
         } catch (Exception e) {
             result.put("account",new BigDecimal("0.0"));
