@@ -55,10 +55,6 @@ public class CoreServiceImpl implements ICoreService {
     private PlanService planService;
 
     @Resource
-    @Qualifier("apiService")
-    private ApiService apiService;
-
-    @Resource
     @Qualifier("pictureStorageService")
     private PictureStorageService pictureStorageService;
 
@@ -764,106 +760,6 @@ public class CoreServiceImpl implements ICoreService {
         } else {
             throw new MyException(ResultEnum.ERROP);
         }
-    }
-
-    /**
-     * @描述
-     * @参数 [entity, request]
-     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/24
-     * @修改人和其它信息 查询接口列表
-     */
-    @Override
-    public Result<Object> getApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        Paging paging = new Paging();
-        if (entity.getNowPage() == null) {
-            entity.setNowPage(1);
-        }
-        if (entity.getPageSize() == null) {
-            entity.setPageSize(20);
-        }
-        //每页显示记录的数量
-        paging.setPageSize(entity.getPageSize());
-        //获取满足条件的总记录（不分页）
-        Long pageSize = apiService.getApiCount(entity);
-        if (pageSize > 0) {
-            //总记录数
-            paging.setDateSum(pageSize);
-            //计算总页数
-            paging.setTotalPage();
-            //设置当前的页码-并校验是否超出页码范围
-            paging.setPageNow(entity.getNowPage());
-            //设置行索引
-            entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
-            //获取满足条件的记录集合
-            List<ApiEntity> list = apiService.getApiPage(entity);
-            paging.setGrid(list);
-            return ResultUtil.success(paging);
-        } else {
-            //未找到有效记录
-            throw new MyException(ResultEnum.NOT_EXIST);
-        }
-    }
-
-    /**
-     * @描述
-     * @参数 [entity, request]
-     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/24
-     * @修改人和其它信息 创建接口
-     */
-    @Override
-    public Result<Object> createApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        Result<Object> result = apiService.insertApi(entity);
-        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
-            /**
-             * 记录日志
-             */
-            recordService.record("OX031", request);
-        }
-        return result;
-    }
-
-    /**
-     * @描述
-     * @参数 [entity, request]
-     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/24
-     * @修改人和其它信息 修改接口
-     */
-    @Override
-    public Result<Object> editApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        Result<Object> result = apiService.editApi(entity);
-        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
-            /**
-             * 记录日志
-             */
-            recordService.record("OX032", request);
-        }
-        return result;
-    }
-
-    /**
-     * @描述
-     * @参数 [entity, request]
-     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/24
-     * @修改人和其它信息 删除接口
-     */
-    @Override
-    public Result<Object> deleteApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        Result<Object> result = apiService.deleteApi(entity);
-        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
-            /**
-             * 记录日志
-             */
-            recordService.record("OX033", request);
-        }
-        return result;
     }
 
     /**
