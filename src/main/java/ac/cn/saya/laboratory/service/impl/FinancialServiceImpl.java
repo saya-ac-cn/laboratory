@@ -914,7 +914,7 @@ public class FinancialServiceImpl implements IFinancialService {
             // 本月的数据结果
             BillOfDayEntity _currentMonth = financialBillService.totalBalanceHard(queryParam);
             BigDecimal _currentMonthAccount = BigDecimal.ZERO;
-            if (null != _currentMonth){
+            if (null != _currentMonth && null != _currentMonth.getCurrencyNumber()){
                 // 本月总收入
                 _currentMonthAccount = _currentMonth.getCurrencyNumber();
             }
@@ -987,7 +987,7 @@ public class FinancialServiceImpl implements IFinancialService {
                 result.put("account",queryResult.getCurrencyNumber());
                 BigDecimal zero = BigDecimal.ZERO;
                 BigDecimal percentage = BigDecimal.ZERO;
-                if (0 != zero.compareTo(queryResult.getCurrencyNumber())){
+                if (null != queryResult.getDeposited() &&  null != queryResult.getCurrencyNumber() && 0 != zero.compareTo(queryResult.getCurrencyNumber())){
                     percentage = (queryResult.getDeposited()).divide((queryResult.getCurrencyNumber()),4, BigDecimal.ROUND_HALF_UP);
                 }
                 result.put("percentage",percentage);

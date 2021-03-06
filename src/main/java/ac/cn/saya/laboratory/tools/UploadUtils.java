@@ -82,7 +82,6 @@ public class UploadUtils {
 
     /**
      * 上传图片（笔记、动态图片）
-     *
      * @param image
      * @param imgeUrl
      * @param request

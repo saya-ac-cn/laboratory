@@ -27,16 +27,16 @@ import java.net.URLConnection;
 @Component("httpClientUtil")
 public class HttpClientUtil {
 
-    @Value("${wx.appid}")
+    @Value("${wx.appid:898989}")
     private String appId;
 
-    @Value("${wx.secret}")
+    @Value("${wx.secret:6789}")
     private String secret;
 
-    @Value("${wx.url.token}")
+    @Value("${wx.url.token:678}")
     private String requestWxTokenUrl;
 
-    @Value("${wx.url.openid}")
+    @Value("${wx.url.openid:6789}")
     private String requestWxOpenidUrl;
 
     /**
