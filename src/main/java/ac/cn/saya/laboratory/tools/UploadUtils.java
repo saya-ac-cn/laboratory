@@ -5,13 +5,13 @@ import ac.cn.saya.laboratory.entity.UserMemory;
 import org.apache.commons.io.FileUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.UUID;
-
+import java.util.Base64;
+import java.util.Base64.Decoder;
 /**
  * @Title: UploadUtils
  * @ProjectName DataCenter
@@ -44,8 +44,8 @@ public class UploadUtils {
                 //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
                 UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
                 //将字符串格式的image转为二进制流（biye[])的decodedBytes
-                BASE64Decoder decoder = new BASE64Decoder();
-                byte[] decodedBytes = decoder.decodeBuffer(image);
+                Decoder decoder = Base64.getDecoder();
+                byte[] decodedBytes = decoder.decode(image);
                 /********生成今天的日期**********/
                 String datetime = DateUtils.getCurrentDateTime(DateUtils.fileFormat);
                 //url路径 files/picture/logo/用户名/yyyyMMdd
@@ -99,8 +99,8 @@ public class UploadUtils {
                 // 写入磁盘标志
                 String success = "fail";
                 //将字符串格式的image转为二进制流（biye[])的decodedBytes
-                BASE64Decoder decoder = new BASE64Decoder();
-                byte[] decodedBytes = decoder.decodeBuffer(image);
+                Decoder decoder = Base64.getDecoder();
+                byte[] decodedBytes = decoder.decode(image);
                 /********生成今天的日期**********/
                 String datetime = DateUtils.getCurrentDateTime(DateUtils.fileFormat);
                 //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
