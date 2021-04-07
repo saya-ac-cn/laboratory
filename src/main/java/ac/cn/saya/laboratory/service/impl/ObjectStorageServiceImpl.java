@@ -52,6 +52,10 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     @Qualifier("backupLogService")
     private BackupLogService backupLogService;
 
+    @Resource
+    @Qualifier("uploadUtils")
+    private UploadUtils uploadUtils;
+
     /**
      * 上传动态、笔记（插图）图片服务
      *
@@ -61,7 +65,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
      */
     @Override
     public Result<Object> updateNewsPicture(PictureEntity entity, HttpServletRequest request) throws Exception {
-        Result<String> upload = UploadUtils.uploadPicture(entity.getFileurl(), "illustrated", request);
+        Result<String> upload = uploadUtils.uploadPicture(entity.getFileurl(), "illustrated", request);
         if (upload.getCode() == 0) {
             //logo上传成功
             //得到文件上传成功的回传地址
@@ -73,7 +77,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             // 文件在服务器的存放目录
             entity.setFileurl(successUrl);
             // 浏览器可访问的url
-            entity.setWeburl(UploadUtils.descUrl(successUrl));
+            entity.setWeburl(uploadUtils.descUrl(successUrl));
             if (pictureStorageService.uploadPictureBase64(entity) > 0) {
                 /**
                  * 记录日志
@@ -103,7 +107,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
      */
     @Override
     public Result<Object> updateWallpaperPicture(MultipartFile file, HttpServletRequest request) throws Exception {
-        Result<String> upload = UploadUtils.uploadWallpaper(file, request);
+        Result<String> upload = uploadUtils.uploadWallpaper(file, request);
         if (upload.getCode() == 0) {
             //logo上传成功
             //得到文件上传成功的回传地址
@@ -118,7 +122,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             // 文件在服务器的存放目录
             entity.setFileurl(successUrl);
             // 浏览器可访问的url
-            entity.setWeburl(UploadUtils.descUrl(successUrl));
+            entity.setWeburl(uploadUtils.descUrl(successUrl));
             if (pictureStorageService.uploadPictureBase64(entity) > 0) {
                 /**
                  * 记录日志
@@ -165,7 +169,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
             // 删除文件
-            UploadUtils.deleteFile(result.getFileurl());
+            uploadUtils.deleteFile(result.getFileurl());
             if (pictureStorageService.deletePictuBase64(result) > 0) {
                 /**
                  * 记录日志
@@ -254,7 +258,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
      */
     @Override
     public Result<Object> uploadFile(MultipartFile file, String uid, HttpServletRequest request) throws Exception {
-        Result<String> upload = UploadUtils.uploadFile(file, request);
+        Result<String> upload = uploadUtils.uploadFile(file, request);
         if (upload.getCode() == 0) {
             //logo上传成功
             //得到文件上传成功的回传地址
@@ -346,7 +350,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
             // 删除文件
-            UploadUtils.deleteFile(result.getFileurl());
+            uploadUtils.deleteFile(result.getFileurl());
             if (filesService.deleteFile(result) > 0) {
                 /**
                  * 记录日志
@@ -426,7 +430,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
         if (resultEntity == null || StringUtils.isEmpty(resultEntity.getFileurl())) {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
-            File thisFile = UploadUtils.getFilePath(resultEntity.getFileurl());
+            File thisFile = uploadUtils.getFilePath(resultEntity.getFileurl());
             if (thisFile == null) {
                 // 文件不存在
                 response.setStatus(404);
@@ -476,7 +480,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
         if (resultEntity == null || StringUtils.isEmpty(resultEntity.getUrl())) {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
-            File thisFile = UploadUtils.getFilePath(resultEntity.getUrl());
+            File thisFile = uploadUtils.getFilePath(resultEntity.getUrl());
             if (thisFile == null) {
                 // 文件不存在
                 response.setStatus(404);

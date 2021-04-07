@@ -29,7 +29,7 @@ import java.util.concurrent.FutureTask;
  * @Description: TODO
  * @Author liunengkai
  * @Date: 2019-03-01 20:27
- * @Description:
+ * @Description:/opt/server/laboratory  /opt/server/warehouse
  */
 
 @Service("systemServiceImpl")
@@ -69,6 +69,10 @@ public class SystemServiceImpl implements SystemService {
 
     @Resource
     private TemplateEngine templateEngine;
+
+    @Resource
+    @Qualifier("uploadUtils")
+    private UploadUtils uploadUtils;
 
     /**
      * @描述 备份数据库、每天3点备份一次
@@ -137,7 +141,7 @@ public class SystemServiceImpl implements SystemService {
                 List<BackupLogEntity> list = backupLogService.getBackupPagin(queryEntity);
                 // 删除磁盘文件
                 for (BackupLogEntity item : list) {
-                    UploadUtils.deleteFile(item.getUrl());
+                    uploadUtils.deleteFile(item.getUrl());
                 }
                 // 删除数据库记录
                 backupLogService.deleteBackup(queryEntity);

@@ -21,10 +21,10 @@
 #执行程序启动所使用的系统用户，考虑到安全，推荐不使用root帐号
 RUNNING_USER=liunengkai
 #设置JAVA_HOME
-JAVA_HOME="/Library/java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home"
+JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
 
 #java虚拟机启动参数
-JAVA_OPTS="-Xbootclasspath/a:./ -Xms128m -Xmx128m -Xss256K -XX:MetaspaceSize=32m -XX:MaxMetaspaceSize=32m -XX:+UseConcMarkSweepGC -XX:+PrintGCDetails -Djava.awt.headless=true"
+JAVA_OPTS="-Xbootclasspath/a:./ -Xms128m -Xmx128m -Xss256K -XX:MetaspaceSize=32m -XX:MaxMetaspaceSize=64m -XX:+UseG1GC -XX:+PrintGCDetails -Djava.awt.headless=true -Duser.timezone=Asia/Shanghai"
 #启动项目的名称
 APP_NAME=laboratory
 
@@ -58,6 +58,7 @@ else
      echo "INFO: use APP_HOME '$APP_HOME'"
 	 echo "INFO: use APP_JAR '$APP_JAR'"
      echo "INFO: use APP_MAINCLASS : '$APP_MAINCLASS'"
+     echo "INFO: use CLASSPATH '$CLASSPATH'"
      #echo "================================"
 
 fi
@@ -147,7 +148,8 @@ start() {
 
 	  #su - $RUNNING_USER -c "$JAVA_CMD"
 	  #$JAVA_CMD $JAVA_OPTS -jar  $APP_JAR start >$APP_HOME/logs/init.log 2>&1 &
-	 $JAVA_CMD $JAVA_OPTS  -classpath  $CLASSPATH  $APP_MAINCLASS    start >$APP_HOME/logs/init.log 2>&1 &
+	  echo "exec command: '$JAVA_CMD' $JAVA_OPTS -classpath $CLASSPATH $APP_MAINCLASS start >$APP_HOME/logs/init.log 2>&1 &"
+	  $JAVA_CMD $JAVA_OPTS  -classpath  $CLASSPATH  $APP_MAINCLASS start >$APP_HOME/logs/init.log 2>&1 &
 
 	  #echo "$JAVA_CMD $JAVA_OPTS  -classpath  $CLASSPATH   $APP_JAR $APP_MAINCLASS  start >$APP_HOME/logs/init.log 2>&1 &"
 	  echo $! > $APP_PID

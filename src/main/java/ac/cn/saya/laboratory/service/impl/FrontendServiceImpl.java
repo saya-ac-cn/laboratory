@@ -53,6 +53,10 @@ public class FrontendServiceImpl implements IFrontendService {
     @Qualifier("notesService")
     private NotesService notesService;
 
+    @Resource
+    @Qualifier("uploadUtils")
+    private UploadUtils uploadUtils;
+
     /**
      * @描述 查询一条动态
      * @参数
@@ -194,7 +198,7 @@ public class FrontendServiceImpl implements IFrontendService {
             response.setStatus(404);
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
-            File thisFile = UploadUtils.getFilePath(resultEntity.getFileurl());
+            File thisFile = uploadUtils.getFilePath(resultEntity.getFileurl());
             if (thisFile == null) {
                 // 文件不存在
                 response.setStatus(404);

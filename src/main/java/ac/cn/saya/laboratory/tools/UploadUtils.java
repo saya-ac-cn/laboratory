@@ -3,6 +3,8 @@ package ac.cn.saya.laboratory.tools;
 
 import ac.cn.saya.laboratory.entity.UserMemory;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,8 +22,11 @@ import java.util.Base64.Decoder;
  * @Date: 2018/11/11 21:30
  * @Description: 上传单元
  */
-
+@Component
 public class UploadUtils {
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     /**
      * 上传logo -> class/files
@@ -31,7 +36,7 @@ public class UploadUtils {
      * @return
      * @throws Exception
      */
-    public static Result<String> uploadLogo(String image, HttpServletRequest request) throws Exception {
+    public Result<String> uploadLogo(String image, HttpServletRequest request) throws Exception {
         try {
             String header = "data:image";
             String[] imageArr = image.split(",");
@@ -51,7 +56,7 @@ public class UploadUtils {
                 //url路径 files/picture/logo/用户名/yyyyMMdd
                 String urlPath = File.separator + "warehouse" + File.separator + "picture" + File.separator + "logo" + File.separator + userSession.getUser() + File.separator + datetime;
                 //上传文件路径-/picture/目录下该用户当天的文件夹
-                String path = System.getProperty("user.home", "/home/saya") + urlPath;
+                String path = uploadPath + urlPath;
                 File filepath = new File(path);
                 //判断路径是否存在，如果不存在就创建一个
                 //这里不能判断父目录getParentFile()是否存在
@@ -88,7 +93,7 @@ public class UploadUtils {
      * @return
      * @throws Exception
      */
-    public static Result<String> uploadPicture(String image, String imgeUrl, HttpServletRequest request) throws Exception {
+    public Result<String> uploadPicture(String image, String imgeUrl, HttpServletRequest request) throws Exception {
         try {
             String header = "data:image";
             String[] imageArr = image.split(",");
@@ -108,7 +113,7 @@ public class UploadUtils {
                 //url路径 files/picture/{wallpaper,news}/用户名/yyyyMMdd
                 String urlPath = File.separator + "warehouse" + File.separator + "picture" + File.separator + imgeUrl + File.separator + userSession.getUser() + File.separator + datetime;
                 //上传文件路径-/picture/目录下该用户当天的文件夹
-                String path = System.getProperty("user.home", "/home/saya") + urlPath;
+                String path = uploadPath + urlPath;
                 File filepath = new File(path);
                 //判断路径是否存在，如果不存在就创建一个
                 //这里不能判断父目录getParentFile()是否存在
@@ -144,7 +149,7 @@ public class UploadUtils {
      * @return
      * @throws Exception
      */
-    public static Result<String> uploadFile(MultipartFile file, HttpServletRequest request) throws Exception {
+    public Result<String> uploadFile(MultipartFile file, HttpServletRequest request) throws Exception {
         try {
             if (file == null) {
                 return ResultUtil.error(-3, "文件不能为空");
@@ -169,7 +174,7 @@ public class UploadUtils {
                     //url路径 files/picture/document/用户名/yyyyMMdd
                     String urlPath = File.separator + "warehouse" + File.separator + "document" + File.separator + "file" + File.separator + userSession.getUser() + File.separator + datetime;
                     //上传文件路径-/picture/目录下该用户当天的文件夹
-                    String path = System.getProperty("user.home", "/home/saya") + urlPath;
+                    String path = uploadPath + urlPath;
                     File filepath = new File(path);
                     //判断路径是否存在，如果不存在就创建一个
                     //这里不能判断父目录getParentFile()是否存在
@@ -204,7 +209,7 @@ public class UploadUtils {
      * @return
      * @throws Exception
      */
-    public static Result<String> uploadWallpaper(MultipartFile file, HttpServletRequest request) throws Exception {
+    public Result<String> uploadWallpaper(MultipartFile file, HttpServletRequest request) throws Exception {
         try {
             if (file == null) {
                 return ResultUtil.error(-3, "文件不能为空");
@@ -232,7 +237,7 @@ public class UploadUtils {
                     //url路径 files/picture/{wallpaper,news}/用户名/yyyyMMdd
                     String urlPath = File.separator + "warehouse" + File.separator + "picture" + File.separator + "wallpaper" + File.separator + userSession.getUser() + File.separator + datetime;
                     //上传文件路径-/picture/目录下该用户当天的文件夹
-                    String path = System.getProperty("user.home", "/home/saya") + urlPath;
+                    String path = uploadPath + urlPath;
                     File filepath = new File(path);
                     //判断路径是否存在，如果不存在就创建一个
                     //这里不能判断父目录getParentFile()是否存在
@@ -269,8 +274,8 @@ public class UploadUtils {
      * @创建时间 2018/11/11
      * @修改人和其它信息
      */
-    public static void deleteFile(String url) {
-        String tempurl = System.getProperty("user.home", "/home/saya") + url;
+    public void deleteFile(String url) {
+        String tempurl = uploadPath + url;
         File file = new File(tempurl);
         //判断要删除的目录是否存在
         if (file.exists() && file.isFile()) {
@@ -283,7 +288,7 @@ public class UploadUtils {
      *
      * @param path
      */
-    public static void createFolders(String path) {
+    public void createFolders(String path) {
         File file = new File(path);
         if (!file.exists()) {
             file.mkdirs();
@@ -295,7 +300,7 @@ public class UploadUtils {
      *
      * @param file
      */
-    public static void deleteFile(File file) {
+    public void deleteFile(File file) {
         if (!file.isDirectory()) {
             file.delete();
         } else {
@@ -307,11 +312,11 @@ public class UploadUtils {
         }
     }
 
-    public static void deleteFile_(String path) {
+    public void deleteFile_(String path) {
         deleteFile(new File(path));
     }
 
-    public static String uuid() {
+    public String uuid() {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
@@ -324,8 +329,8 @@ public class UploadUtils {
      * @创建时间 2019/1/19
      * @修改人和其它信息
      */
-    public static File getFilePath(String url) {
-        String tempurl = System.getProperty("user.home", "/home/saya") + url;
+    public File getFilePath(String url) {
+        String tempurl = uploadPath + url;
         File file = new File(tempurl);
         //判断要删除的目录是否存在
         if (file.exists() && file.isFile()) {
@@ -343,7 +348,7 @@ public class UploadUtils {
      * @创建时间 2019/1/9
      * @修改人和其它信息
      */
-    public static String descUrl(String url) {
+    public String descUrl(String url) {
         if (StringUtils.isEmpty(url)) {
             return "";
         } else {

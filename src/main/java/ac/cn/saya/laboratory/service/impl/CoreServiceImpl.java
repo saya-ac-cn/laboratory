@@ -91,8 +91,8 @@ public class CoreServiceImpl implements ICoreService {
     private MemoService memoService;
 
     @Resource
-    @Qualifier("financialDeclareService")
-    private FinancialDeclareService financialDeclareService;
+    @Qualifier("uploadUtils")
+    private UploadUtils uploadUtils;
 
     @Resource
     @Qualifier("httpClientUtil")
@@ -152,10 +152,10 @@ public class CoreServiceImpl implements ICoreService {
             entity.setPassword(null);
             // 转换成浏览器可以直接识别的url
             // 用户logo，及背景图片的返回
-            entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
+            entity.setLogo(uploadUtils.descUrl(entity.getLogo()));
             String pictureUrl = null;
             if (null != entity.getBackground() && !(StringUtils.isEmpty(pictureUrl = pictureStorageService.getPictureUrl(entity.getBackground())))){
-                entity.setBackgroundUrl(UploadUtils.descUrl(pictureUrl));
+                entity.setBackgroundUrl(uploadUtils.descUrl(pictureUrl));
             }
             // 注入用户个人信息
             result.put("user", entity);
@@ -190,10 +190,10 @@ public class CoreServiceImpl implements ICoreService {
                 entity.setPassword(null);
                 // 转换成浏览器可以直接识别的url
                 // 用户logo，及背景图片的返回
-                entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
+                entity.setLogo(uploadUtils.descUrl(entity.getLogo()));
                 String pictureUrl = null;
                 if (null != entity.getBackground() && !(StringUtils.isEmpty(pictureUrl = pictureStorageService.getPictureUrl(entity.getBackground())))){
-                    entity.setBackgroundUrl(UploadUtils.descUrl(pictureUrl));
+                    entity.setBackgroundUrl(uploadUtils.descUrl(pictureUrl));
                 }
                 // 返回用户的个人信息
                 List<PlanEntity> todayPlan = planService.queryTodayPlan(user.getUser());
@@ -486,7 +486,7 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> updateLogo(String imgBase64, HttpServletRequest request) throws Exception {
-        Result<String> upload = UploadUtils.uploadLogo(imgBase64, request);
+        Result<String> upload = uploadUtils.uploadLogo(imgBase64, request);
         if (upload.getCode() == 0) {
             //logo上传成功
             //得到文件上传成功的回传地址
@@ -502,7 +502,7 @@ public class CoreServiceImpl implements ICoreService {
                  * 上传头像
                  */
                 recordService.record("OX003", request);
-                return ResultUtil.success(UploadUtils.descUrl(successUrl));
+                return ResultUtil.success(uploadUtils.descUrl(successUrl));
             } else {
                 throw new MyException(ResultEnum.ERROP);
             }

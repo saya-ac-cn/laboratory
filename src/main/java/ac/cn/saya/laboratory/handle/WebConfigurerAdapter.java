@@ -1,5 +1,6 @@
 package ac.cn.saya.laboratory.handle;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.HttpPutFormContentFilter;
@@ -19,6 +20,9 @@ import java.io.File;
  */
 @Configuration
 public class WebConfigurerAdapter extends WebMvcConfigurationSupport {
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     /**
      * 允许put
@@ -51,7 +55,7 @@ public class WebConfigurerAdapter extends WebMvcConfigurationSupport {
          * addResourceHandler：访问映射路径
          * addResourceLocations：资源绝对路径
          */
-        registry.addResourceHandler("/warehouse/**").addResourceLocations("file:" + System.getProperty("user.home", "/home/saya") + File.separator + "warehouse" + File.separator);
+        registry.addResourceHandler("/warehouse/**").addResourceLocations("file:" + uploadPath + File.separator + "warehouse" + File.separator);
         super.addResourceHandlers(registry);
     }
 
