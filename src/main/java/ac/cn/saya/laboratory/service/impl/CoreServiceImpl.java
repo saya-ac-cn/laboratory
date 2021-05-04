@@ -717,7 +717,7 @@ public class CoreServiceImpl implements ICoreService {
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         entity.setSource(userSession.getUser());
         // 日期准备
-        entity.setPlandate(DateUtils.getCurrentDateTime(DateUtils.dateFormat));
+        entity.setPlandate(entity.getPlandate());
         Integer flog = planService.editPlan(entity);
         if (flog > 0) {
             /**
