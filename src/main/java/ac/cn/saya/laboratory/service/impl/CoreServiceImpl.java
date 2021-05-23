@@ -4,7 +4,6 @@ import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.handle.RepeatLogin;
 import ac.cn.saya.laboratory.persistent.business.service.*;
-import ac.cn.saya.laboratory.persistent.financial.service.FinancialDeclareService;
 import ac.cn.saya.laboratory.persistent.primary.service.LogService;
 import ac.cn.saya.laboratory.persistent.primary.service.UserService;
 import ac.cn.saya.laboratory.service.ICoreService;
@@ -22,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -322,9 +322,6 @@ public class CoreServiceImpl implements ICoreService {
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         user.setUser(userSession.getUser());
         if (userService.setUser(user) > 0) {
-            /**
-             * 记录日志
-             */
             // 修改个人信息
             recordService.record("OX002", request);
             return ResultUtil.success();
@@ -471,7 +468,6 @@ public class CoreServiceImpl implements ICoreService {
             OutExcelUtils.outExcelTemplateSimple(keys, titles, jsonObjectList, out);
         } catch (Exception e) {
             response.setStatus(500);
-            e.printStackTrace();
         }
         return null;
     }
@@ -497,10 +493,6 @@ public class CoreServiceImpl implements ICoreService {
             user.setUser(userSession.getUser());
             user.setLogo(successUrl);
             if (userService.setUser(user) > 0) {
-                /**
-                 * 记录日志
-                 * 上传头像
-                 */
                 recordService.record("OX003", request);
                 return ResultUtil.success(uploadUtils.descUrl(successUrl));
             } else {
@@ -651,12 +643,12 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> getPlanDetail(PlanEntity entity, HttpServletRequest request) throws Exception {
-        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        entity.setSource(userSession.getUser());
         if (entity == null || entity.getId() == null) {
             // 缺少参数
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         PlanEntity result = planService.getOnePlan(entity);
         if (result == null) {
             //未找到有效记录
@@ -685,13 +677,10 @@ public class CoreServiceImpl implements ICoreService {
         entity.setSource(userSession.getUser());
         Integer flog = planService.insertPlan(entity);
         if (flog > 0) {
-            /**
-             * 记录日志
-             */
             recordService.record("OX022", request);
             return ResultUtil.success();
         } else if (flog == -2) {
-            // 改天计划已经存在
+            // 该天计划已经存在
             throw new MyException(ResultEnum.ERROP);
         } else {
             throw new MyException(ResultEnum.UNKONW_ERROR);
@@ -857,7 +846,7 @@ public class CoreServiceImpl implements ICoreService {
      * 查询活动率
      * @param queryMonth 所在月份的日期(2021-01-25格式)
      * @param request 当前用户会话信息
-     * @return
+     * @return Result<Object> map对象
      * @throws Exception
      */
     @Override
@@ -866,7 +855,7 @@ public class CoreServiceImpl implements ICoreService {
         try {
             LocalDate monthDate = LocalDate.parse(queryMonth, DateUtils.dateFormat);
             // 总天数，计算日均用
-            int days = 0;
+            int days;
             if(DateUtils.checkIsCurrentMonth(queryMonth)){
                 // 是当前月，天数为已经过去的天数
                 days = monthDate.getDayOfMonth();
@@ -883,7 +872,7 @@ public class CoreServiceImpl implements ICoreService {
             // 本月活跃总数
             Long currentActivityCount = logService.selectCount(logEntity);
             // 计算日均
-            BigDecimal avgAccount = (BigDecimal.valueOf(currentActivityCount)).divide(new BigDecimal(days),4, BigDecimal.ROUND_HALF_UP);
+            BigDecimal avgAccount = (BigDecimal.valueOf(currentActivityCount)).divide(new BigDecimal(days),4, RoundingMode.HALF_UP);
             // 近半年的活跃次数
             Map<String, Object> log6 = userService.countPre6Logs(userSession.getUser(), queryMonth);
             result.put("count",currentActivityCount);

@@ -78,7 +78,7 @@ public class FrontendServiceImpl implements IFrontendService {
         } else {
             // 寻找上一条和下一条
             Map<String, String> preAndNext = newsService.getNewsPreAndNext(entity.getId());
-            Map<String, NewsEntity> out = new HashMap();
+            Map<String, NewsEntity> out = new HashMap(8);
             out.put("now", result);
             if (preAndNext != null) {
                 for (Map.Entry<String, String> item : preAndNext.entrySet()) {
@@ -388,7 +388,7 @@ public class FrontendServiceImpl implements IFrontendService {
         } else {
             // 寻找上一条和下一条
             Map<String, String> preAndNext = notesService.getNotesPreAndNext(entity.getId());
-            Map<String, NotesEntity> out = new HashMap();
+            Map<String, NotesEntity> out = new HashMap(8);
             out.put("now", result);
             if (preAndNext != null) {
                 for (Map.Entry<String, String> item : preAndNext.entrySet()) {
