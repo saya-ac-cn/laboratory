@@ -22,6 +22,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
+import java.net.URLConnection;
 import java.util.List;
 
 /**
@@ -258,20 +259,17 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
      */
     @Override
     public Result<Object> uploadFile(MultipartFile file, String uid, HttpServletRequest request) throws Exception {
-        Result<String> upload = uploadUtils.uploadFile(file, request);
+        Result<FilesEntity> upload = uploadUtils.uploadFile(file, request);
         if (upload.getCode() == 0) {
             //logo上传成功
             //得到文件上传成功的回传地址
-            String successUrl = String.valueOf(upload.getData());
+            FilesEntity entity = upload.getData();
             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
             UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-            FilesEntity entity = new FilesEntity();
             // 原文件名称
             entity.setFilename(file.getOriginalFilename());
             entity.setSource(userSession.getUser());
             entity.setStatus("2");
-            // 文件在服务器的存放目录
-            entity.setFileurl(successUrl);
             // 设置文件前端uid，方便删除
             if (StringUtils.isEmpty(uid)){
                 entity.setUid("null");

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
@@ -19,7 +20,7 @@ import java.io.UnsupportedEncodingException;
  * @Date: 2019-03-01 21:33
  * @Description:
  */
-//@Service("mailService")
+@Service("mailService")
 public class MailService {
 
     @Autowired

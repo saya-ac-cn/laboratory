@@ -116,9 +116,9 @@
     <!--获取所有用户当天的计划内容-->
     <select id="getTodayPlanList" resultType="plan" flushCache="true">
         select
-            a.`id`,a.`source`,a.`describe`,a.`plandate`,a.`createtime`,b.email as updatetime
+            a.`id`,a.`source`,a.`describe`,a.`plandate`,a.`createtime`
         from
-              `plan` a left join `user` b on a.source = b.`user`
+              `plan` a
         where date_format(a.plandate,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')
     </select>
 

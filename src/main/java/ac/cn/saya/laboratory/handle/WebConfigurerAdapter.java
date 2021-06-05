@@ -21,7 +21,7 @@ import java.io.File;
 @Configuration
 public class WebConfigurerAdapter extends WebMvcConfigurationSupport {
 
-    @Value("${upload.path}")
+    @Value("${upload.uploadPath}")
     private String uploadPath;
 
     /**

@@ -1,9 +1,13 @@
 package ac.cn.saya.laboratory.tools;
 
 
+import ac.cn.saya.laboratory.entity.FilesEntity;
 import ac.cn.saya.laboratory.entity.UserMemory;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Base64;
 import java.util.Base64.Decoder;
@@ -23,10 +28,16 @@ import java.util.Base64.Decoder;
  * @Description: 上传单元
  */
 @Component
+@ConfigurationProperties(prefix = "upload")
+@Getter
+@Setter
 public class UploadUtils {
+    
+    private Map<String, String> fileTypeMap;
 
-    @Value("${upload.path}")
     private String uploadPath;
+
+
 
     /**
      * 上传logo -> class/files
@@ -149,7 +160,7 @@ public class UploadUtils {
      * @return
      * @throws Exception
      */
-    public Result<String> uploadFile(MultipartFile file, HttpServletRequest request) throws Exception {
+    public Result<FilesEntity> uploadFile(MultipartFile file, HttpServletRequest request) throws Exception {
         try {
             if (file == null) {
                 return ResultUtil.error(-3, "文件不能为空");
@@ -190,7 +201,13 @@ public class UploadUtils {
                     //file.transferTo(saveFile);
 
                     //上传成功
-                    return ResultUtil.success(urlPath + File.separator + newFileName);
+                    FilesEntity result = new FilesEntity();
+                    // 文件在服务器的存放目录
+                    result.setFileurl(urlPath + File.separator + newFileName);
+                    // 标记文件所属类别
+                    String classify = fileTypeMap.getOrDefault((fileType.trim()).toLowerCase(), "complex");
+                    result.setFiletype(classify);
+                    return ResultUtil.success(result);
                 } else {
                     return ResultUtil.error(-2, "请选择有效的文件");
                 }

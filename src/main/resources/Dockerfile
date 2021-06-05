@@ -22,7 +22,6 @@ RUN mkdir -p $APP_LOGS_HOME \
 ##add files to images tomcat webapps
 ADD ./laboratory.tar.gz $APP_HOME/
 
-
 EXPOSE 8080
 
 WORKDIR $APP_HOME/$APP_NAME
