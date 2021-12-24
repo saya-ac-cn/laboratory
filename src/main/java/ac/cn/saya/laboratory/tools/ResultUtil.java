@@ -14,7 +14,7 @@ public class ResultUtil {
      * @param data 执行成功后返回的数据
      * @return 包装后的数据
      */
-    public static <T> Result<T> success( T data) {
+    public static <T> Result<T> success(T data) {
         return new Result<T>().code(0)
         .msg("成功")
         //返回执行成功后的模型
@@ -38,7 +38,7 @@ public class ResultUtil {
      * @param data 执行成功后返回的数据
      * @return 包装后的数据
      */
-    public static <T> Result<T> success( int code, String msg, T data) {
+    public static <T> Result<T> success(int code, String msg, T data) {
         return new Result<T>().code(code).msg(msg).data(data);
     }
 
