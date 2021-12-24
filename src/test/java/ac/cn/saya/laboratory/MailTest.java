@@ -2,8 +2,7 @@ package ac.cn.saya.laboratory;
 
 import ac.cn.saya.laboratory.service.impl.MailService;
 import ac.cn.saya.laboratory.service.impl.SystemServiceImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.thymeleaf.TemplateEngine;
@@ -18,7 +17,6 @@ import org.thymeleaf.context.Context;
  * @Description:
  */
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = LaboratoryApplication.class)
 public class MailTest {
 

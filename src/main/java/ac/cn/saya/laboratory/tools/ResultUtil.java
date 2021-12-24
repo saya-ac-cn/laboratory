@@ -1,7 +1,5 @@
 package ac.cn.saya.laboratory.tools;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * 统一返回的外包装类
  */
@@ -16,7 +14,7 @@ public class ResultUtil {
      * @param data 执行成功后返回的数据
      * @return 包装后的数据
      */
-    public static <T> Result<T> success(@NotNull T data) {
+    public static <T> Result<T> success( T data) {
         return new Result<T>().code(0)
         .msg("成功")
         //返回执行成功后的模型
@@ -40,7 +38,7 @@ public class ResultUtil {
      * @param data 执行成功后返回的数据
      * @return 包装后的数据
      */
-    public static <T> Result<T> success(@NotNull int code, @NotNull String msg, @NotNull T data) {
+    public static <T> Result<T> success( int code, String msg, T data) {
         return new Result<T>().code(code).msg(msg).data(data);
     }
 
@@ -51,7 +49,7 @@ public class ResultUtil {
      * @param msg 响应消息
      * @return 包装后的数据
      */
-    public static <T> Result<T> error(@NotNull int code, @NotNull String msg) {
+    public static <T> Result<T> error(int code,String msg) {
         return new Result<T>().code(code).msg(msg);
     }
 
@@ -61,7 +59,7 @@ public class ResultUtil {
      * @param value 异常
      * @return 包装后的数据
      */
-    public static <T> Result<T> error(@NotNull ResultEnum value) {
+    public static <T> Result<T> error(ResultEnum value) {
         return new Result<T>().code(value.getCode()).msg(value.getMsg());
     }
 

@@ -6,6 +6,8 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 
+import java.math.BigDecimal;
+
 /**
  * @Title: MarkDownTest
  * @ProjectName laboratory
@@ -29,6 +31,21 @@ public class MarkDownTest {
     }
 
     public static void main(String[] args) {
+        BigDecimal income = new BigDecimal("52.454");
+        BigDecimal account = new BigDecimal(100);
+        BigDecimal zero = BigDecimal.ZERO;
+        if (0 == zero.compareTo(account)){
+            System.out.println("被除数为0");
+            return;
+        }
+        BigDecimal percentage = income.divide(account,4, BigDecimal.ROUND_HALF_UP);
+        String str = "632784564384839637t537428957654678987667898766235_电表图片1";
+        System.out.println(str.replaceAll("632784564384839637t537428957654678987667898766235_电表图片",""));;
+
+        return;
+    }
+
+    public static void main1(String[] args) {
         String value1 = "<h1 style=\"text-align:center;\"><span style=\"line-height: 1.5; font-size: 20px;\">刘能凯个人网站将于2016年5月正式上线，为确保上线能够做到有序合理，现将计划公布如下：</span><span style=\"line-height:1.5;\">&nbsp;</span></h1><h4 style=\"text-align:left;\"><span style=\"line-height:1.5;\">&nbsp; &nbsp; &nbsp;1、时间安排，根据计划进度，所有网站的代码务必于4月5日全部完毕（包括总体的框架，以及美工设计）。<br/></span><span style=\"line-height:1.5;\">&nbsp; &nbsp; &nbsp;2、网站的虚拟空间，在网站做好后，将租用一个虚拟服务器，并做好域名的备案工作。<br/></span><span style=\"line-height:1.5;\">&nbsp; &nbsp; &nbsp;3，在以上所有的工作完成后，将网站的所有文件全部上传到虚拟服务器上。</span></h4><p style=\"text-align: right;\"><span style=\"line-height:1.5;\">刘能凯</span></p><p style=\"text-align: right;\"><span style=\"line-height:1.5;\">2016年4月16日</span></p>";
         String value2 = "### Zookeper\n" +
                 "\n" +
