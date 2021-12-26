@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
@@ -19,7 +20,7 @@ import java.io.UnsupportedEncodingException;
  * @Date: 2019-03-01 21:33
  * @Description:
  */
-//@Service("mailService")
+@Service("mailService")
 public class MailService {
 
     @Autowired
@@ -32,8 +33,7 @@ public class MailService {
      * @param to 发给谁
      * @param subject 主题
      * @param content 正文
-     * @return
-     * @throws Exception
+     * @return Boolean
      */
     public Boolean sendHtmlMail(String to, String subject, String content) {
         MimeMessage message = javaMailSender.createMimeMessage();

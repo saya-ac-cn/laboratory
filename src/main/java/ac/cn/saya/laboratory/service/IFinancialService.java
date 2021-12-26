@@ -23,60 +23,6 @@ import java.util.List;
 public interface IFinancialService {
 
     /**
-     * 按天分页查询账单
-     * @param param
-     * @param request
-     * @return
-     * @throws MyException
-     */
-    public Result<Object> getBillByDay(TransactionListEntity param,HttpServletRequest request) throws MyException;
-
-    /**
-     * 统计指定月份的总收入和支出
-     * @param param
-     * @param request
-     * @return
-     * @throws MyException
-     */
-    public Result<Object> totalBalance(BillOfDayEntity param,HttpServletRequest request) throws MyException;
-
-    /**
-     * 统计指定月份中各摘要的收支情况flag=-1）或收入（flag=1）
-     * @param tradeDate 月份
-     * @param request 所属用户
-     * @return
-     * @throws MyException
-     */
-    public Result<Object> totalBillByAmount(String tradeDate,HttpServletRequest request) throws MyException;
-
-    /**
-     * 查询指定月份中支出（flag=-1）或收入（flag=1）的排行
-     * @param tradeDate 月份
-     * @param request 所属用户
-     * @return
-     * @throws MyException
-     */
-    public Result<Object> getBillBalanceRank(String tradeDate,HttpServletRequest request) throws MyException;
-
-    /**
-     * 查询指定月份中，某一摘要类型的收支数据
-     * @param param 查询参数
-     * @param request
-     * @return
-     * @throws MyException
-     */
-    public Result<Object> getBillByAmount(TransactionListEntity param,HttpServletRequest request) throws MyException;
-
-    /**
-     * 查询账单明细
-     * @param param 查询参数
-     * @param request
-     * @return
-     * @throws MyException
-     */
-    public Result<Object> getBillDetail(TransactionListEntity param,HttpServletRequest request) throws MyException;
-
-    /**
      * 获取所有的交易类别
      *
      * @return

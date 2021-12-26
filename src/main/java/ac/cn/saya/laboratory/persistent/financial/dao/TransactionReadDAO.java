@@ -1,10 +1,8 @@
 package ac.cn.saya.laboratory.persistent.financial.dao;
 
-import ac.cn.saya.laboratory.entity.TransactionAmountEntity;
-import ac.cn.saya.laboratory.entity.TransactionInfoEntity;
-import ac.cn.saya.laboratory.entity.TransactionListEntity;
-import ac.cn.saya.laboratory.entity.TransactionTypeEntity;
+import ac.cn.saya.laboratory.entity.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -142,5 +140,21 @@ public interface TransactionReadDAO {
      * @return
      */
     public Long selectTransactionForYearCount(TransactionListEntity entity);
+
+    /**
+     * 统计指定月份的总收入和支出
+     * @param param
+     * @return
+     */
+    public BillOfDayEntity totalBalance(BillOfDayEntity param);
+
+    /**
+     * 统计指定月份中各摘要的收支情况（flag=-1）或收入（flag=1）
+     * @param tradeDate 月份
+     * @param source    所属用户账单
+     * @param flag 收支 标志
+     * @return
+     */
+    public List<BillOfAmountEntity> totalBillByAmount(@Param("tradeDate") String tradeDate, @Param("source") String source, @Param("flag") int flag);
 
 }

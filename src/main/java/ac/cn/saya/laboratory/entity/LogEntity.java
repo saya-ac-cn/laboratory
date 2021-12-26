@@ -45,7 +45,7 @@ public class LogEntity extends BaseEntity{
      */
     private String date;
     /**
-     * 日志类别
+     * 日志类别(非数据库字段)
      */
     private LogTypeEntity logType;
 

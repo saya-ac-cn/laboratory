@@ -3,6 +3,7 @@ package ac.cn.saya.laboratory.thread;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 
 /**
@@ -83,7 +84,7 @@ public class MysqlDumpThread implements Callable<Boolean> {
         PrintWriter printWriter = null;
         BufferedReader bufferedReader = null;
         try {
-            printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(savePath + fileName), "utf8"));
+            printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(savePath + fileName), StandardCharsets.UTF_8));
             StringBuilder command = new StringBuilder(mysqlBin).append("mysqldump");
             command.append(" -h").append(hostIP);
             command.append(" -u").append(userName);
@@ -95,7 +96,7 @@ public class MysqlDumpThread implements Callable<Boolean> {
             /// 要导出的数据库
             command.append(" --databases ").append(databaseNames);
             Process process = Runtime.getRuntime().exec(command.toString());
-            InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream(), "utf8");
+            InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
             bufferedReader = new BufferedReader(inputStreamReader);
             String line;
             while ((line = bufferedReader.readLine()) != null) {

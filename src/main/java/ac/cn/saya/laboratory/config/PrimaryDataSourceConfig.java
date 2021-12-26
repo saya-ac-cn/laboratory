@@ -25,7 +25,7 @@ import javax.sql.DataSource;
  */
 
 @Configuration
-@MapperScan(basePackages = {"ac.cn.saya.laboratory.persistent.primary.dao", "ac.cn.saya.laboratory.persistent.pnd.dao"}, sqlSessionTemplateRef = "primarySqlSessionTemplate")
+@MapperScan(basePackages = {"ac.cn.saya.laboratory.persistent.primary.dao"}, sqlSessionTemplateRef = "primarySqlSessionTemplate")
 public class PrimaryDataSourceConfig {
 
     public static PrimaryDataSourceConfig create() {

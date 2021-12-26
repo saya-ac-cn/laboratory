@@ -1,6 +1,5 @@
 package ac.cn.saya.laboratory.controller;
 
-import ac.cn.saya.laboratory.entity.BillOfDayEntity;
 import ac.cn.saya.laboratory.entity.TransactionInfoEntity;
 import ac.cn.saya.laboratory.entity.TransactionListEntity;
 import ac.cn.saya.laboratory.exception.MyException;
@@ -317,72 +316,6 @@ public class FinancialController {
     @GetMapping(value = "preSixMonthBill/{tradeDate}")
     public Result<Object> preSixMonthBill(@PathVariable("tradeDate") String tradeDate,HttpServletRequest request){
         return financialService.preSixMonthBill(tradeDate, request);
-    }
-
-    /**
-     * 查询指定月份的账单（按天）
-     * @param param 表单查询参数
-     * @param request 用户会话请求
-     * @return  按天分页账单
-     */
-    @GetMapping(value = "bill/billByDay")
-    public Result<Object> getBillByDay(TransactionListEntity param,HttpServletRequest request) throws MyException {
-        return financialService.getBillByDay(param,request);
-    }
-
-    /**
-     * 统计指定月份的总收入和支出
-     * @param param 表单查询参数
-     * @param request 用户会话请求
-     * @return 指定月份的总收入和支出
-     */
-    @GetMapping(value = "bill/totalBalance")
-    public Result<Object> totalBalance(BillOfDayEntity param, HttpServletRequest request) throws MyException {
-        return financialService.totalBalance(param,request);
-    }
-
-    /**
-     * 统计指定月份中各摘要的收支情况（flag=-1）或收入（flag=1）
-     * @param tradeDate 日期
-     * @param request 用户会话请求
-     * @return 收支列表
-     */
-    @GetMapping(value = "bill/totalBillByAmount")
-    public Result<Object> totalBillByAmount(@RequestParam(value = "tradeDate") String tradeDate,HttpServletRequest request) throws MyException{
-        return financialService.totalBillByAmount(tradeDate, request);
-    }
-
-    /**
-     * 查询指定月份中支出（flag=-1）或收入（flag=1）的排行
-     * @param tradeDate 日期
-     * @param request 用户会话请求
-     * @return 收支排行
-     */
-    @GetMapping(value = "bill/billBalanceRank")
-    public Result<Object> getBillBalanceRank(@RequestParam(value = "tradeDate") String tradeDate,HttpServletRequest request){
-        return financialService.getBillBalanceRank(tradeDate, request);
-    }
-
-    /**
-     * 查询指定月份中，某一摘要类型的收支数据
-     * @param param 表单查询参数
-     * @param request 用户会话请求
-     * @return 指定摘要类型的收支数据
-     */
-    @GetMapping(value = "bill/billByAmount")
-    public Result<Object> getBillByAmount(TransactionListEntity param,HttpServletRequest request) throws MyException{
-        return financialService.getBillByAmount(param, request);
-    }
-
-    /**
-     * 查询账单明细
-     * @param param 表单查询参数
-     * @param request 用户会话请求
-     * @return 账单明细
-     */
-    @GetMapping(value = "bill/billDetail")
-    public Result<Object> getBillDetail(TransactionListEntity param,HttpServletRequest request) throws MyException{
-        return financialService.getBillDetail(param, request);
     }
 
 }

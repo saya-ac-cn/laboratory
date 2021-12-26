@@ -3,8 +3,8 @@ package ac.cn.saya.laboratory.handle;
 
 import ac.cn.saya.laboratory.entity.UserMemory;
 import ac.cn.saya.laboratory.tools.HttpRequestUtil;
+import ac.cn.saya.laboratory.tools.JackJsonUtil;
 import ac.cn.saya.laboratory.tools.ResultUtil;
-import com.alibaba.fastjson.JSON;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -39,7 +39,7 @@ public class SystemInterceptor implements HandlerInterceptor {
             response.setStatus(401);
             //获取PrintWriter输出流
             PrintWriter out = response.getWriter();
-            out.write(JSON.toJSONString(ResultUtil.error(-7, "请登录")));
+            out.write(JackJsonUtil.objectToString(ResultUtil.error(-7, "请登录")));
             out.close();
             ///response.sendRedirect("/login.html");
             return false;

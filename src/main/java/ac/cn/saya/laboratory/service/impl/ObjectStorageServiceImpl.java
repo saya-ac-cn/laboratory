@@ -22,6 +22,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
+import java.net.URLConnection;
 import java.util.List;
 
 /**
@@ -52,6 +53,10 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
     @Qualifier("backupLogService")
     private BackupLogService backupLogService;
 
+    @Resource
+    @Qualifier("uploadUtils")
+    private UploadUtils uploadUtils;
+
     /**
      * 上传动态、笔记（插图）图片服务
      *
@@ -61,7 +66,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
      */
     @Override
     public Result<Object> updateNewsPicture(PictureEntity entity, HttpServletRequest request) throws Exception {
-        Result<String> upload = UploadUtils.uploadPicture(entity.getFileurl(), "illustrated", request);
+        Result<String> upload = uploadUtils.uploadPicture(entity.getFileurl(), "illustrated", request);
         if (upload.getCode() == 0) {
             //logo上传成功
             //得到文件上传成功的回传地址
@@ -73,7 +78,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             // 文件在服务器的存放目录
             entity.setFileurl(successUrl);
             // 浏览器可访问的url
-            entity.setWeburl(UploadUtils.descUrl(successUrl));
+            entity.setWeburl(uploadUtils.descUrl(successUrl));
             if (pictureStorageService.uploadPictureBase64(entity) > 0) {
                 /**
                  * 记录日志
@@ -103,7 +108,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
      */
     @Override
     public Result<Object> updateWallpaperPicture(MultipartFile file, HttpServletRequest request) throws Exception {
-        Result<String> upload = UploadUtils.uploadWallpaper(file, request);
+        Result<String> upload = uploadUtils.uploadWallpaper(file, request);
         if (upload.getCode() == 0) {
             //logo上传成功
             //得到文件上传成功的回传地址
@@ -118,7 +123,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             // 文件在服务器的存放目录
             entity.setFileurl(successUrl);
             // 浏览器可访问的url
-            entity.setWeburl(UploadUtils.descUrl(successUrl));
+            entity.setWeburl(uploadUtils.descUrl(successUrl));
             if (pictureStorageService.uploadPictureBase64(entity) > 0) {
                 /**
                  * 记录日志
@@ -165,7 +170,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
             // 删除文件
-            UploadUtils.deleteFile(result.getFileurl());
+            uploadUtils.deleteFile(result.getFileurl());
             if (pictureStorageService.deletePictuBase64(result) > 0) {
                 /**
                  * 记录日志
@@ -254,20 +259,17 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
      */
     @Override
     public Result<Object> uploadFile(MultipartFile file, String uid, HttpServletRequest request) throws Exception {
-        Result<String> upload = UploadUtils.uploadFile(file, request);
+        Result<FilesEntity> upload = uploadUtils.uploadFile(file, request);
         if (upload.getCode() == 0) {
             //logo上传成功
             //得到文件上传成功的回传地址
-            String successUrl = String.valueOf(upload.getData());
+            FilesEntity entity = upload.getData();
             //在session中取出管理员的信息   最后放入的都是 用户名 不是邮箱
             UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-            FilesEntity entity = new FilesEntity();
             // 原文件名称
             entity.setFilename(file.getOriginalFilename());
             entity.setSource(userSession.getUser());
             entity.setStatus("2");
-            // 文件在服务器的存放目录
-            entity.setFileurl(successUrl);
             // 设置文件前端uid，方便删除
             if (StringUtils.isEmpty(uid)){
                 entity.setUid("null");
@@ -346,7 +348,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
             // 删除文件
-            UploadUtils.deleteFile(result.getFileurl());
+            uploadUtils.deleteFile(result.getFileurl());
             if (filesService.deleteFile(result) > 0) {
                 /**
                  * 记录日志
@@ -426,7 +428,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
         if (resultEntity == null || StringUtils.isEmpty(resultEntity.getFileurl())) {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
-            File thisFile = UploadUtils.getFilePath(resultEntity.getFileurl());
+            File thisFile = uploadUtils.getFilePath(resultEntity.getFileurl());
             if (thisFile == null) {
                 // 文件不存在
                 response.setStatus(404);
@@ -476,7 +478,7 @@ public class ObjectStorageServiceImpl implements IObjectStorageService {
         if (resultEntity == null || StringUtils.isEmpty(resultEntity.getUrl())) {
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
-            File thisFile = UploadUtils.getFilePath(resultEntity.getUrl());
+            File thisFile = uploadUtils.getFilePath(resultEntity.getUrl());
             if (thisFile == null) {
                 // 文件不存在
                 response.setStatus(404);

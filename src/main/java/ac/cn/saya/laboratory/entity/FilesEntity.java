@@ -40,6 +40,11 @@ public class FilesEntity extends BaseEntity{
     private String fileurl;
 
     /**
+     * 文件所属类别
+     */
+    private String filetype;
+
+    /**
      * 上传者
      */
     private String source;

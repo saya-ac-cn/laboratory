@@ -2,13 +2,11 @@ package ac.cn.saya.laboratory.service.impl;
 
 import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.business.service.NotesService;
-import ac.cn.saya.laboratory.persistent.financial.service.FinancialBillService;
 import ac.cn.saya.laboratory.persistent.financial.service.FinancialDeclareService;
 import ac.cn.saya.laboratory.service.IFinancialService;
 import ac.cn.saya.laboratory.tools.*;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -21,8 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,135 +44,6 @@ public class FinancialServiceImpl implements IFinancialService {
     @Resource
     @Qualifier("financialDeclareService")
     private FinancialDeclareService financialDeclareService;
-
-    @Resource
-    @Qualifier("financialBillService")
-    private FinancialBillService financialBillService;
-
-    /**
-     * @描述 按天分页查询账单
-     * @参数  [param] 其中时间参数 为月格式：2020-10
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息 无
-     */
-    @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> getBillByDay(TransactionListEntity param,HttpServletRequest request){
-        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        param.setSource(userSession.getUser());
-        List<BillOfDayEntity> billByDayList = financialBillService.getBillByDay(param);
-        if (billByDayList == null || billByDayList.isEmpty()) {
-            // 没有找到账单
-            throw new MyException(ResultEnum.NOT_EXIST);
-        } else {
-            return ResultUtil.success(billByDayList);
-        }
-    }
-
-    /**
-     * @描述 统计指定月份的总收入和支出
-     * @参数  [param]
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息
-     */
-    @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> totalBalance(BillOfDayEntity param,HttpServletRequest request) throws MyException{
-        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        param.setSource(userSession.getUser());
-        BillOfDayEntity balance = financialBillService.totalBalance(param);
-        if (null == balance){
-            throw new MyException(ResultEnum.NOT_EXIST);
-        }else {
-            return ResultUtil.success(balance);
-        }
-    }
-
-    /**
-     * @描述 统计指定月份中各摘要的收支情况（flag=-1）或收入（flag=1）
-     * @参数  [param]
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息
-     */
-    @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> totalBillByAmount(String tradeDate,HttpServletRequest request) throws MyException{
-        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        Map<String,Object> result = financialBillService.totalBillByAmount(tradeDate, userSession.getUser());
-        if (!result.isEmpty()) {
-            return ResultUtil.success(result);
-        }else {
-            throw new MyException(ResultEnum.NOT_EXIST);
-        }
-    }
-
-    /**
-     * @描述 查询指定月份中支出（flag=-1）或收入（flag=1）的排行
-     * @参数  [tradeDate:月份, source:所属用户账单, flag:收支 标志]
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息
-     */
-    @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> getBillBalanceRank(String tradeDate,HttpServletRequest request) throws MyException{
-        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        Map<String,Object> result = financialBillService.getBillBalanceRank(tradeDate, userSession.getUser());
-        if (result.isEmpty()) {
-            throw new MyException(ResultEnum.NOT_EXIST);
-        } else {
-            return ResultUtil.success(result);
-        }
-    }
-
-    /**
-     * @描述 查询指定月份中，某一摘要类型的收支数据
-     * @参数  [param]
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息
-     */
-    @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> getBillByAmount(TransactionListEntity param,HttpServletRequest request) throws MyException{
-        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        param.setSource(userSession.getUser());
-        List<TransactionListEntity> list = financialBillService.getBillByAmount(param);
-        if (list == null || list.isEmpty()) {
-            throw new MyException(ResultEnum.NOT_EXIST);
-        } else {
-            return ResultUtil.success(list);
-        }
-    }
-
-    /**
-     * @描述 查询账单明细
-     * @参数  [param]
-     * @返回值  ac.cn.saya.laboratory.tools.Result<java.lang.Object>
-     * @创建人  shmily
-     * @创建时间  2020/10/21
-     * @修改人和其它信息
-     */
-    @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
-    public Result<Object> getBillDetail(TransactionListEntity param,HttpServletRequest request) throws MyException{
-        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        param.setSource(userSession.getUser());
-        TransactionListEntity detail = financialBillService.getBillDetail(param);
-        if (null == detail){
-            throw new MyException(ResultEnum.NOT_EXIST);
-        } else {
-            return ResultUtil.success(detail);
-        }
-    }
 
     /**
      * 获取所有的交易类别
@@ -507,9 +376,9 @@ public class FinancialServiceImpl implements IFinancialService {
             entity.setSource(userSession.getUser());
             //获取满足条件的记录集合
             List<TransactionListEntity> entityList = financialDeclareService.selectTransactionPage(entity);
-            List<JSONObject> jsonObjectList = new ArrayList<>();
+            ArrayNode jsonObjectList = JackJsonUtil.createArrayNode();
             for (TransactionListEntity item : entityList) {
-                JSONObject json = new JSONObject();
+                ObjectNode json = JackJsonUtil.createObjectNode();
                 json.put("tradeId", item.getTradeId());
                 json.put("deposited", item.getDeposited());
                 json.put("expenditure", item.getExpenditure());
@@ -565,9 +434,9 @@ public class FinancialServiceImpl implements IFinancialService {
             entity.setSource(userSession.getUser());
             //获取满足条件的记录集合
             List<TransactionListEntity> entityList = financialDeclareService.selectTransactionDetailPage(entity);
-            List<JSONObject> jsonObjectList = new ArrayList<>();
+            ArrayNode jsonObjectList = JackJsonUtil.createArrayNode();
             for (TransactionListEntity item : entityList) {
-                JSONObject json = new JSONObject();
+                ObjectNode json = JackJsonUtil.createObjectNode();
                 json.put("tradeId", item.getTradeId());
                 json.put("deposited", item.getDeposited());
                 json.put("expenditure", item.getExpenditure());
@@ -580,9 +449,9 @@ public class FinancialServiceImpl implements IFinancialService {
                 json.put("updateTime", item.getUpdateTime());
                 List<TransactionInfoEntity> infoList = item.getInfoList();
                 if (null != infoList && !infoList.isEmpty()){
-                    JSONArray infoJson = new JSONArray();
+                    ArrayNode infoJson = JackJsonUtil.createArrayNode();
                     for (TransactionInfoEntity info:infoList) {
-                        JSONObject childJson = new JSONObject();
+                        ObjectNode childJson = JackJsonUtil.createObjectNode();;
                         childJson.put("currencyDetails", info.getCurrencyDetails());
                         if (info.getFlog() == 1) {
                             childJson.put("flog", "收入");
@@ -600,7 +469,7 @@ public class FinancialServiceImpl implements IFinancialService {
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("UTF-8");
             //设置文件头：最后一个参数是设置下载文件名
-            response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("财务流水明细.xlsx", "UTF-8"));
+            response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("财务流水明细.xlsx", StandardCharsets.UTF_8));
             ServletOutputStream out = response.getOutputStream();
             response.flushBuffer();
             OutExcelUtils.outExcelTemplatePlus(rootKeys, childKeys,titles, jsonObjectList, out);
@@ -762,9 +631,9 @@ public class FinancialServiceImpl implements IFinancialService {
             entity.setPage(0, pageSize.intValue());
             //获取满足条件的记录集合
             List<TransactionListEntity> entityList = financialDeclareService.selectTransactionForDayPage(entity);
-            List<JSONObject> jsonObjectList = new ArrayList<>();
+            ArrayNode jsonObjectList = JackJsonUtil.createArrayNode();
             for (TransactionListEntity item : entityList) {
-                JSONObject json = new JSONObject();
+                ObjectNode json = JackJsonUtil.createObjectNode();
                 json.put("tradeDate", item.getTradeDate());
                 json.put("deposited", item.getDeposited());
                 json.put("expenditure", item.getExpenditure());
@@ -811,9 +680,9 @@ public class FinancialServiceImpl implements IFinancialService {
             entity.setPage(0, pageSize.intValue());
             //获取满足条件的记录集合
             List<TransactionListEntity> entityList = financialDeclareService.selectTransactionForMonthPage(entity);
-            List<JSONObject> jsonObjectList = new ArrayList<>();
+            ArrayNode jsonObjectList = JackJsonUtil.createArrayNode();
             for (TransactionListEntity item : entityList) {
-                JSONObject json = new JSONObject();
+                ObjectNode json = JackJsonUtil.createObjectNode();
                 json.put("tradeDate", item.getTradeDate());
                 json.put("deposited", item.getDeposited());
                 json.put("expenditure", item.getExpenditure());
@@ -860,9 +729,9 @@ public class FinancialServiceImpl implements IFinancialService {
             entity.setPage(0, pageSize.intValue());
             //获取满足条件的记录集合
             List<TransactionListEntity> entityList = financialDeclareService.selectTransactionForYearPage(entity);
-            List<JSONObject> jsonObjectList = new ArrayList<>();
+            ArrayNode jsonObjectList = JackJsonUtil.createArrayNode();
             for (TransactionListEntity item : entityList) {
-                JSONObject json = new JSONObject();
+                ObjectNode json = JackJsonUtil.createObjectNode();
                 json.put("deposited", item.getDeposited());
                 json.put("expenditure", item.getExpenditure());
                 json.put("currencyNumber", item.getCurrencyNumber());
@@ -912,7 +781,7 @@ public class FinancialServiceImpl implements IFinancialService {
             queryParam.setTradeDate(monthDate.format(DateUtils.dateFormatMonth));
             queryParam.setSource(userSession.getUser());
             // 本月的数据结果
-            BillOfDayEntity _currentMonth = financialBillService.totalBalanceHard(queryParam);
+            BillOfDayEntity _currentMonth = financialDeclareService.totalBalanceHard(queryParam);
             BigDecimal _currentMonthAccount = BigDecimal.ZERO;
             if (null != _currentMonth){
                 // 本月总收入
@@ -920,7 +789,7 @@ public class FinancialServiceImpl implements IFinancialService {
             }
             // 上月的数据结果
             queryParam.setTradeDate(lastMonth.format(DateUtils.dateFormatMonth));
-            BillOfDayEntity _lastMonth = financialBillService.totalBalanceHard(queryParam);
+            BillOfDayEntity _lastMonth = financialDeclareService.totalBalanceHard(queryParam);
             BigDecimal _lastMonthAccount = BigDecimal.ZERO;
             if (null != _lastMonth){
                 // 上月的总收入
@@ -928,7 +797,7 @@ public class FinancialServiceImpl implements IFinancialService {
             }
             // 去年同期这个月的数据结果
             queryParam.setTradeDate(lastYear.format(DateUtils.dateFormatMonth));
-            BillOfDayEntity _lastYear = financialBillService.totalBalanceHard(queryParam);
+            BillOfDayEntity _lastYear = financialDeclareService.totalBalanceHard(queryParam);
             BigDecimal _lastYearAccount = BigDecimal.ZERO;
             if (null != _lastYear){
                 // 去年同期这个月的总收入
@@ -979,7 +848,7 @@ public class FinancialServiceImpl implements IFinancialService {
             BillOfDayEntity queryParam = new BillOfDayEntity();
             queryParam.setTradeDate(monthDate.format(DateUtils.dateFormatMonth));
             queryParam.setSource(userSession.getUser());
-            BillOfDayEntity queryResult = financialBillService.totalBalanceHard(queryParam);
+            BillOfDayEntity queryResult = financialDeclareService.totalBalanceHard(queryParam);
             if (null == queryResult){
                 result.put("account",new BigDecimal("0.0"));
                 result.put("percentage",new BigDecimal("0.0"));
@@ -1012,7 +881,7 @@ public class FinancialServiceImpl implements IFinancialService {
             // 清洗时间数据 2021-01-25 -> 2021-01
             LocalDate monthDate = LocalDate.parse(tradeDate, DateUtils.dateFormat);
             UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-            List<BillOfAmountEntity> rankList = financialBillService.orderByAmount(monthDate.format(DateUtils.dateFormatMonth), userSession.getUser(), 0);
+            List<BillOfAmountEntity> rankList = financialDeclareService.orderByAmount(monthDate.format(DateUtils.dateFormatMonth), userSession.getUser(), 0);
             return ResultUtil.success(rankList);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("统计指定月份中各摘要的排名时发生异常", e, FinancialServiceImpl.class);

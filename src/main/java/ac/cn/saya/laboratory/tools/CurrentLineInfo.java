@@ -3,7 +3,6 @@ package ac.cn.saya.laboratory.tools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -27,7 +26,7 @@ public class CurrentLineInfo {
      * @param t
      * @return
      */
-    public static Optional<String> getStackTrace(@NotNull final Throwable t) {
+    public static Optional<String> getStackTrace(final Throwable t) {
         StringBuffer buffer = null;
         try (StringWriter stringWriter = new StringWriter(); PrintWriter writer = new PrintWriter(stringWriter)) {
             t.printStackTrace(writer);
@@ -43,7 +42,7 @@ public class CurrentLineInfo {
      * @Author shmily
      * @Date 2020/11/15  下午10:44
      */
-    public static void printCurrentLineInfo(@NotNull final String errorTitle, @NotNull final String errorDetail, @NotNull final Class c) {
+    public static void printCurrentLineInfo(final String errorTitle, final String errorDetail, final Class c) {
         Logger logger = LoggerFactory.getLogger(c);
         StringBuffer errorString = new StringBuffer(errorTitle);
         errorString.append("\n------------开始------------");
@@ -57,7 +56,7 @@ public class CurrentLineInfo {
      * @Author shmily
      * @Date 2020/11/15  下午10:44
      */
-    public static void printCurrentLineInfo(@NotNull final String errorTitle, @NotNull final Throwable e, @NotNull final Class c) {
+    public static void printCurrentLineInfo(final String errorTitle, final Throwable e, final Class c) {
         Logger logger = LoggerFactory.getLogger(c);
         StackTraceElement s = e.getStackTrace()[originStackIndex];
         StringBuffer errorString = new StringBuffer(errorTitle);

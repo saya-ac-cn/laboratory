@@ -1,8 +1,6 @@
 package ac.cn.saya.laboratory.tools;
 
 import ac.cn.saya.laboratory.entity.UserMemory;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +32,7 @@ public class HttpRequestUtil {
      * @param params  请求参数，请求参数应该是 name1=value1,name2=value2 的形式。
      * @return URL 所代表远程资源的响应结果
      */
-    public static JSONObject sendGet(String url, String... params) {
+    public static Map<String,Object> sendGet(String url, String... params) {
         BufferedReader in = null;
         //请求返回的结果字符串
         StringBuilder json = new StringBuilder();
@@ -87,7 +85,7 @@ public class HttpRequestUtil {
         if (null == json){
             return null;
         }else {
-            return JSON.parseObject(json.toString());
+            return JackJsonUtil.objectToMap(json.toString());
         }
     }
 
@@ -98,7 +96,7 @@ public class HttpRequestUtil {
      * @param paramMap 请求参数
      * @return 所代表远程资源的响应结果
      */
-    public static JSONObject sendPost(String httpUrl, Map<String, String> paramMap) throws Exception {
+    public static Map<String,Object> sendPost(String httpUrl, Map<String, String> paramMap) throws Exception {
         PrintWriter out = null;
         BufferedReader in = null;
         StringBuilder result = new StringBuilder();
@@ -157,7 +155,7 @@ public class HttpRequestUtil {
         if (null == result){
             return null;
         }else {
-            return JSON.parseObject(result.toString());
+            return JackJsonUtil.objectToMap(result.toString());
         }
     }
 
@@ -167,7 +165,7 @@ public class HttpRequestUtil {
      * @param params
      * @return
      */
-    public static JSONObject httpUrlConnetionGet(String httpUrl, String... params) {
+    public static Map<String,Object> httpUrlConnetionGet(String httpUrl, String... params) {
         StringBuffer stringBuffer = null;
         try {
             //创建URL对象
@@ -214,7 +212,7 @@ public class HttpRequestUtil {
         if (stringBuffer == null) {
             return null;
         } else {
-            return JSON.parseObject(stringBuffer.toString());
+            return JackJsonUtil.objectToMap(stringBuffer.toString());
         }
     }
 

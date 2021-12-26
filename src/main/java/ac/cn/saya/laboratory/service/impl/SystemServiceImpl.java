@@ -1,5 +1,7 @@
 package ac.cn.saya.laboratory.service.impl;
 
+import ac.cn.saya.laboratory.entity.UserEntity;
+import ac.cn.saya.laboratory.persistent.primary.service.UserService;
 import ac.cn.saya.laboratory.thread.MysqlDumpThread;
 import ac.cn.saya.laboratory.entity.BackupLogEntity;
 import ac.cn.saya.laboratory.entity.PlanEntity;
@@ -19,7 +21,9 @@ import org.thymeleaf.context.Context;
 
 import javax.annotation.Resource;
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -29,7 +33,7 @@ import java.util.concurrent.FutureTask;
  * @Description: TODO
  * @Author liunengkai
  * @Date: 2019-03-01 20:27
- * @Description:
+ * @Description:/opt/server/laboratory  /opt/server/warehouse
  */
 
 @Service("systemServiceImpl")
@@ -64,11 +68,18 @@ public class SystemServiceImpl implements SystemService {
     @Qualifier("planService")
     private PlanService planService;
 
-    //@Autowired
+    @Autowired
     private MailService mailService;
+
+    @Autowired
+    private UserService userService;
 
     @Resource
     private TemplateEngine templateEngine;
+
+    @Resource
+    @Qualifier("uploadUtils")
+    private UploadUtils uploadUtils;
 
     /**
      * @描述 备份数据库、每天3点备份一次
@@ -85,11 +96,11 @@ public class SystemServiceImpl implements SystemService {
     //@Scheduled(cron = "0 0/1 * * * ?")
     public Boolean backupDatabase() {
         try {
-            String executeTime =  DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat);
+            String executeTime = DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat);
             //url路径 files/database
             String urlPath = File.separator + "warehouse" + File.separator + "database";
             //上传文件路径-/database/目录下当天的文件夹
-            String backUppath = System.getProperty("user.home","/home/saya") + urlPath;
+            String backUppath = System.getProperty("user.home", "/home/saya") + urlPath;
             //保存的文件名
             String backUpName = RandomUtil.getRandomFileName() + ".sql";
             MysqlDumpThread task = new MysqlDumpThread(this.dburl, this.username, this.password, backUppath, backUpName, this.dbname, this.mysqlbin);
@@ -105,10 +116,10 @@ public class SystemServiceImpl implements SystemService {
                 System.out.println("error");
                 sendBackUpMail(executeTime, "失败", "-");
             }
-        } catch (ExecutionException e){
-            CurrentLineInfo.printCurrentLineInfo("备份数据库计划异常",e,SystemServiceImpl.class);
-        }catch (InterruptedException e) {
-            CurrentLineInfo.printCurrentLineInfo("备份数据库计划异常",e,SystemServiceImpl.class);
+        } catch (ExecutionException e) {
+            CurrentLineInfo.printCurrentLineInfo("备份数据库计划异常", e, SystemServiceImpl.class);
+        } catch (InterruptedException e) {
+            CurrentLineInfo.printCurrentLineInfo("备份数据库计划异常", e, SystemServiceImpl.class);
         }
         return false;
     }
@@ -137,13 +148,13 @@ public class SystemServiceImpl implements SystemService {
                 List<BackupLogEntity> list = backupLogService.getBackupPagin(queryEntity);
                 // 删除磁盘文件
                 for (BackupLogEntity item : list) {
-                    UploadUtils.deleteFile(item.getUrl());
+                    uploadUtils.deleteFile(item.getUrl());
                 }
                 // 删除数据库记录
                 backupLogService.deleteBackup(queryEntity);
             }
         } catch (Exception e) {
-            CurrentLineInfo.printCurrentLineInfo("清理备份数据库计划异常",e,SystemServiceImpl.class);
+            CurrentLineInfo.printCurrentLineInfo("清理备份数据库计划异常", e, SystemServiceImpl.class);
         }
         return false;
     }
@@ -157,7 +168,6 @@ public class SystemServiceImpl implements SystemService {
      * @修改人和其它信息
      */
     @Override
-    // 每天4点执行
     @Scheduled(cron = "0 0 4 * * ?")
     public Boolean remindPlan() {
         List<PlanEntity> list = planService.getTodayPlanList();
@@ -167,13 +177,19 @@ public class SystemServiceImpl implements SystemService {
                 return false;
             } else {
                 // 今日有计划安排
+                Map<String, UserEntity> userMap = new HashMap<>();
                 for (PlanEntity item : list) {
-                    sendRemndPlanMail(item.getUpdatetime(), item.getSource(), item.getCreatetime(), item.getDescribe());
+                    UserEntity userInfo = userMap.get(item.getSource());
+                    if (null == userInfo) {
+                        userInfo = userService.getUser(item.getSource());
+                        userMap.put(item.getSource(), userInfo);
+                    }
+                    sendRemndPlanMail(userInfo.getEmail(), item.getSource(), item.getCreatetime(), item.getDescribe());
                 }
                 return true;
             }
         } catch (Exception e) {
-            CurrentLineInfo.printCurrentLineInfo("日程安排邮件发送定时任务异常",e,SystemServiceImpl.class);
+            CurrentLineInfo.printCurrentLineInfo("日程安排邮件发送定时任务异常", e, SystemServiceImpl.class);
         }
         return false;
     }
@@ -199,7 +215,7 @@ public class SystemServiceImpl implements SystemService {
             String emailContent = templateEngine.process("mail/backUpDB", context);
             mailService.sendHtmlMail(mail, "数据库备份结果报告", emailContent);
         } catch (Exception e) {
-            CurrentLineInfo.printCurrentLineInfo("邮件发送异常",e,SystemServiceImpl.class);
+            CurrentLineInfo.printCurrentLineInfo("邮件发送异常", e, SystemServiceImpl.class);
         }
     }
 
@@ -222,24 +238,24 @@ public class SystemServiceImpl implements SystemService {
             String emailContent = templateEngine.process("mail/remindPlan", context);
             mailService.sendHtmlMail(userEmail, "今日计划安排提醒", emailContent);
         } catch (Exception e) {
-            CurrentLineInfo.printCurrentLineInfo("邮件发送异常",e,SystemServiceImpl.class);
+            CurrentLineInfo.printCurrentLineInfo("邮件发送异常", e, SystemServiceImpl.class);
         }
     }
 
     /**
      * @Title
-     * @Params  [userEmail, userName, account, ip, city, platform, loginTime]
-     * @Return  void
-     * @Author  saya.ac.cn-刘能凯
-     * @Date  2020-06-06
+     * @Params [userEmail, userName, account, ip, city, platform, loginTime]
+     * @Return void
+     * @Author saya.ac.cn-刘能凯
+     * @Date 2020-06-06
      * @Description
      */
-    public void sendLoginNotice(String userEmail,String userName,String account,String ip,String city,String platform,String loginTime){
+    public void sendLoginNotice(String userEmail, String userName, String account, String ip, String city, String platform, String loginTime) {
         //创建邮件正文
         Context context = new Context();
         context.setVariable("userName", userName);
         context.setVariable("account", account);
-        context.setVariable("platform", (platform.equals("lab")?"实验室中心后台":"财政申报系统"));
+        context.setVariable("platform", (platform.equals("lab") ? "实验室中心后台" : "财政申报系统"));
         context.setVariable("ip", ip);
         context.setVariable("city", city);
         context.setVariable("ip", ip);
@@ -249,7 +265,7 @@ public class SystemServiceImpl implements SystemService {
             String emailContent = templateEngine.process("mail/loginNotice", context);
             mailService.sendHtmlMail(userEmail, "登录提醒", emailContent);
         } catch (Exception e) {
-            CurrentLineInfo.printCurrentLineInfo("邮件发送异常",e,SystemServiceImpl.class);
+            CurrentLineInfo.printCurrentLineInfo("邮件发送异常", e, SystemServiceImpl.class);
         }
     }
 

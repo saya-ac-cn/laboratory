@@ -506,4 +506,62 @@
             ) b
     </select>
 
+    <resultMap id="returnBillOfAmountList" type="billOfAmount">
+        <result column="deposited" property="deposited"/>
+        <result column="expenditure" property="expenditure"/>
+        <result column="currencyNumber" property="currencyNumber"/>
+        <association property="amountEntity" javaType="transactionAmount">
+            <id column="transactionAmount" property="id"/>
+            <result column="flog" property="flog"/>
+            <result column="tag" property="tag"/>
+        </association>
+    </resultMap>
+
+    <!--统计指定月份中各摘要的收支情况,其中支出（flag=-1）或收入（flag=1）-->
+    <select id="totalBillByAmount" parameterType="billOfAmount" resultMap="returnBillOfAmountList">
+        SELECT
+        b.*,a.*
+        FROM
+        transaction_amount a
+        INNER JOIN  (
+        SELECT
+        c.transactionAmount ,
+        sum(c.deposited) AS deposited ,
+        sum(c.expenditure) AS expenditure ,
+        sum(c.currencyNumber) AS currencyNumber
+        FROM
+        transaction_list c
+        WHERE
+        c.source = #{source}
+        <if test="tradeDate != null and tradeDate != ''">
+            and c.tradeDate like concat(#{tradeDate} , '%')
+        </if>
+        GROUP BY
+        c.transactionAmount
+        ) b ON a.id = b.transactionAmount
+        <where>
+            <if test = 'flag != null and flag == 1'>
+                a.flog = 1
+            </if>
+            <if test = 'flag != null and flag == -1'>
+                a.flog = 2
+            </if>
+        </where>
+        ORDER BY
+        b.currencyNumber desc
+    </select>
+
+    <!--统计指定月份的总收入和支出-->
+    <select id="totalBalance" parameterType="billOfDay" resultType="billOfDay">
+        select
+            #{tradeDate} as tradeDate,
+            sum(a.deposited) as deposited,
+            sum(a.expenditure) as expenditure,
+            sum(a.currencyNumber) as currencyNumber
+        from
+            transaction_list a
+        where
+            a.source = #{source} and a.tradeDate like concat(#{tradeDate} , '%')
+    </select>
+
 </mapper> 

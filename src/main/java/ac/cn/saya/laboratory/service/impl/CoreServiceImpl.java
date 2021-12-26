@@ -4,13 +4,12 @@ import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.handle.RepeatLogin;
 import ac.cn.saya.laboratory.persistent.business.service.*;
-import ac.cn.saya.laboratory.persistent.financial.service.FinancialDeclareService;
 import ac.cn.saya.laboratory.persistent.primary.service.LogService;
 import ac.cn.saya.laboratory.persistent.primary.service.UserService;
 import ac.cn.saya.laboratory.service.ICoreService;
 import ac.cn.saya.laboratory.tools.*;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -22,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -53,10 +53,6 @@ public class CoreServiceImpl implements ICoreService {
     @Resource
     @Qualifier("planService")
     private PlanService planService;
-
-    @Resource
-    @Qualifier("apiService")
-    private ApiService apiService;
 
     @Resource
     @Qualifier("pictureStorageService")
@@ -91,16 +87,8 @@ public class CoreServiceImpl implements ICoreService {
     private AmapLocateUtils amapLocateUtils;
 
     @Resource
-    @Qualifier("memoService")
-    private MemoService memoService;
-
-    @Resource
-    @Qualifier("financialDeclareService")
-    private FinancialDeclareService financialDeclareService;
-
-    @Resource
-    @Qualifier("httpClientUtil")
-    private HttpClientUtil httpClientUtil;
+    @Qualifier("uploadUtils")
+    private UploadUtils uploadUtils;
 
     /**
      * 用户登录
@@ -113,25 +101,6 @@ public class CoreServiceImpl implements ICoreService {
     @Override
     public Result<Object> login(String platform,UserEntity user, HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession();
-        if ("wx".equals(platform) && !StringUtils.isEmpty(user.getOpenId())){
-            // 微信登录方式
-            ThirdUserEntity wxUser = userService.getThirdUser(user.getOpenId(),"wx");
-            if (null != wxUser) {
-                UserMemory memory = new UserMemory();
-                String ip = HttpRequestUtil.getIpAddress(request);
-                UserEntity entity = userService.getUser(wxUser.getUser());
-                memory.setUser(entity.getUser());
-                memory.setIp(ip);
-                memory.setCity(amapLocateUtils.getCityByIp(ip));
-                // 记录该用户的此次登录成功的信息
-                session.setAttribute("user", memory);
-                JSONObject wxInfo = new JSONObject();
-                wxInfo.put("sessionId", session.getId());
-                return ResultUtil.success(wxInfo);
-            }else {
-                return ResultUtil.error(-999,"未能获取到您的信息，请联系运营团队进行添加");
-            }
-        }
         // 校验用户输入的参数
         if (StringUtils.isEmpty(user.getUser()) || StringUtils.isEmpty(user.getPassword())) {
             // 缺少参数
@@ -156,10 +125,10 @@ public class CoreServiceImpl implements ICoreService {
             entity.setPassword(null);
             // 转换成浏览器可以直接识别的url
             // 用户logo，及背景图片的返回
-            entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
+            entity.setLogo(uploadUtils.descUrl(entity.getLogo()));
             String pictureUrl = null;
             if (null != entity.getBackground() && !(StringUtils.isEmpty(pictureUrl = pictureStorageService.getPictureUrl(entity.getBackground())))){
-                entity.setBackgroundUrl(UploadUtils.descUrl(pictureUrl));
+                entity.setBackgroundUrl(uploadUtils.descUrl(pictureUrl));
             }
             // 注入用户个人信息
             result.put("user", entity);
@@ -194,10 +163,10 @@ public class CoreServiceImpl implements ICoreService {
                 entity.setPassword(null);
                 // 转换成浏览器可以直接识别的url
                 // 用户logo，及背景图片的返回
-                entity.setLogo(UploadUtils.descUrl(entity.getLogo()));
+                entity.setLogo(uploadUtils.descUrl(entity.getLogo()));
                 String pictureUrl = null;
                 if (null != entity.getBackground() && !(StringUtils.isEmpty(pictureUrl = pictureStorageService.getPictureUrl(entity.getBackground())))){
-                    entity.setBackgroundUrl(UploadUtils.descUrl(pictureUrl));
+                    entity.setBackgroundUrl(uploadUtils.descUrl(pictureUrl));
                 }
                 // 返回用户的个人信息
                 List<PlanEntity> todayPlan = planService.queryTodayPlan(user.getUser());
@@ -214,53 +183,6 @@ public class CoreServiceImpl implements ICoreService {
                 //密码错误
                 throw new MyException(ResultEnum.ERROP);
             }
-        }
-    }
-
-    /**
-     * 获取微信用户信息
-     * @param code 微信生成的登录码
-     * @param request 用户请求会话
-     * @return 获取成功且绑定了，自动登录
-     */
-    @Override
-    public Result<Object> getWxUserDetail(String code, HttpServletRequest request) throws MyException{
-        JSONObject wxInfo = null;
-        try {
-            // 获取用户的openid
-            //appid和secret是开发者分别是小程序ID和小程序密钥，开发者通过微信公众平台-》设置-》开发设置就可以直接获取，
-            wxInfo = httpClientUtil.getOpenId(code);
-            if (wxInfo == null || StringUtils.isEmpty(wxInfo.getString("openid"))) {
-                return ResultUtil.error(-100010201, "调用微信接口获取用户信息异常");
-            }
-            // 通过openid放到第三方用户表判断用户是否已经绑定
-            ThirdUserEntity user = userService.getThirdUser(wxInfo.getString("openid"),"wx");
-            if (null != user) {
-                UserEntity entity = userService.getUser(user.getUser());
-                UserMemory userSession = HttpRequestUtil.getUserMemory(request);
-                HttpSession session = request.getSession();
-                // 未登录
-                if (userSession == null){
-                    // 该用户已经绑定->设置用户登录信息
-
-                    UserMemory memory = new UserMemory();
-                    String ip = HttpRequestUtil.getIpAddress(request);
-                    memory.setUser(entity.getUser());
-                    memory.setIp(ip);
-                    memory.setCity(amapLocateUtils.getCityByIp(ip));
-                    // 记录该用户的此次登录成功的信息
-                    session.setAttribute("user", memory);
-                }
-                wxInfo.put("sessionId", session.getId());
-                wxInfo.put("bind", 1);
-            } else {
-                wxInfo.put("bind", 0);
-            }
-            // 返回含有用户openid的信息
-            return ResultUtil.success(wxInfo);
-        } catch (Exception e) {
-            CurrentLineInfo.printCurrentLineInfo("获取微信用户信息异常",e, CoreServiceImpl.class);
-            return ResultUtil.error(-100010202, "获取微信用户信息异常");
         }
     }
 
@@ -326,9 +248,6 @@ public class CoreServiceImpl implements ICoreService {
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         user.setUser(userSession.getUser());
         if (userService.setUser(user) > 0) {
-            /**
-             * 记录日志
-             */
             // 修改个人信息
             recordService.record("OX002", request);
             return ResultUtil.success();
@@ -455,9 +374,9 @@ public class CoreServiceImpl implements ICoreService {
             entity.setUser(userSession.getUser());
             //获取满足条件的记录集合
             List<LogEntity> entityList = logService.selectPage(entity);
-            List<JSONObject> jsonObjectList = new ArrayList<>();
+            ArrayNode jsonObjectList = JackJsonUtil.createArrayNode();
             for (LogEntity item : entityList) {
-                JSONObject json = new JSONObject();
+                ObjectNode json = JackJsonUtil.createObjectNode();
                 json.put("user", item.getUser());
                 json.put("describe", item.getLogType().getDescribe());
                 json.put("ip", item.getIp());
@@ -475,7 +394,6 @@ public class CoreServiceImpl implements ICoreService {
             OutExcelUtils.outExcelTemplateSimple(keys, titles, jsonObjectList, out);
         } catch (Exception e) {
             response.setStatus(500);
-            e.printStackTrace();
         }
         return null;
     }
@@ -490,7 +408,7 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> updateLogo(String imgBase64, HttpServletRequest request) throws Exception {
-        Result<String> upload = UploadUtils.uploadLogo(imgBase64, request);
+        Result<String> upload = uploadUtils.uploadLogo(imgBase64, request);
         if (upload.getCode() == 0) {
             //logo上传成功
             //得到文件上传成功的回传地址
@@ -501,12 +419,8 @@ public class CoreServiceImpl implements ICoreService {
             user.setUser(userSession.getUser());
             user.setLogo(successUrl);
             if (userService.setUser(user) > 0) {
-                /**
-                 * 记录日志
-                 * 上传头像
-                 */
                 recordService.record("OX003", request);
-                return ResultUtil.success(UploadUtils.descUrl(successUrl));
+                return ResultUtil.success(uploadUtils.descUrl(successUrl));
             } else {
                 throw new MyException(ResultEnum.ERROP);
             }
@@ -614,9 +528,9 @@ public class CoreServiceImpl implements ICoreService {
             }
             // 统计有效的单元格（加上月尾的空白单元格）
             gridCount = tableLine * 7;
-            List<JSONObject> jsonObjectList = new ArrayList<>();
+            ArrayNode jsonObjectList = JackJsonUtil.createArrayNode();
             for (int i = 1; i <= gridCount; i++) {
-                JSONObject json = new JSONObject();
+                ObjectNode json = JackJsonUtil.createObjectNode();
                 if (i >= firstDayWeek && i <= (monthCount + (firstDayWeek - 1))) {
                     json.put("flog", 1);
                     json.put("number", i - (firstDayWeek - 1));
@@ -655,12 +569,12 @@ public class CoreServiceImpl implements ICoreService {
      */
     @Override
     public Result<Object> getPlanDetail(PlanEntity entity, HttpServletRequest request) throws Exception {
-        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
-        entity.setSource(userSession.getUser());
         if (entity == null || entity.getId() == null) {
             // 缺少参数
             throw new MyException(ResultEnum.NOT_PARAMETER);
         }
+        UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
+        entity.setSource(userSession.getUser());
         PlanEntity result = planService.getOnePlan(entity);
         if (result == null) {
             //未找到有效记录
@@ -689,13 +603,10 @@ public class CoreServiceImpl implements ICoreService {
         entity.setSource(userSession.getUser());
         Integer flog = planService.insertPlan(entity);
         if (flog > 0) {
-            /**
-             * 记录日志
-             */
             recordService.record("OX022", request);
             return ResultUtil.success();
         } else if (flog == -2) {
-            // 改天计划已经存在
+            // 该天计划已经存在
             throw new MyException(ResultEnum.ERROP);
         } else {
             throw new MyException(ResultEnum.UNKONW_ERROR);
@@ -721,7 +632,7 @@ public class CoreServiceImpl implements ICoreService {
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         entity.setSource(userSession.getUser());
         // 日期准备
-        entity.setPlandate(DateUtils.getCurrentDateTime(DateUtils.dateFormat));
+        entity.setPlandate(entity.getPlandate());
         Integer flog = planService.editPlan(entity);
         if (flog > 0) {
             /**
@@ -767,106 +678,6 @@ public class CoreServiceImpl implements ICoreService {
     }
 
     /**
-     * @描述
-     * @参数 [entity, request]
-     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/24
-     * @修改人和其它信息 查询接口列表
-     */
-    @Override
-    public Result<Object> getApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        Paging paging = new Paging();
-        if (entity.getNowPage() == null) {
-            entity.setNowPage(1);
-        }
-        if (entity.getPageSize() == null) {
-            entity.setPageSize(20);
-        }
-        //每页显示记录的数量
-        paging.setPageSize(entity.getPageSize());
-        //获取满足条件的总记录（不分页）
-        Long pageSize = apiService.getApiCount(entity);
-        if (pageSize > 0) {
-            //总记录数
-            paging.setDateSum(pageSize);
-            //计算总页数
-            paging.setTotalPage();
-            //设置当前的页码-并校验是否超出页码范围
-            paging.setPageNow(entity.getNowPage());
-            //设置行索引
-            entity.setPage((paging.getPageNow() - 1) * paging.getPageSize(), paging.getPageSize());
-            //获取满足条件的记录集合
-            List<ApiEntity> list = apiService.getApiPage(entity);
-            paging.setGrid(list);
-            return ResultUtil.success(paging);
-        } else {
-            //未找到有效记录
-            throw new MyException(ResultEnum.NOT_EXIST);
-        }
-    }
-
-    /**
-     * @描述
-     * @参数 [entity, request]
-     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/24
-     * @修改人和其它信息 创建接口
-     */
-    @Override
-    public Result<Object> createApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        Result<Object> result = apiService.insertApi(entity);
-        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
-            /**
-             * 记录日志
-             */
-            recordService.record("OX031", request);
-        }
-        return result;
-    }
-
-    /**
-     * @描述
-     * @参数 [entity, request]
-     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/24
-     * @修改人和其它信息 修改接口
-     */
-    @Override
-    public Result<Object> editApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        Result<Object> result = apiService.editApi(entity);
-        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
-            /**
-             * 记录日志
-             */
-            recordService.record("OX032", request);
-        }
-        return result;
-    }
-
-    /**
-     * @描述
-     * @参数 [entity, request]
-     * @返回值 ac.cn.saya.datacenter.tools.Result<java.lang.Object>
-     * @创建人 saya.ac.cn-刘能凯
-     * @创建时间 2019/1/24
-     * @修改人和其它信息 删除接口
-     */
-    @Override
-    public Result<Object> deleteApi(ApiEntity entity, HttpServletRequest request) throws Exception {
-        Result<Object> result = apiService.deleteApi(entity);
-        if (result.getCode() == ResultEnum.SUCCESS.getCode()) {
-            /**
-             * 记录日志
-             */
-            recordService.record("OX033", request);
-        }
-        return result;
-    }
-
-    /**
      * @描述 获取统计总数及笔记簿词云数据
      * @参数
      * @返回值
@@ -908,40 +719,40 @@ public class CoreServiceImpl implements ICoreService {
         newsEntity.setSource(userSession.getUser());
         CompletableFuture<Long> newsCountFuture = CompletableFuture.supplyAsync(()->newsService.getNewsCount(newsEntity));
 
-        JSONArray roseData = new JSONArray();
+        ArrayNode roseData = JackJsonUtil.createArrayNode();
 
         Long pictureCount = pictureCountFuture.exceptionally(f -> 0L).get();
-        JSONObject pictureItem = new JSONObject();
+        ObjectNode pictureItem = JackJsonUtil.createObjectNode();
         pictureItem.put("type","图片");
         pictureItem.put("value",pictureCount);
         roseData.add(pictureItem);
 
         Long fileCount = fileCountFuture.exceptionally(f -> 0L).get();
-        JSONObject fileItem = new JSONObject();
+        ObjectNode fileItem = JackJsonUtil.createObjectNode();
         fileItem.put("type","文件");
         fileItem.put("value",fileCount);
         roseData.add(fileItem);
 
         Long bookCount = bookCountFuture.exceptionally(f -> 0L).get();
-        JSONObject bookItem = new JSONObject();
+        ObjectNode bookItem = JackJsonUtil.createObjectNode();
         bookItem.put("type","笔记簿");
         bookItem.put("value",bookCount);
         roseData.add(bookItem);
 
         Long notesCount = notesCountFuture.exceptionally(f -> 0L).get();
-        JSONObject notesItem = new JSONObject();
+        ObjectNode notesItem = JackJsonUtil.createObjectNode();
         notesItem.put("type","笔记");
         notesItem.put("value",notesCount);
         roseData.add(notesItem);
 
         Long planCount = planCountFuture.exceptionally(f -> 0L).get();
-        JSONObject planItem = new JSONObject();
+        ObjectNode planItem = JackJsonUtil.createObjectNode();
         planItem.put("type","计划");
         planItem.put("value",planCount);
         roseData.add(planItem);
 
         Long newsCount = newsCountFuture.exceptionally(f -> 0L).get();
-        JSONObject newsItem = new JSONObject();
+        ObjectNode newsItem = JackJsonUtil.createObjectNode();
         newsItem.put("type","动态");
         newsItem.put("value",newsCount);
         roseData.add(newsItem);
@@ -961,7 +772,7 @@ public class CoreServiceImpl implements ICoreService {
      * 查询活动率
      * @param queryMonth 所在月份的日期(2021-01-25格式)
      * @param request 当前用户会话信息
-     * @return
+     * @return Result<Object> map对象
      * @throws Exception
      */
     @Override
@@ -970,7 +781,7 @@ public class CoreServiceImpl implements ICoreService {
         try {
             LocalDate monthDate = LocalDate.parse(queryMonth, DateUtils.dateFormat);
             // 总天数，计算日均用
-            int days = 0;
+            int days;
             if(DateUtils.checkIsCurrentMonth(queryMonth)){
                 // 是当前月，天数为已经过去的天数
                 days = monthDate.getDayOfMonth();
@@ -987,7 +798,7 @@ public class CoreServiceImpl implements ICoreService {
             // 本月活跃总数
             Long currentActivityCount = logService.selectCount(logEntity);
             // 计算日均
-            BigDecimal avgAccount = (BigDecimal.valueOf(currentActivityCount)).divide(new BigDecimal(days),4, BigDecimal.ROUND_HALF_UP);
+            BigDecimal avgAccount = (BigDecimal.valueOf(currentActivityCount)).divide(new BigDecimal(days),4, RoundingMode.HALF_UP);
             // 近半年的活跃次数
             Map<String, Object> log6 = userService.countPre6Logs(userSession.getUser(), queryMonth);
             result.put("count",currentActivityCount);

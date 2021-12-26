@@ -5,7 +5,8 @@ import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.business.service.*;
 import ac.cn.saya.laboratory.service.IFrontendService;
 import ac.cn.saya.laboratory.tools.*;
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -53,6 +54,10 @@ public class FrontendServiceImpl implements IFrontendService {
     @Qualifier("notesService")
     private NotesService notesService;
 
+    @Resource
+    @Qualifier("uploadUtils")
+    private UploadUtils uploadUtils;
+
     /**
      * @描述 查询一条动态
      * @参数
@@ -74,7 +79,7 @@ public class FrontendServiceImpl implements IFrontendService {
         } else {
             // 寻找上一条和下一条
             Map<String, String> preAndNext = newsService.getNewsPreAndNext(entity.getId());
-            Map<String, NewsEntity> out = new HashMap();
+            Map<String, NewsEntity> out = new HashMap(8);
             out.put("now", result);
             if (preAndNext != null) {
                 for (Map.Entry<String, String> item : preAndNext.entrySet()) {
@@ -194,7 +199,7 @@ public class FrontendServiceImpl implements IFrontendService {
             response.setStatus(404);
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
-            File thisFile = UploadUtils.getFilePath(resultEntity.getFileurl());
+            File thisFile = uploadUtils.getFilePath(resultEntity.getFileurl());
             if (thisFile == null) {
                 // 文件不存在
                 response.setStatus(404);
@@ -265,9 +270,9 @@ public class FrontendServiceImpl implements IFrontendService {
             }
             // 统计有效的单元格（加上月尾的空白单元格）
             gridCount = tableLine * 7;
-            List<JSONObject> jsonObjectList = new ArrayList<>();
+            ArrayNode jsonObjectList = JackJsonUtil.createArrayNode();
             for (int i = 1; i <= gridCount; i++) {
-                JSONObject json = new JSONObject();
+                ObjectNode json = JackJsonUtil.createObjectNode();
                 if (i >= firstDayWeek && i <= (monthCount + (firstDayWeek - 1))) {
                     json.put("flog", 1);
                     json.put("number", i - (firstDayWeek - 1));
@@ -384,7 +389,7 @@ public class FrontendServiceImpl implements IFrontendService {
         } else {
             // 寻找上一条和下一条
             Map<String, String> preAndNext = notesService.getNotesPreAndNext(entity.getId());
-            Map<String, NotesEntity> out = new HashMap();
+            Map<String, NotesEntity> out = new HashMap(8);
             out.put("now", result);
             if (preAndNext != null) {
                 for (Map.Entry<String, String> item : preAndNext.entrySet()) {

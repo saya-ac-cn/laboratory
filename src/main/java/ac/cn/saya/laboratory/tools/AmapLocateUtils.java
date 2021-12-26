@@ -1,11 +1,11 @@
 package ac.cn.saya.laboratory.tools;
 
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 高德ip定位
@@ -44,7 +44,7 @@ public class AmapLocateUtils {
         if (StringUtils.isEmpty(ip) || "127.0.0.1".equals(ip) || "localhost".equals(ip)){
             return "本机地址";
         }
-        JSONObject jsonObject = HttpRequestUtil.httpUrlConnetionGet(amapUrl, "key=" + amapKey, "ip=" + ip);
+        Map<String,Object> jsonObject = HttpRequestUtil.httpUrlConnetionGet(amapUrl, "key=" + amapKey, "ip=" + ip);
         if (null != jsonObject){
             if ("0".equals(String.valueOf(jsonObject.get("status")))){
                 return "高德城市定位失败";

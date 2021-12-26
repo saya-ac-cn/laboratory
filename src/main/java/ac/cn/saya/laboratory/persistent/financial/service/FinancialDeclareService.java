@@ -1,9 +1,6 @@
 package ac.cn.saya.laboratory.persistent.financial.service;
 
-import ac.cn.saya.laboratory.entity.TransactionAmountEntity;
-import ac.cn.saya.laboratory.entity.TransactionInfoEntity;
-import ac.cn.saya.laboratory.entity.TransactionListEntity;
-import ac.cn.saya.laboratory.entity.TransactionTypeEntity;
+import ac.cn.saya.laboratory.entity.*;
 import ac.cn.saya.laboratory.exception.MyException;
 import ac.cn.saya.laboratory.persistent.financial.dao.FinancialBatchDAO;
 import ac.cn.saya.laboratory.persistent.financial.dao.TransactionReadDAO;
@@ -668,6 +665,39 @@ public class FinancialDeclareService {
             return ResultUtil.error(-1, "删除失败");
         } else {
             return ResultUtil.error(-1, "记录已经不存在");
+        }
+    }
+
+    /**
+     * 查询指定月份的总收入、支出和总收支（硬查询）
+     * @param param
+     * @return
+     */
+    public BillOfDayEntity totalBalanceHard(BillOfDayEntity param) {
+        try {
+            BillOfDayEntity balance = transactionReadDAO.totalBalance(param);
+            if (null != balance) {
+                return balance;
+            }
+            return null;
+        } catch (Exception e) {
+            CurrentLineInfo.printCurrentLineInfo("统计指定月份的总支出失败", e, FinancialDeclareService.class);
+            throw new MyException(ResultEnum.DB_ERROR);
+        }
+    }
+
+    /**
+     * 统计指定月份中各摘要的排名
+     * @param tradeDate 所在月份的日期
+     * @param source 当前用户会话信息
+     * @return
+     */
+    public List<BillOfAmountEntity> orderByAmount(String tradeDate, String source,int flag){
+        try {
+            return transactionReadDAO.totalBillByAmount(tradeDate, source, flag);
+        } catch (Exception e) {
+            CurrentLineInfo.printCurrentLineInfo("统计指定月份中各摘要的排名失败", e, FinancialDeclareService.class);
+            throw new MyException(ResultEnum.DB_ERROR);
         }
     }
 

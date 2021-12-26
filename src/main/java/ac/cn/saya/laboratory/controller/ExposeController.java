@@ -45,18 +45,6 @@ public class ExposeController {
     }
 
     /**
-     * 获取微信用户信息
-     *
-     * @param code  微信生成的登录码
-     * @param request 用户请求会话
-     * @return 获取成功且绑定了，自动登录
-     */
-    @GetMapping("/backend/wx/user")
-    public Result<Object> getWxUserDetail(@RequestParam(value = "code") String code, HttpServletRequest request) {
-        return coreServiceImpl.getWxUserDetail(code, request);
-    }
-
-    /**
      * 下载文件（通过路由）
      *
      * @param url
