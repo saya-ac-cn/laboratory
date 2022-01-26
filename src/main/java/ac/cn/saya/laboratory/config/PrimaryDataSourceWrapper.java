@@ -1,6 +1,6 @@
 package ac.cn.saya.laboratory.config;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -15,7 +15,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @Description: 核心主数据库数据源配置
  */
 @ConfigurationProperties(prefix = "spring.datasource.primary")
-public class PrimaryDataSourceWrapper extends DruidDataSource implements InitializingBean {
+public class PrimaryDataSourceWrapper extends HikariDataSource implements InitializingBean {
 
     private static final long serialVersionUID = 2957957409906618805L;
     @Autowired
@@ -30,8 +30,8 @@ public class PrimaryDataSourceWrapper extends DruidDataSource implements Initial
         if (super.getPassword() == null) {
             super.setPassword(basicProperties.determinePassword());
         }
-        if (super.getUrl() == null) {
-            super.setUrl(basicProperties.determineUrl());
+        if (super.getJdbcUrl() == null) {
+            super.setJdbcUrl(basicProperties.determineUrl());
         }
         if (super.getDriverClassName() == null) {
             super.setDriverClassName(basicProperties.getDriverClassName());

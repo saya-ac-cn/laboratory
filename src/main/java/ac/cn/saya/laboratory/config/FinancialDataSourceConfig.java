@@ -1,6 +1,5 @@
 package ac.cn.saya.laboratory.config;
-
-import com.alibaba.druid.pool.DruidDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -32,7 +31,7 @@ public class FinancialDataSourceConfig {
     /**
      * 创建财政数据库数据源
      */
-    public DruidDataSource build() {
+    public HikariDataSource build() {
         return new FinancialDataSourceWrapper();
     }
 
