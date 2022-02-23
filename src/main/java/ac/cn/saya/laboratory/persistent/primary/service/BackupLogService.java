@@ -94,13 +94,8 @@ public class BackupLogService {
      */
     @Transactional(readOnly = true)
     public List<BackupLogEntity> getBackupPagin(BackupLogEntity entity) {
-        List<BackupLogEntity> list = new ArrayList<>();
         try {
-            list = backupLogDAO.getBackupPagin(entity);
-            if (list.size() <= 0) {
-                list = null;
-            }
-            return list;
+            return backupLogDAO.getBackupPagin(entity);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("分页查看备份记录发生异常", e, BackupLogService.class);
             throw new MyException(ResultEnum.DB_ERROR);

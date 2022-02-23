@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -117,11 +118,10 @@ public class NotesService {
      */
     @Transactional(readOnly = true)
     public List<NotesEntity> getNotesPage(NotesEntity entity) {
-        List<NotesEntity> list = new ArrayList<>();
         try {
-            list = notesDAO.getNotesPage(entity);
-            if (list.size() <= 0) {
-                list = null;
+            List<NotesEntity> list = notesDAO.getNotesPage(entity);
+            if (CollectionUtils.isEmpty(list)) {
+                return list;
             }
             // 过滤文本
             list = list.stream().map(item -> {

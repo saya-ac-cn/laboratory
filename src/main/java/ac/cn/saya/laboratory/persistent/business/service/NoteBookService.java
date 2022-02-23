@@ -108,9 +108,8 @@ public class NoteBookService {
      */
     @Transactional(readOnly = true)
     public List<NoteBookEntity> getNoteBookPage(NoteBookEntity entity) {
-        List<NoteBookEntity> list = new ArrayList<>();
         try {
-            list = noteBookDAO.getNoteBookPage(entity);
+            List<NoteBookEntity> list = noteBookDAO.getNoteBookPage(entity);
             if (list.size() <= 0) {
                 list = null;
             }
@@ -149,9 +148,8 @@ public class NoteBookService {
      */
     @Transactional(readOnly = true)
     public List<NoteBookEntity> getNoteBook(NoteBookEntity entity) {
-        List<NoteBookEntity> list = new ArrayList<>();
         try {
-            list = noteBookDAO.getNoteBook(entity);
+            List<NoteBookEntity> list = noteBookDAO.getNoteBook(entity);
             if (list.size() <= 0) {
                 list = null;
             }

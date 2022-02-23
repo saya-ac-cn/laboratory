@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -119,11 +120,10 @@ public class NewsService {
      */
     @Transactional(readOnly = true)
     public List<NewsEntity> getNewsPage(NewsEntity entity) {
-        List<NewsEntity> list = new ArrayList<>();
         try {
-            list = newsDAO.getNewsPage(entity);
-            if (list.size() <= 0) {
-                list = null;
+            List<NewsEntity> list = newsDAO.getNewsPage(entity);
+            if (CollectionUtils.isEmpty(list)) {
+                return list;
             }
             // 过滤文本
             list = list.stream().map(item -> {

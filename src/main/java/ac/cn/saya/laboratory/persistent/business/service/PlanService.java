@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -163,11 +164,7 @@ public class PlanService {
     @Transactional(readOnly = true)
     public List<PlanEntity> getPlanList(PlanEntity entity) {
         try {
-            List<PlanEntity> list = planDAO.getPlanList(entity);
-            if (list.size() <= 0) {
-                list = null;
-            }
-            return list;
+            return planDAO.getPlanList(entity);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("获取计划安排列表异常",e, PlanService.class);
             throw new MyException(ResultEnum.DB_ERROR);

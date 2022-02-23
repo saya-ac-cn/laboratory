@@ -2,12 +2,10 @@ package ac.cn.saya.laboratory.persistent.business.service;
 
 import ac.cn.saya.laboratory.entity.MemoEntity;
 import ac.cn.saya.laboratory.exception.MyException;
-import ac.cn.saya.laboratory.persistent.business.dao.BusinessBatchDAO;
 import ac.cn.saya.laboratory.persistent.business.dao.MemoDAO;
 import ac.cn.saya.laboratory.tools.AesUtil;
 import ac.cn.saya.laboratory.tools.CurrentLineInfo;
 import ac.cn.saya.laboratory.tools.ResultEnum;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,7 +14,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Title: MemoService
@@ -29,10 +26,6 @@ import java.util.Map;
 @Service("memoService")
 @Transactional(value = "primaryTransactionManager",readOnly = false,propagation= Propagation.REQUIRED, isolation= Isolation.REPEATABLE_READ, rollbackFor=MyException.class)
 public class MemoService {
-    
-    @Resource
-    @Qualifier("businessBatchDAO")
-    private BusinessBatchDAO batchDAO;
 
     @Resource
     private MemoDAO memoDAO;

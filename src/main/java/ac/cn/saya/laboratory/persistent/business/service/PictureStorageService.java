@@ -74,9 +74,8 @@ public class PictureStorageService {
      */
     @Transactional(readOnly = true)
     public List<PictureEntity> getPictuBase64Page(PictureEntity entity) {
-        List<PictureEntity> list = new ArrayList<>();
         try {
-            list = pictureDAO.getPictuBase64Page(entity);
+            List<PictureEntity> list = pictureDAO.getPictuBase64Page(entity);
             if (list.size() <= 0) {
                 list = null;
             }

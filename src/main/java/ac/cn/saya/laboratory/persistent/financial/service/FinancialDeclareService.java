@@ -65,11 +65,7 @@ public class FinancialDeclareService {
      */
     public List<TransactionTypeEntity> selectTransactionType() {
         try {
-            List<TransactionTypeEntity> list = transactionReadDAO.selectTransactionType();
-            if (list.size() <= 0) {
-                return null;
-            }
-            return list;
+            return transactionReadDAO.selectTransactionType();
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查询交易类别时发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
@@ -83,11 +79,7 @@ public class FinancialDeclareService {
      */
     public List<TransactionAmountEntity> selectTransactionAmount() {
         try {
-            List<TransactionAmountEntity> list = transactionReadDAO.selectTransactionAmount();
-            if (list.size() <= 0) {
-                return null;
-            }
-            return list;
+            return transactionReadDAO.selectTransactionAmount();
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查询交易摘要时发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
@@ -134,11 +126,7 @@ public class FinancialDeclareService {
      */
     public List<TransactionInfoEntity> selectTransactionInfoPage(TransactionInfoEntity entity) {
         try {
-            List<TransactionInfoEntity> list = transactionReadDAO.selectTransactionInfoPage(entity);
-            if (list.size() <= 0) {
-                return null;
-            }
-            return list;
+            return transactionReadDAO.selectTransactionInfoPage(entity);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查看流水明细发生异常",e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);
@@ -378,7 +366,6 @@ public class FinancialDeclareService {
                     throw new MyException(ResultEnum.DB_ERROR);
                 }
             } catch (MyException e) {
-                e.printStackTrace();
                 CurrentLineInfo.printCurrentLineInfo("修改财政记录父异常",e, FinancialDeclareService.class);
                 throw new MyException(ResultEnum.DB_ERROR);
             }
@@ -410,7 +397,6 @@ public class FinancialDeclareService {
                     return ResultUtil.error(-1, "删除失败");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 CurrentLineInfo.printCurrentLineInfo("删除财政记录父+子异常",e, FinancialDeclareService.class);
                 throw new MyException(ResultEnum.DB_ERROR);
             }
@@ -675,11 +661,7 @@ public class FinancialDeclareService {
      */
     public BillOfDayEntity totalBalanceHard(BillOfDayEntity param) {
         try {
-            BillOfDayEntity balance = transactionReadDAO.totalBalance(param);
-            if (null != balance) {
-                return balance;
-            }
-            return null;
+            return transactionReadDAO.totalBalance(param);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("统计指定月份的总支出失败", e, FinancialDeclareService.class);
             throw new MyException(ResultEnum.DB_ERROR);

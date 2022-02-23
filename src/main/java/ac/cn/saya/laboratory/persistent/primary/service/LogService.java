@@ -46,14 +46,13 @@ public class LogService {
      * @修改人和其它信息
      */
     public LogEntity queryRecentlyLog(String user) {
-        LogEntity log = null;
         try {
             // 查询用户最近的操作
-            log = logDAO.queryRecentlyLog(user);
+            return logDAO.queryRecentlyLog(user);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查询用户最近的操作失败",e, LogService.class);
+            throw new MyException(ResultEnum.DB_ERROR);
         }
-        return log;
     }
 
     /**
@@ -92,13 +91,8 @@ public class LogService {
      * @修改人和其它信息
      */
     public List<LogTypeEntity> selectLogType() {
-        List<LogTypeEntity> list = new ArrayList<>();
         try {
-            list = logDAO.selectType();
-            if (list.size() <= 0) {
-                list = null;
-            }
-            return list;
+            return logDAO.selectType();
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查询日志类别时发生异常",e, LogService.class);
             throw new MyException(ResultEnum.DB_ERROR);
@@ -114,13 +108,8 @@ public class LogService {
      * @修改人和其它信息
      */
     public List<LogEntity> selectPage(LogEntity entity) {
-        List<LogEntity> list = new ArrayList<>();
         try {
-            list = logDAO.selectPage(entity);
-            if (list.size() <= 0) {
-                list = null;
-            }
-            return list;
+            return logDAO.selectPage(entity);
         } catch (Exception e) {
             CurrentLineInfo.printCurrentLineInfo("查询日志时发生异常",e, LogService.class);
             throw new MyException(ResultEnum.DB_ERROR);
