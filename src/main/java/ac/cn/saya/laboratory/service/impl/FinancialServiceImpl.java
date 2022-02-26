@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -52,7 +53,7 @@ public class FinancialServiceImpl implements IFinancialService {
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
     public Result<Object> getTransactionType() throws MyException {
         List<TransactionTypeEntity> list = financialDeclareService.selectTransactionType();
-        if (list == null || list.isEmpty()) {
+        if (CollectionUtils.isEmpty(list)) {
             // 没有找到交易类别
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {
@@ -67,7 +68,7 @@ public class FinancialServiceImpl implements IFinancialService {
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true, rollbackFor = MyException.class)
     public Result<Object> getTransactionAmount() throws MyException {
         List<TransactionAmountEntity> list = financialDeclareService.selectTransactionAmount();
-        if (list == null || list.isEmpty()) {
+        if (CollectionUtils.isEmpty(list)) {
             // 没有找到交易摘要
             throw new MyException(ResultEnum.NOT_EXIST);
         } else {

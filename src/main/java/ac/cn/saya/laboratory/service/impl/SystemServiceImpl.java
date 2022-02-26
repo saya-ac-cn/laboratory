@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -172,7 +173,7 @@ public class SystemServiceImpl implements SystemService {
     public Boolean remindPlan() {
         List<PlanEntity> list = planService.getTodayPlanList();
         try {
-            if (list == null || list.size() <= 0) {
+            if (CollectionUtils.isEmpty(list)) {
                 // 今日无计划安排
                 return false;
             } else {

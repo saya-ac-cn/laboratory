@@ -7,6 +7,7 @@ import ac.cn.saya.laboratory.service.IMessageService;
 import ac.cn.saya.laboratory.tools.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -373,7 +374,7 @@ public class MessageServiceImpl implements IMessageService {
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         entity.setSource(userSession.getUser());
         List<NoteBookEntity> list = noteBookService.getNoteBook(entity);
-        if (list.size() > 0) {
+        if (CollectionUtils.isEmpty(list)) {
             return ResultUtil.success(list);
         } else {
             //未找到有效记录

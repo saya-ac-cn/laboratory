@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -295,7 +296,7 @@ public class CoreServiceImpl implements ICoreService {
     @Override
     public Result<Object> getLogType() throws Exception {
         List<LogTypeEntity> list = logService.selectLogType();
-        if (list.size() < 0) {
+        if (CollectionUtils.isEmpty(list)) {
             // 没有该用户的信息 直接中断返回
             //未找到登录类别
             throw new MyException(ResultEnum.NOT_EXIST);

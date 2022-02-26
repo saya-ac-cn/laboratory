@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -18,7 +19,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -313,7 +313,7 @@ public class FrontendServiceImpl implements IFrontendService {
     public Result<Object> getNoteBook(NoteBookEntity entity) throws Exception {
         entity.setStatus(1);
         List<NoteBookEntity> list = noteBookService.getNoteBook(entity);
-        if (null != list && list.size() > 0) {
+        if (!CollectionUtils.isEmpty(list)) {
             return ResultUtil.success(list);
         } else {
             //未找到有效记录
