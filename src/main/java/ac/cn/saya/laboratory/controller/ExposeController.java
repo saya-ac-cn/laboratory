@@ -53,7 +53,7 @@ public class ExposeController {
      */
     @GetMapping("/backend/download/channel-1")
     public void fileDownload(@RequestParam(value = "url") String url, HttpServletRequest request, HttpServletResponse response) {
-        System.out.println(ClassUtils.getDefaultClassLoader().getResource("").getPath());
+        /// System.out.println(ClassUtils.getDefaultClassLoader().getResource("").getPath());
         coreServiceImpl.fileDownload(url, request, response);
     }
 

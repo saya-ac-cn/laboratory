@@ -1,6 +1,5 @@
 package ac.cn.saya.laboratory.controller;
 
-import ac.cn.saya.laboratory.entity.ApiEntity;
 import ac.cn.saya.laboratory.entity.LogEntity;
 import ac.cn.saya.laboratory.entity.PlanEntity;
 import ac.cn.saya.laboratory.entity.UserEntity;
