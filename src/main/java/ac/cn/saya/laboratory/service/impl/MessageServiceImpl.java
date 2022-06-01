@@ -374,7 +374,7 @@ public class MessageServiceImpl implements IMessageService {
         UserMemory userSession = (UserMemory) request.getSession().getAttribute("user");
         entity.setSource(userSession.getUser());
         List<NoteBookEntity> list = noteBookService.getNoteBook(entity);
-        if (CollectionUtils.isEmpty(list)) {
+        if (!CollectionUtils.isEmpty(list)) {
             return ResultUtil.success(list);
         } else {
             //未找到有效记录

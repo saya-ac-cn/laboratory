@@ -17,8 +17,7 @@ public class ExceptionHandle {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public Result<Object> handle(Exception e) {
-        if (e instanceof MyException) {
-            MyException myException = (MyException) e;
+        if (e instanceof MyException myException) {
             return ResultUtil.error(myException.getCode(), myException.getMessage());
         } else {
             //不在定义范围内的异常错误
